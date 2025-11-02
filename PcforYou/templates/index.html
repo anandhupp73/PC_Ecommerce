@@ -24,9 +24,9 @@
                             <span class="logo-text">PC-FOR-YOU</span>
                         </a>
                         <nav>
-                            <a href="#">Components</a>
+                            <a href="#shop">Components</a>
                             <a href="#">Pre-Built</a>
-                            <a href="#">Deals</a>
+                            <a href="#deals">Deals</a>
                             <a href="#">Support</a>
                         </nav>
                     </div>
@@ -63,7 +63,7 @@
                 <h1>Build Your <span class="text-primary">Dream PC</span></h1>
                 <p>Premium components, expert guidance, and unbeatable prices...</p>
                 <div class="hero-buttons">
-                    <a href="#" class="btn btn-primary">Shop Components</a>
+                    <a href="#shop" class="btn btn-primary">Shop Components</a>
                     <a href="#" class="btn btn-secondary">PC Builder Tool</a>
                 </div>
             </div>
@@ -71,7 +71,7 @@
 
         {% comment %} shop by category part  {% endcomment %}
 
-        <div class="shop-section">
+        <div class="shop-section" id="shop">
             <h2 class="shop-title">Shop by Category</h2>
             <p class="shop-subtitle">Find exactly what you need for your build</p>
 
@@ -84,7 +84,7 @@
                     </div>
                     <div class="title">Processors</div>
                     <div class="count">
-                        {% comment %} Processors count  {% endcomment %}
+                        Processors count 
                     </div>
                 </div>
 
@@ -94,9 +94,9 @@
                     <div class="icon-wrap">
                         <i data-lucide="box" class="my-icon"></i>
                     </div>
-                    <div class="title">Processors</div>
+                    <div class="title">Graphics Cards</div>
                     <div class="count">
-                        {% comment %} graphics card count  {% endcomment %}
+                        graphics card count 
                     </div>
                 </div>
 
@@ -106,9 +106,9 @@
                     <div class="icon-wrap">
                         <i data-lucide="hard-drive" class="my-icon"></i>
                     </div>
-                    <div class="title">Processors</div>
+                    <div class="title">Storage</div>
                     <div class="count">
-                        {% comment %} storage count  {% endcomment %}
+                        storage count 
                     </div>
                 </div>
 
@@ -118,9 +118,9 @@
                     <div class="icon-wrap">
                         <i data-lucide="monitor-speaker" class="my-icon"></i>
                     </div>
-                    <div class="title">Processors</div>
+                    <div class="title">Monitors</div>
                     <div class="count">
-                        {% comment %} Monitors count  {% endcomment %}
+                        Monitors count 
                     </div>
                 </div>
 
@@ -130,27 +130,241 @@
                     <div class="icon-wrap">
                        <i data-lucide="fan" class="my-icon"></i>
                     </div>
-                    <div class="title">Processors</div>
+                    <div class="title">Cooling</div>
                     <div class="count">
-                        {% comment %} cooling count  {% endcomment %}
+                        cooling count 
+                    </div>
+                </div>
+                
+                {% comment %} Motherboard  {% endcomment %}
+
+                 <div class="card">
+                    <div class="icon-wrap">
+                        <i data-lucide="circuit-board" class="my-icon"></i>
+                    </div>
+                    <div class="title">Motherboard</div>
+                    <div class="count">
+                        Motherboard count 
                     </div>
                 </div>
 
-                {% comment %} Accessories  {% endcomment %}
+                {% comment %} ram  {% endcomment %}
+
+                 <div class="card">
+                    <div class="icon-wrap">
+                        <i data-lucide="memory-stick" class="my-icon"></i>
+                    </div>
+                    <div class="title">RAM</div>
+                    <div class="count">
+                        RAM count 
+                    </div>
+                </div>
+
+                {% comment %} power supply  {% endcomment %}
+
+                 <div class="card">
+                    <div class="icon-wrap">
+                        <i data-lucide="square-power" class="my-icon"></i>
+                    </div>
+                    <div class="title">Power Supply</div>
+                    <div class="count">
+                        Power Supply count 
+                    </div>
+                </div>
+
+                {% comment %} Cabinets  {% endcomment %}
+
+                 <div class="card">
+                    <div class="icon-wrap">
+                        <i data-lucide="pc-case" class="my-icon"></i>
+                    </div>
+                    <div class="title">Cabinets</div>
+                    <div class="count">
+                        Cabinets count 
+                    </div>
+                </div>
+
+                 {% comment %} Accessories  {% endcomment %}
 
                 <div class="card">
                     <div class="icon-wrap">
                         <i data-lucide="cable" class="my-icon"></i>
                     </div>
-                    <div class="title">Processors</div>
+                    <div class="title">Accessories</div>
                     <div class="count">
-                        {% comment %} Accessories count  {% endcomment %}
+                        Accessories count 
                     </div>
                 </div>
 
-
             </div>
         </div>
+
+        {% comment %} featured-section  {% endcomment %}
+
+        <div class="featured-section" id="deals">
+            <h1>Featured Products</h1>
+            <p class="featured-subtitle">Hand-picked selections for your next build</p>
+
+            <div class="products">
+
+                <div class="product-card">
+                    <div class="image-container">
+                        <img src="{% static 'images/amd-ryzen-9.jpg' %}" alt="amd">
+                        <span class="tag best-seller">Best Seller</span>
+                    </div>
+                    <div class="info">
+                        <p class="category">Processor</p>
+                        <h3>AMD Ryzen 9 7950X</h3>
+                        <p class="rating"> <i data-lucide="star" class="my-icon"></i> 4.8 <span>(1247)</span></p>
+                        <div class="price-add">
+                            <p class="price">$699.99</p>
+                            <button class="add-btn">
+                                <i data-lucide="shopping-cart" style="width:18px; height:18px;"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="image-container">
+                        <img src="{% static 'images/rtx-5090.png' %}" alt="amd">
+                        <span class="tag top-rated">Top Rated</span>
+                    </div>
+                    <div class="info">
+                        <p class="category">Graphics Card</p>
+                        <h3>NVIDIA RTX 5090</h3>
+                        <p class="rating"> <i data-lucide="star" class="my-icon"></i> 4.9 <span>(892)</span></p>
+                        <div class="price-add">
+                            <p class="price">$1599.99</p>
+                            <button class="add-btn">
+                                <i data-lucide="shopping-cart" style="width:18px; height:18px;"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="image-container">
+                        <img src="{% static 'images/samsung-990-pro.webp' %}" alt="amd">
+                        <span class="tag hot-deal">Hot Deal</span>
+                    </div>
+                    <div class="info">
+                        <p class="category">SSD Storage</p>
+                        <h3>Samsung 990 PRO 2TB</h3>
+                        <p class="rating"> <i data-lucide="star" class="my-icon"></i> 4.7 <span>(2156)</span></p>
+                        <div class="price-add">
+                            <p class="price">$160.99</p>
+                            <button class="add-btn">
+                                <i data-lucide="shopping-cart" style="width:18px; height:18px;"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="image-container">
+                        <img src="{% static 'images/crosshair-vengence-32gb.avif' %}" alt="amd">
+                        <span class="tag popular">Popular</span>
+                    </div>
+                    <div class="info">
+                        <p class="category">SSD Storage</p>
+                        <h3>Samsung 990 PRO 2TB</h3>
+                        <p class="rating"> <i data-lucide="star" class="my-icon"></i> 4.7 <span>(2156)</span></p>
+                        <div class="price-add">
+                            <p class="price">$199.99</p>
+                            <button class="add-btn">
+                                <i data-lucide="shopping-cart" style="width:18px; height:18px;"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <button class="view-all">View All Products</button>
+
+        </div>
+
+        {% comment %} services part {% endcomment %}
+
+        <div class="services">
+            <div class="service-item">
+                <div class="service-icon">
+                    <i data-lucide="truck" style="color:#00bfff;"></i>
+                </div>
+                <h3>Fast & Free Shipping</h3>
+                <p>Free shipping on orders over $50.<br>Express delivery available.</p>
+            </div>
+
+            <div class="service-item">
+                <div class="service-icon">
+                    <i data-lucide="shield" style="color:#00bfff;"></i>
+                </div>
+                 <h3>Secure Payments</h3>
+                <p>100% secure transactions with buyer protection guarantee.</p>
+            </div>
+
+            <div class="service-item">
+                <div class="service-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3>24/7 Support</h3>
+                <p>Expert assistance whenever you need it, day or night.</p>
+            </div>
+
+            <div class="service-item">
+                <div class="service-icon">
+                    <i class="fas fa-award"></i>
+                </div>
+                <h3>Quality Guaranteed</h3>
+                <p>Only authentic products with manufacturer warranty.</p>
+            </div>
+        </div>
+
+        {% comment %} footer  {% endcomment %}
+
+        <footer class="footer">
+            <div class="footer-container">
+                
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <div class="logo-icon"></div>
+                        <h3>PC-FOR-YOU</h3>
+                    </div>
+                    <p>Your trusted source for premium PC components and gaming hardware.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><a href="#">Processors</a></li>
+                        <li><a href="#">Graphics Cards</a></li>
+                        <li><a href="#">Memory & Storage</a></li>
+                        <li><a href="#">Cooling Solutions</a></li>
+                    </ul>
+                </div>
+
+                 <div class="footer-column">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Shipping Info</a></li>
+                        <li><a href="#">Returns</a></li>
+                        <li><a href="#">Warranty</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 PC-FOR-YOU. All rights reserved.</p>
+            </div>
+        </footer>
 
     </div>
 
