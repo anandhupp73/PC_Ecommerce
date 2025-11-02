@@ -143,6 +143,45 @@ nav a:hover {
     font-size: 20px;
     color: var(--foreground);
 }
+/* #userIcon{
+  position: relative;
+} */
+.user-dropdown{
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: #0f131a;
+  color: white;
+  border-radius: 8px;
+  width: 160px;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 10;
+  animation: fadeIn 0.2s ease;
+}
+.user-dropdown a{
+  padding: 10px 15px;
+  text-decoration: none;
+  color: white;
+  transition: background 0.2s;
+}
+.user-dropdown a:hover{
+  background:  #161b24;
+}
+.show{
+  display: flex;
+}
+@keyframes fadeIn {
+    from{
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    to{
+      opacity: 1;
+      transform: translateY(0);
+    }
+}
 .hero{
     position: relative;
     min-height: 800px;
@@ -499,10 +538,11 @@ button:hover {
   }
 }
 .footer {
-    background-color: #0f141a;
+    background-color:  #161b24;
     color: #fff;
     padding: 60px 8%;
     font-family: 'Poppins', sans-serif;
+    border-top: 1px solid rgb(49, 48, 48);
 }
 .footer-container {
   display: flex;
@@ -522,6 +562,7 @@ button:hover {
   align-items: center;
   gap: 10px;
   margin-bottom: 15px;
+  padding-top: 20px;
 }
 
 .logo-icon {

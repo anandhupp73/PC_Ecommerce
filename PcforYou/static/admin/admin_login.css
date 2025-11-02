@@ -1,0 +1,239 @@
+:root {
+    --dark-bg: #10141b;
+    --card-bg: #1c212a;
+    --input-bg: #1a1e26;
+    --text-color: #f0f4f8;
+    --subtle-text: #aeb6bf;
+    --accent-blue-light: #4dc4ff;
+    --accent-blue-dark: #007bff;
+    --border-radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Page Background */
+body {
+    background-color: var(--dark-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Login Card Container */
+.login-card {
+    background-color: var(--card-bg);
+    padding: 40px 50px;
+    border-radius: var(--border-radius);
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+}
+
+/* Shield Icon Styling */
+.shield-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: linear-gradient(
+    135deg,
+    var(--accent-blue-light),
+    var(--accent-blue-dark)
+    );
+    filter: drop-shadow(0 0 8px rgba(77, 196, 255, 0.6));
+}
+
+.shield-icon i,
+.shield-icon svg {
+    width: 28px;
+    /* height: 28px; */
+    color: white;
+    stroke-width: 2.5;
+}
+
+/* Text Styling */
+.title {
+    color: var(--text-color);
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: var(--subtle-text);
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+/* Form Group Styling */
+.input-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    color: var(--subtle-text);
+    font-size: 14px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.input-field {
+    display: flex;
+    align-items: center;
+    background-color: var(--input-bg);
+    border-radius: 8px;
+    padding: 10px 20px;
+    border: 1px solid transparent;
+    transition: border-color 0.3s;
+}
+
+.input-field:focus-within {
+    border-color: var(--accent-blue-dark);
+}
+
+.input-field i {
+    color: var(--subtle-text);
+    margin-right: 10px;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.input-field input {
+    flex-grow: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-color);
+    font-size: 16px;
+    padding: 0;
+}
+
+.input-field input::placeholder {
+    color: var(--subtle-text);
+    opacity: 0.7;
+}
+
+/* Password Eye Icon */
+.show-password {
+    margin-right: 0 !important;
+    cursor: pointer;
+}
+
+/* Sign In Button */
+.login-button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+    margin-top: 15px;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.login-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 114, 255, 0.6);
+}
+
+/* Security Note */
+.security-note {
+    margin-top: 30px;
+    font-size: 12px;
+    color: var(--subtle-text);
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+.login-card {
+    padding: 35px 40px;
+    max-width: 90%;
+}
+
+.title {
+    font-size: 22px;
+}
+
+.subtitle {
+    font-size: 13px;
+    margin-bottom: 25px;
+}
+
+.input-field {
+    padding: 10px 16px;
+}
+
+.sign-in-button {
+    padding: 12px;
+    font-size: 15px;
+}
+}
+
+@media (max-width: 480px) {
+    .login-card {
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.shield-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 15px;
+}
+
+.title {
+    font-size: 20px;
+}
+
+.subtitle {
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    font-size: 13px;
+}
+
+.input-field input {
+    font-size: 14px;
+}
+
+.sign-in-button {
+    padding: 10px;
+    font-size: 14px;
+}
+
+.security-note {
+    font-size: 11px;
+    margin-top: 20px;
+}
+}
+/* Autofill Fix for Chrome, Edge, Safari */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    /* Force dark background and text color */
+    -webkit-box-shadow: 0 0 0 1000px var(--input-bg) inset !important;
+    -webkit-text-fill-color: var(--text-color) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}

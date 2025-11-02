@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'admin/admin_login.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="shield-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+
+            <h1 class="title">Admin Portal</h1>
+            <p class="subtitle">Sign in to access your dashboard</p>
+
+            <form action="{% url 'admin_login' %}" method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="username" id="username" placeholder="Enter your username" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" id="password" placeholder="Enter your password" required>
+                        <i class="fas fa-eye show-password"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-button">Login</button>
+            </form>
+
+            <p class="security-note">Protected by industry-standard security</p>
+        </div>
+    </div>
+    <script>
+        const passwordField = document.getElementById("password");
+        const showPasswordIcon = document.querySelector(".show-password");
+
+        showPasswordIcon.addEventListener("click", () => {
+            const isPasswordHidden = passwordField.getAttribute("type") === "password";
+
+            if (isPasswordHidden) {
+                // Show the password
+                passwordField.setAttribute("type", "text");
+                showPasswordIcon.classList.remove("fa-eye");
+                showPasswordIcon.classList.add("fa-eye-slash");
+            } else {
+                // Hide the password
+                passwordField.setAttribute("type", "password");
+                showPasswordIcon.classList.remove("fa-eye-slash");
+                showPasswordIcon.classList.add("fa-eye");
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -36,10 +36,11 @@
                             <input type="text" class="search-input" placeholder="Search">
                         </div>
 
-                        <a href="#"><button class="icon-button">
+                        <div class="icon-button" id="userIcon">
                                 <i class="user-icon fa-regular fa-user" style="color: white;"></i>
-                            </button>
-                        </a>
+                                <div class="user-dropdown" id="userDropdown"></div>
+                        </div>
+            
 
                         <a href="#">
                             <button class="icon-button">
@@ -370,6 +371,38 @@
 
     <script>
         lucide.createIcons();
+
+        
+        const userIcon = document.getElementById("userIcon");
+        const dropdown = document.getElementById("userDropdown");
+
+        let isLoggedIn = false;
+        function updateDropdown(){
+            if (isLoggedIn){
+                dropdown.innerHTML = `
+                <a href="#">Profile</a>
+                <a href="#" id="logoutBtn">Logout</a>`;
+            }
+            else{
+                dropdown.innerHTML= `
+                <a href="#">Login</a>
+                <a href="#">Sign Up</a>`;            
+            }
+        }
+        updateDropdown();
+
+            // Toggle dropdown visibility
+            userIcon.addEventListener("click", (e) => {
+                e.stopPropagation(); // Prevent closing immediately
+                dropdown.classList.toggle("show");
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener("click", (e) => {
+                if (!userIcon.contains(e.target)) {
+                dropdown.classList.remove("show");
+                }
+            });
     </script>
 </body>
 
