@@ -39,7 +39,38 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pc',
+
+    # Required by allauth
+    'django.contrib.sites',
+
+    # Allauth apps
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+    # Google provider
+    'allauth.socialaccount.providers.google',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # default
+    'allauth.account.auth_backends.AuthenticationBackend',  # allauth
+]
+
+# Redirect URLs after login/logout
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+
+# Email login instead of username
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+
+# Optional: Email verification method ('mandatory', 'optional', 'none')
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+
+# Optional: keep the user logged in after signing up or logging in
+ACCOUNT_SESSION_REMEMBER = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -47,6 +78,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware', #allauth
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -123,3 +155,5 @@ STATICFILES_DIRS = [BASE_DIR,'static']
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SITE_ID = 1
