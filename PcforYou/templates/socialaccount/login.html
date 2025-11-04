@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Login</title>
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top left, #0d1117, #020617);
+      color: #f0f0f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: rgba(17, 25, 40, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 40px 60px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(0, 200, 255, 0.15);
+      width: 90%;
+      max-width: 420px;
+    }
+
+    .container h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #00b4ff;
+    }
+
+    .container p {
+      color: #bbb;
+      font-size: 15px;
+      margin-bottom: 25px;
+    }
+
+    .messages {
+      background-color: rgba(0, 200, 255, 0.1);
+      border-left: 4px solid #00b4ff;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      padding: 10px 15px;
+      color: #aef;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .menu {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .menu a {
+      text-decoration: none;
+      color: #00b4ff;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .menu a:hover {
+      color: #66d9ff;
+    }
+
+    button {
+      background: linear-gradient(90deg, #00b4ff, #007aff);
+      border: none;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 180, 255, 0.3);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(0, 180, 255, 0.6);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    form {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    {% if messages %}
+    <div class="messages">
+      <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <div class="menu">
+      <a href="{% url 'account_login' %}">Login</a>
+      <a href="{% url 'account_signup' %}">Sign Up</a>
+    </div>
+
+    <h1>Sign In via Google</h1>
+    <p>You are about to sign in using your Google account.</p>
+
+    <form action="" method="post">
+      {% csrf_token %}
+      <button type="submit">Continue with Google</button>
+    </form>
+  </div>
+</body>
+</html>

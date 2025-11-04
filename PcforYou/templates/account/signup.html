@@ -4,23 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PcforYou Login</title>
+    <title>PcforYou Sign Up</title>
     <!-- Font Awesome for icons (envelope, lock, google) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     {% load static %}
+    <!-- Reuses the same dark theme and styling -->
     <link rel="stylesheet" href="{% static 'social/useracc.css' %}">
 </head>
 <body>
-    <!-- The main wrapper div to center the login card -->
+    <!-- The main wrapper div to center the signup card -->
     <div class="login-card-wrapper">
-        <form action="{% url 'account_login' %}" method='post' class="login-form">
+        <!-- Action points to the allauth signup URL -->
+        <form action="{% url 'account_signup' %}" method='post' class="login-form">
             {% csrf_token %}
 
             <div class="header-content">
                 <!-- Logo element with "PC" text -->
                 <div class="logo">PcforYou</div>
-                <h1 class="welcome-title">Welcome Back</h1>
-                <p class="welcome-subtitle">Login to access your PcforYou account</p>
+                <h1 class="welcome-title">Create Account</h1>
+                <p class="welcome-subtitle">Join the PcforYou community to save your configurations</p>
             </div>
 
             {% if form.errors %}
@@ -36,21 +38,27 @@
             <!-- Email Input Group -->
             <div class="input-group">
                 <i class="fas fa-envelope input-icon"></i>
-                <input type="email" placeholder="Email address" name="login" required>
+                <!-- Assuming the email field name is 'email' in the signup form -->
+                <input type="email" placeholder="Email address" name="email" required>
             </div>
             
             <!-- Password Input Group -->
             <div class="input-group">
                 <i class="fas fa-lock input-icon"></i>
-                <input type="password" placeholder="Password" name="password" required>
+                <!-- Assuming the password field name is 'password' -->
+                <input type="password" placeholder="Password" name="password1" required>
             </div>
 
-            <!-- Forgot password link -->
-            <div class="forgot-password-container">
-                <a href="{% url 'account_reset_password' %}">forgot password?</a>
+            <!-- Password Confirmation Input Group -->
+            <div class="input-group">
+                <i class="fas fa-lock input-icon"></i>
+                <!-- Assuming the password confirmation field name is 'password2' -->
+                <input type="password" placeholder="Confirm Password" name="password2" required>
             </div>
 
-            <button class="login-btn" type="submit">Login</button>
+            <!-- Note: No forgot password link on the signup page -->
+
+            <button class="login-btn" type="submit">Sign Up</button>
 
             <div class="divider-text">or</div>
 
@@ -61,7 +69,7 @@
             </a>
 
             <div class="signup-text">
-                Don't have an account? <a href="{% url 'account_signup' %}">Sign up</a>
+                Already have an account? <a href="{% url 'account_login' %}">Log In</a>
             </div>
 
         </form>

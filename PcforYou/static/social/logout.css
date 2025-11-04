@@ -1,0 +1,106 @@
+/* ========================
+   PC Builder Logout Popup
+   ======================== */
+
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background-color: #0b0e13;
+    color: white;
+}
+
+/* Dark blurred overlay */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 13, 20, 0.8);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+/* Centered logout card */
+.logout-card {
+    background: linear-gradient(145deg, #111827, #0d111a);
+    border: 1px solid rgba(0, 229, 255, 0.15);
+    border-radius: 12px;
+    padding: 35px 45px;
+    text-align: center;
+    box-shadow: 0 4px 30px rgba(0, 229, 255, 0.15);
+    max-width: 380px;
+    width: 90%;
+    animation: fadeIn 0.35s ease-out;
+}
+
+/* Heading */
+.logout-card h2 {
+    font-size: 22px;
+    color: #00e5ff;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+/* Message text */
+.logout-card p {
+    color: #b8c2cc;
+    font-size: 15px;
+    margin-bottom: 28px;
+}
+
+/* Buttons wrapper */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* Logout (primary) button */
+.logout-btn {
+    flex: 1;
+    background: linear-gradient(90deg, #00e5ff, #0094ff);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.logout-btn:hover {
+    background: linear-gradient(90deg, #0094ff, #00e5ff);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+}
+
+/* Cancel (secondary) button */
+.cancel-btn {
+    flex: 1;
+    background: #1a1f2a;
+    color: #b8c2cc;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 15px;
+    padding: 10px 0;
+    transition: all 0.3s ease;
+}
+
+.cancel-btn:hover {
+    background: #252c3a;
+    color: #00e5ff;
+}
+
+/* Pop-in animation */
+@keyframes fadeIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

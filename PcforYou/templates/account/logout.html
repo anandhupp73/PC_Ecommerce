@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout | PcforYou</title>
+    <link rel="stylesheet" href="{% static 'social/logout.css' %}">
+</head>
+<body>
+
+<div class="overlay">
+    <div class="logout-card">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to log out of your account?</p>
+
+        <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            <div class="button-group">
+                <button type="submit" class="logout-btn">Yes, Logout</button>
+                <a href="/" class="cancel-btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

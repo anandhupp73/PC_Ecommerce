@@ -373,36 +373,42 @@
         lucide.createIcons();
 
         
-        const userIcon = document.getElementById("userIcon");
-        const dropdown = document.getElementById("userDropdown");
+        const isLoggedIn = {{ user.is_authenticated|yesno:"true,false" }};
+    const userEmail = "{% if user.is_authenticated %}{{ user.email }}{% endif %}";
 
-        let isLoggedIn = false;
-        function updateDropdown(){
-            if (isLoggedIn){
-                dropdown.innerHTML = `
+    const userIcon = document.getElementById("userIcon");
+    const dropdown = document.getElementById("userDropdown");
+
+    function updateDropdown() {
+        if (isLoggedIn) {
+            dropdown.innerHTML = `
+                <div style="padding: 8px 12px; color: #aaa; font-size: 14px;">
+                    Hello, ${userEmail}
+                </div>
                 <a href="#">Profile</a>
-                <a href="#" id="logoutBtn">Logout</a>`;
-            }
-            else{
-                dropdown.innerHTML= `
-                <a href="#">Login</a>
-                <a href="#">Sign Up</a>`;            
-            }
+                <a href="{% url 'account_logout' %}" id="logoutBtn">Logout</a>
+            `;
+        } else {
+            dropdown.innerHTML = `
+                <a href="{% url 'account_login' %}">Login</a>
+                <a href="{% url 'account_signup' %}">Sign Up</a>
+            `;
         }
-        updateDropdown();
+    }
+    updateDropdown();
 
-            // Toggle dropdown visibility
-            userIcon.addEventListener("click", (e) => {
-                e.stopPropagation(); // Prevent closing immediately
-                dropdown.classList.toggle("show");
-            });
+    // Toggle dropdown visibility
+    userIcon.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("show");
+    });
 
-            // Close dropdown when clicking outside
-            document.addEventListener("click", (e) => {
-                if (!userIcon.contains(e.target)) {
-                dropdown.classList.remove("show");
-                }
-            });
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+        if (!userIcon.contains(e.target)) {
+            dropdown.classList.remove("show");
+        }
+    });
     </script>
 </body>
 
