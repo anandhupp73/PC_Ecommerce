@@ -1,14 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'admin/dash.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
-    <h1>Dashboard</h1>
-    <a href="{% url 'admin_logout' %}" class="admin-logout-button">
-            &larr; Logout
-    </a>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2><span><i class="fa-solid fa-cubes"></i></span> PC Builder</h2>
+        <small style="color:#64748b; margin-bottom:15px;">Management</small>
+        <nav>
+            <a href="{% url 'admin_dashboard' %}" class="active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+            <a href="{% url 'view_products' %}"><i class="fa-solid fa-box"></i> Products</a>
+            <a href="#"><i class="fa-solid fa-list"></i> Categories</a>
+            <a href="#"><i class="fa-solid fa-computer"></i> Pre-built PCs</a>
+            <a href="#"><i class="fa-solid fa-cart-shopping"></i> Orders</a>
+            <a href="#"><i class="fa-solid fa-users"></i>Users</a>
+        </nav>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <!-- Logout button -->
+        <a href="{% url 'admin_logout' %}">
+        <button class="logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+        </a>
+
+        {% block content %}
+        <p class="welcome">Welcome back! Here’s your store overview.</p>
+
+        <!-- Cards -->
+        <div class="cards">
+            <div class="card">
+                <div class="card-icon" style="background: var(--gradient1);"><i class="fa-solid fa-cube"></i></div>
+                <h4>Total Products</h4>
+                <h2>248</h2>
+                <small>+12% from last month</small>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background: var(--gradient2);"><i class="fa-solid fa-layer-group"></i>
+                </div>
+                <h4>Categories</h4>
+                <h2>18</h2>
+                <small>+2 new categories</small>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background: var(--gradient3);"><i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <h4>Total Orders</h4>
+                <h2>1,254</h2>
+                <small>+8% from last month</small>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background: var(--gradient4);"><i class="fa-solid fa-dollar-sign"></i>
+                </div>
+                <h4>Revenue</h4>
+                <h2>$45,231</h2>
+                <small>+15% from last month</small>
+            </div>
+        </div>
+
+        <!-- Recent Orders Table -->
+        <div class="table-section">
+            <h3>Recent Orders</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Product</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ORD-001</td>
+                        <td>John Doe</td>
+                        <td>Gaming PC RTX 4090</td>
+                        <td><span class="status completed">Completed</span></td>
+                        <td>$2,499</td>
+                    </tr>
+                    <tr>
+                        <td>ORD-002</td>
+                        <td>Jane Smith</td>
+                        <td>AMD Ryzen 9 7950X</td>
+                        <td><span class="status processing">Processing</span></td>
+                        <td>$599</td>
+                    </tr>
+                    <tr>
+                        <td>ORD-003</td>
+                        <td>Mike Johnson</td>
+                        <td>Pre-built Gaming Rig</td>
+                        <td><span class="status shipped">Shipped</span></td>
+                        <td>$1,899</td>
+                    </tr>
+                    <tr>
+                        <td>ORD-004</td>
+                        <td>Sarah Williams</td>
+                        <td>RTX 4070 Ti</td>
+                        <td><span class="status pending">Pending</span></td>
+                        <td>$799</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {% endblock %}
+    </div>
 </body>
+
 </html>

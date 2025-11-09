@@ -1,0 +1,63 @@
+{% extends "admin/admin_dashboard.html" %}
+{% block title %}All Products{% endblock %}
+
+{% block content %}
+<div class="product-section">
+	<div class="product-header">
+		<h2>All Products</h2>
+		<div class="actions">
+			<form method="get" id="filterForm" action="{% url 'view_products' %}">
+				<select name="category" class="sort-select" onchange="document.getElementById('filterForm').submit()">
+					<option value="">All Categories</option>
+					{% for category in categories %}
+						<option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>
+							{{ category.name }}
+						</option>
+					{% endfor %}
+				</select>
+			</form>
+			<a href="{% url 'add_products' %}" class="add-btn">
+				<i class="fa-solid fa-plus"></i> Add Product
+			</a>
+		</div>
+	</div>
+
+	<table class="product-table" style="border-collapse: separate; border-spacing: 0; border-radius: 6px; overflow: hidden;">
+		<thead>
+			<tr>
+				<th>Product Name</th>
+				<th>Category</th>
+				<th>Stock</th>
+				<th>Price</th>
+				<th>Status</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for product in products %}
+			<tr>
+				<td>{{ product.name }}</td>
+				<td>{{ product.category }}</td>
+				<td>{{ product.stock_quantity }}</td>
+				<td>${{ product.price }}</td>
+				<td>
+					{% if product.stock_quantity > 0 %}
+					<span class="status in-stock">In Stock</span>
+					{% else %}
+					<span class="status out-stock">Out of Stock</span>
+					{% endif %}
+				</td>
+				<td class="dropdown">
+					<a href="#" class="edit-btn" style="padding: 5px;"><i class="fa-solid fa-pen"></i></a>
+					<a href="#" class="delete-btn" style="padding: 5px; color: red;"><i class="fa-solid fa-trash"></i></a>
+				</td>
+			</tr>
+			{% empty %}
+			<tr>
+				<td colspan="6" style="text-align:center;">No products available</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock %}
