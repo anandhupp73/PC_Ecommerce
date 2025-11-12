@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
@@ -40,7 +40,7 @@ def admin_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated or not request.user.is_staff:
-            messages.error(request, "You must login as admin to access this page.")
+            # messages.error(request, "You must login as admin to access this page.")
             return redirect('admin_login')
         return view_func(request, *args, **kwargs)
     return wrapper
@@ -117,3 +117,49 @@ def viewproducts(request):
                     'categories': categories, 
                     'selected_category': int(category_id) if category_id else None,
                 })
+
+@admin_required
+def prebuiltview(request):
+
+    prebuilt_pcs = PrebuiltPC.objects.all().order_by('-created_at')  
+    context = {
+        'prebuilt_pcs': prebuilt_pcs
+    }
+    return render(request,'admin/prebuilt_pc.html',context)
+
+@admin_required
+def prebuilt_pc_detail(request, slug):
+    # Retrieve the PC based on the slug, or return 404 if not found
+    pc = get_object_or_404(PrebuiltPC, slug=slug)
+    context = {
+        'pc': pc
+    }
+    return render(request, 'admin/pc_details.html',context)
+
+@admin_required
+def add_prebuilt(request):
+
+    if request.method == 'POST':
+        name = request.POST['name']
+        price = request.POST['price']
+        slug = request.POST['slug']
+        image = request.FILES.get('image')
+        description = request.POST['description']
+        processor = request.POST['processor']
+        graphics_card = request.POST['graphics_card']
+        motherboard = request.POST['motherboard']
+        ram = request.POST['ram']
+        storage = request.POST['storage']
+        power_supply = request.POST['power_supply']
+        cooling = request.POST['cooling']
+        cabinet = request.POST['cabinet']
+        monitor = request.POST['monitor']
+        accessories = request.POST['accessories']
+
+        data = PrebuiltPC.objects.create(name=name,slug=slug,image=image,price=price,description=description,processor=processor,
+                                         motherboard=motherboard,graphics_card=graphics_card,ram=ram,storage=storage,power_supply=power_supply,
+                                         cooling=cooling,cabinet=cabinet,monitor=monitor,accessories=accessories)
+        data.save()
+        # messages.success(request,'prebuilt pc added')
+        return redirect('prebuilt_view')
+    return render(request,'admin/add_prebuilt.html')

@@ -1,0 +1,49 @@
+{% extends "admin/admin_dashboard.html" %}
+{% block title %}PreBuilt Pcs{% endblock %}
+
+{% block content %}
+
+<div class="pc-list-container">
+    <div class="add-pc-and-title">
+    <h1 class="page-title">Featured Prebuilt Gaming PCs</h1>
+    <a href="{% url 'add_prebuilt' %}" class="add-btn" style="height: 35px; margin-bottom: 30px;">
+				<i class="fa-solid fa-plus"></i> Add Prebuilt PC
+		</a>
+    </div>
+    <div class="pc-grid">
+        {% for pc in prebuilt_pcs %}
+        <div class="pc-card">
+            <div class="pc-image-container">
+                {% if pc.image %}
+                    <img src="{{ pc.image.url }}" alt="{{ pc.name }}" class="pc-image">
+                {% else %}
+                    <div class="pc-image-placeholder">No Image Available</div> 
+                {% endif %}
+            </div>
+
+            <div class="pc-details">
+                <h2 class="pc-name">{{ pc.name }}</h2>
+                <p class="pc-price">₹{{ pc.price|floatformat:2 }}</p>
+
+                <div class="pc-specs">
+                    <h3>Key Specifications</h3>
+                    <ul>
+                        <li><span class="spec-label">CPU:</span> {{ pc.processor }}</li>
+                        <li><span class="spec-label">GPU:</span> {{ pc.graphics_card }}</li>
+                        <li><span class="spec-label">RAM:</span> {{ pc.ram }}</li>
+                        <li><span class="spec-label">Storage:</span> {{ pc.storage }}</li>
+                    </ul>
+                </div>
+                
+                <a href="{% url 'prebuilt_pc_detail' pc.slug %}" class="btn-view-details">View Details</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if not prebuilt_pcs %}
+    <p class="no-pcs-message">No prebuilt PCs are currently available.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

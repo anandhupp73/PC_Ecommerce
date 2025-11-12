@@ -1,0 +1,259 @@
+{% extends "admin/admin_dashboard.html" %} 
+
+{% block title %}{{ pc.name }} - Full Details{% endblock %}
+
+{% block content %}
+<style>
+    /* Styling for the detail page */
+    .detail-container {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 25px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        font-family: 'Arial', sans-serif;
+    }
+
+    .detail-header {
+        text-align: center;
+        margin-bottom: 25px;
+        border-bottom: 3px solid #007bff;
+        padding-bottom: 15px;
+    }
+
+    .detail-header h1 {
+        font-size: 2.8em;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .price-tag {
+        font-size: 2.5em;
+        color: #28a745; /* Green for price */
+        font-weight: 700;
+        margin-top: 0;
+    }
+
+    .pc-image-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 30px;
+        min-height: 350px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .pc-image-full {
+        max-width: 100%;
+        max-height: 400px;
+        object-fit: contain;
+    }
+
+    .pc-image-placeholder {
+        padding: 50px;
+        font-size: 1.5em;
+        color: #6c757d;
+        text-align: center;
+    }
+
+    /* Two-column layout for specifications */
+    .spec-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .spec-column {
+        flex: 1 1 45%; /* Two columns, wrapping on smaller screens */
+        padding: 15px;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        background-color: #fefefe;
+    }
+
+    .spec-column h2 {
+        font-size: 1.6em;
+        color: #007bff;
+        margin-top: 0;
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+        border-bottom: 2px dashed #e9ecef;
+    }
+
+    .spec-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .spec-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px dotted #dee2e6;
+        font-size: 1.1em;
+    }
+
+    .spec-list li:last-child {
+        border-bottom: none;
+    }
+
+    .spec-label {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .spec-value {
+        color: #212529;
+        text-align: right;
+        max-width: 60%; /* Ensure long values don't break the layout */
+    }
+
+    /* Description Section */
+    .description-section h2 {
+        font-size: 1.8em;
+        color: #333;
+        margin-top: 0;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #ccc;
+        padding-bottom: 5px;
+    }
+
+    .description-section p {
+        line-height: 1.8;
+        color: #555;
+        font-size: 1.1em;
+    }
+
+    .back-button {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+        background-color: #5a6268;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .detail-container {
+            margin: 15px;
+            padding: 20px;
+        }
+
+        .detail-header h1 {
+            font-size: 2em;
+        }
+
+        .price-tag {
+            font-size: 2em;
+        }
+
+        .spec-column {
+            flex: 1 1 100%; /* Stacks columns vertically on mobile */
+        }
+    }
+</style>
+
+<div class="detail-container">
+    <div class="detail-header">
+        <h1>{{ pc.name }}</h1>
+        <p class="price-tag">${{ pc.price|floatformat:2 }}</p>
+    </div>
+
+    <!-- Image Section -->
+    <div class="pc-image-section">
+        {% if pc.image %}
+            <img src="{{ pc.image.url }}" alt="{{ pc.name }}" class="pc-image-full">
+        {% else %}
+            <div class="pc-image-placeholder">
+                
+                <p>No image uploaded for this PC.</p>
+            </div> 
+        {% endif %}
+    </div>
+
+    <!-- Specifications Section (Two Columns) -->
+    <div class="spec-section">
+        <!-- Core Components -->
+        <div class="spec-column">
+            <h2>Core Components</h2>
+            <ul class="spec-list">
+                <li>
+                    <span class="spec-label">Processor (CPU):</span>
+                    <span class="spec-value">{{ pc.processor }}</span>
+                </li>
+                <li>
+                    <span class="spec-label">Graphics Card (GPU):</span>
+                    <span class="spec-value">{{ pc.graphics_card }}</span>
+                </li>
+                <li>
+                    <span class="spec-label">Motherboard:</span>
+                    <span class="spec-value">{{ pc.motherboard }}</span>
+                </li>
+                <li>
+                    <span class="spec-label">RAM:</span>
+                    <span class="spec-value">{{ pc.ram }}</span>
+                </li>
+                <li>
+                    <span class="spec-label">Storage:</span>
+                    <span class="spec-value">{{ pc.storage }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Power & Accessories -->
+        <div class="spec-column">
+            <h2>Power & Chassis</h2>
+            <ul class="spec-list">
+                <li>
+                    <span class="spec-label">Power Supply:</span>
+                    <span class="spec-value">{{ pc.power_supply }}</span>
+                </li>
+                <li>
+                    <span class="spec-label">Cooling:</span>
+                    <span class="spec-value">{{ pc.cooling|default:"Standard Air Cooling" }}</span>
+                </li>
+                <li>
+                    <span class="spec-label">Cabinet:</span>
+                    <span class="spec-value">{{ pc.cabinet|default:"Not specified" }}</span>
+                </li>
+                <li>
+                    <span class="spec-label">Monitor:</span>
+                    <span class="spec-value">{{ pc.monitor|default:"None included" }}</span>
+                </li>
+                <li>
+                    <span class="spec-label">Accessories:</span>
+                    <span class="spec-value">{{ pc.accessories|default:"None" }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Description Section -->
+    {% if pc.description %}
+    <div class="description-section">
+        <h2>Product Overview</h2>
+        <p>{{ pc.description|linebreaks }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Footer Information -->
+    <small class="text-muted">
+        Last Updated: {{ pc.updated_at|date:"F d, Y, H:i" }} | SKU: {{ pc.slug }}
+    </small>
+    
+    <!-- Back Button - adjust the URL to your PC list view -->
+    <a href="{% url 'prebuilt_view' %}" class="back-button">← Back to All PCs</a>
+</div>
+{% endblock %}

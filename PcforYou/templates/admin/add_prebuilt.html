@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Prebuilt PC</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'admin/add_prebuilt.css'%}">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+
+    <div class="form-container">
+        <h1>Add Prebuilt PC</h1>
+        <form id="addPcForm" method="post" action="{% url 'add_prebuilt' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- === PRODUCT DETAILS SECTION === -->
+            <h2 class="section-separator">Product Details</h2>
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="name" class="required">Product Name</label>
+                    <input type="text" id="name" name="name" placeholder="e.g. Ultra Gaming Rig 9000" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="price" class="required">Price (INR)</label>
+                    <input type="number" id="price" name="price" step="0.01" min="0" placeholder="e.g. 1999.99"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="slug">Slug</label>
+                    <input type="text" id="slug" name="slug" placeholder="auto-generated-from-name">
+                    <span class="slug-info">Lowercase, hyphens only (auto-generated if left blank).</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">Upload Image</label>
+                    <input type="file" id="image" name="image" accept="image/*">
+                    <div class="image-preview">Image Preview Area</div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="description">Short Description (optional)</label>
+                    <textarea id="description" name="description"
+                        placeholder="A brief overview of the PC's intended use and key features."></textarea>
+                </div>
+
+                {% comment %} <div class="checkbox-group full-width">
+                    <input type="checkbox" id="is_featured" name="is_featured">
+                    <label for="is_featured">Feature this PC on the homepage</label>
+                </div> {% endcomment %}
+            </div>
+
+            <!-- === SYSTEM SPECIFICATIONS SECTION === -->
+            <h2 class="section-separator">System Specifications (Required)</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="processor" class="required">Processor (CPU)</label>
+                    <input type="text" id="processor" name="processor" placeholder="e.g. AMD Ryzen 7 7800X3D" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="graphics_card" class="required">Graphics Card (GPU)</label>
+                    <input type="text" id="graphics_card" name="graphics_card" placeholder="e.g. NVIDIA RTX 4070 Ti"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="motherboard" class="required">Motherboard</label>
+                    <input type="text" id="motherboard" name="motherboard"
+                        placeholder="e.g. Gigabyte B650 AORUS ELITE AX" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="ram" class="required">RAM</label>
+                    <input type="text" id="ram" name="ram" placeholder="e.g. 32GB DDR5 6000MHz" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="storage" class="required">Storage</label>
+                    <input type="text" id="storage" name="storage" placeholder="e.g. 2TB NVMe SSD" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="power_supply" class="required">Power Supply</label>
+                    <input type="text" id="power_supply" name="power_supply" placeholder="e.g. 850W 80+ Gold PSU"
+                        required>
+                </div>
+            </div>
+
+            <!-- === CHASSIS AND ACCESSORIES SECTION === -->
+            <h2 class="section-separator">Chassis and Peripherals (Optional)</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="cooling">Cooling System</label>
+                    <input type="text" id="cooling" name="cooling" placeholder="e.g. 360mm AIO Liquid Cooler">
+                </div>
+
+                <div class="form-group">
+                    <label for="cabinet">Cabinet / Case</label>
+                    <input type="text" id="cabinet" name="cabinet" placeholder="e.g. Lian Li Lancool 216">
+                </div>
+
+                <div class="form-group">
+                    <label for="monitor">Monitor (If bundled)</label>
+                    <input type="text" id="monitor" name="monitor" placeholder="e.g. Samsung Odyssey G7">
+                </div>
+
+                <div class="form-group">
+                    <label for="accessories">Accessories</label>
+                    <input type="text" id="accessories" name="accessories" placeholder="e.g. RGB Keyboard and Mouse">
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Save Prebuilt PC</button>
+            <div id="message" style="margin-top: 20px; text-align: center; color: var(--accent-blue); display: none;">
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const nameInput = document.getElementById('name');
+            const slugInput = document.getElementById('slug');
+
+            // Generate slug automatically from name input
+            nameInput.addEventListener('input', function() {
+                let slug = nameInput.value
+                    .toLowerCase()                      // convert to lowercase
+                    .replace(/[^a-z0-9\s-]/g, '')       // remove special chars
+                    .trim()                             // remove leading/trailing spaces
+                    .replace(/\s+/g, '-');              // replace spaces with hyphens
+
+                slugInput.value = slug;
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageInput = document.getElementById('image');
+            const previewBox = document.querySelector('.image-preview');
+
+            imageInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                previewBox.innerHTML = ''; // Clear old content
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '100%';
+                        img.style.maxHeight = '200px';
+                        img.style.borderRadius = '8px';
+                        previewBox.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    previewBox.innerHTML = 'Image Preview Area';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
