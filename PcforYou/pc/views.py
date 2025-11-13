@@ -86,8 +86,8 @@ def add_product(request):
                 else:
                     print(detail_form.errors)
 
-            messages.success(request, "✅ Product added successfully!")
-            return redirect('add_products')
+            # messages.success(request, "✅ Product added successfully!")
+            return redirect('view_products')
         else:
             print(product_form.errors)
             messages.error(request, "⚠️ Please fix the errors below.")

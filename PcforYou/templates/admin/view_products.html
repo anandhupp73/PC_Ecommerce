@@ -39,7 +39,7 @@
 				<td>{{ product.name }}</td>
 				<td>{{ product.category }}</td>
 				<td>{{ product.stock_quantity }}</td>
-				<td>${{ product.price }}</td>
+				<td>₹{{ product.price }}</td>
 				<td>
 					{% if product.stock_quantity > 0 %}
 					<span class="status in-stock">In Stock</span>
