@@ -15,6 +15,10 @@ urlpatterns = [
     path('admin-dashboard/prebuilt-view/',views.prebuiltview,name="prebuilt_view"),
     path('admin-dashboard/prebuilt-detail/<slug:slug>/', views.prebuilt_pc_detail, name='prebuilt_pc_detail'),
     path('admin-dashboard/add-prebuilt/',views.add_prebuilt,name="add_prebuilt"),
+
+    #users section
+
+    path('cabinets/', views.cabinets, name="cabinets"),
     
 
 ]

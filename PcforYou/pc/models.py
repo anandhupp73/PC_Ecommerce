@@ -66,27 +66,28 @@ class Product(models.Model):
         return None
     
 class CPUDetails(models.Model):
-    product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='cpu_details')
+    product = models.OneToOneField(Product,on_delete=models.CASCADE, related_name='cpu_details')
     core_count = models.PositiveIntegerField()
     thread_count = models.PositiveIntegerField()
     base_clock_ghz = models.DecimalField(max_digits=4,decimal_places=2)
     socket_type = models.CharField(max_length=50)
 
 class GPUDetails(models.Model):
-    product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='gpu_details')
+    product = models.OneToOneField(Product,on_delete=models.CASCADE, related_name='gpu_details')
     vram_gb = models.PositiveIntegerField()
     chipset = models.CharField(max_length=100)
     interface = models.CharField(max_length=50,default='PCIe 4.0')
 
 class RAMDetails(models.Model):
-    product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='ram_details')
+    # product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='ram_details')
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='ram_details')
     capacity_gb = models.PositiveIntegerField()
     speed_mhz = models.PositiveIntegerField()
     ddr_type = models.CharField(max_length=10) #DDR4,DDR5
     module_count = models.PositiveIntegerField(default=1)
 
 class StorageDetails(models.Model):
-    product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='storage_details')
+    product = models.OneToOneField(Product,on_delete=models.CASCADE, related_name='storage_details')
     capacity_gb = models.PositiveIntegerField()
     storage_type = models.CharField(max_length=10, choices=[
         ('HDD','HDD'),

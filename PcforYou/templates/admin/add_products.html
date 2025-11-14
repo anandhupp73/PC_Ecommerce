@@ -113,14 +113,14 @@
                                     <h6>CPU Details</h6>
                                     <div class="row g-2">
                                         <div class="col-md-3"><label class="form-label">Cores</label><input
-                                                name="cpu_core_count" type="number" min="1" class="form-control"></div>
+                                                name="core_count" type="number" min="1" class="form-control"></div>
                                         <div class="col-md-3"><label class="form-label">Threads</label><input
-                                                name="cpu_thread_count" type="number" min="1" class="form-control">
+                                                name="thread_count" type="number" min="1" class="form-control">
                                         </div>
                                         <div class="col-md-3"><label class="form-label">Base Clock (GHz)</label><input
-                                                name="cpu_base_clock_ghz" step="0.01" class="form-control"></div>
+                                                name="base_clock_ghz" step="0.01" class="form-control"></div>
                                         <div class="col-md-3"><label class="form-label">Socket</label><input
-                                                name="cpu_socket_type" class="form-control"></div>
+                                                name="socket_type" class="form-control"></div>
                                     </div>
                                 </div>
 
@@ -129,11 +129,11 @@
                                     <h6>GPU Details</h6>
                                     <div class="row g-2">
                                         <div class="col-md-3"><label class="form-label">VRAM (GB)</label><input
-                                                name="gpu_vram_gb" type="number" min="1" class="form-control"></div>
+                                                name="vram_gb" type="number" min="1" class="form-control"></div>
                                         <div class="col-md-5"><label class="form-label">Chipset</label><input
-                                                name="gpu_chipset" class="form-control"></div>
+                                                name="chipset" class="form-control"></div>
                                         <div class="col-md-4"><label class="form-label">Interface</label><input
-                                                name="gpu_interface" class="form-control" placeholder="e.g. PCIe 4.0">
+                                                name="interface" class="form-control" placeholder="e.g. PCIe 4.0">
                                         </div>
                                     </div>
                                 </div>
@@ -143,14 +143,14 @@
                                     <h6>RAM Details</h6>
                                     <div class="row g-2">
                                         <div class="col-md-3"><label class="form-label">Capacity (GB)</label><input
-                                                name="ram_capacity_gb" type="number" min="1" class="form-control"></div>
+                                                name="capacity_gb" type="number" min="1" class="form-control"></div>
                                         <div class="col-md-3"><label class="form-label">Speed (MHz)</label><input
-                                                name="ram_speed_mhz" type="number" min="1" class="form-control"></div>
+                                                name="speed_mhz" type="number" min="1" class="form-control"></div>
                                         <div class="col-md-3"><label class="form-label">DDR Type</label><input
-                                                name="ram_ddr_type" class="form-control" placeholder="DDR4 / DDR5">
+                                                name="ddr_type" class="form-control" placeholder="DDR4 / DDR5">
                                         </div>
                                         <div class="col-md-3"><label class="form-label">Module Count</label><input
-                                                name="ram_module_count" type="number" min="1" class="form-control"
+                                                name="module_count" type="number" min="1" class="form-control"
                                                 value="1"></div>
                                     </div>
                                 </div>
@@ -160,7 +160,7 @@
                                     <h6>Storage Details</h6>
                                     <div class="row g-2">
                                         <div class="col-md-3"><label class="form-label">Capacity (GB)</label><input
-                                                name="storage_capacity_gb" type="number" min="1" class="form-control">
+                                                name="capacity_gb" type="number" min="1" class="form-control">
                                         </div>
                                         <div class="col-md-4">
                                             <label class="form-label">Type</label>
@@ -172,7 +172,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-5"><label class="form-label">Form Factor</label><input
-                                                name="storage_form_factor" class="form-control"
+                                                name="form_factor" class="form-control"
                                                 placeholder='e.g. 2.5", M.2 2280'></div>
                                     </div>
                                 </div>
@@ -182,14 +182,14 @@
                                     <h6>Monitor Details</h6>
                                     <div class="row g-2">
                                         <div class="col-md-3"><label class="form-label">Size (inches)</label><input
-                                                name="monitor_size_inch" step="0.1" class="form-control"></div>
+                                                name="size_inch" step="0.1" class="form-control"></div>
                                         <div class="col-md-4"><label class="form-label">Resolution</label><input
-                                                name="monitor_resolution" class="form-control"
+                                                name="resolution" class="form-control"
                                                 placeholder="e.g. 1920x1080"></div>
                                         <div class="col-md-3"><label class="form-label">Refresh Rate (Hz)</label><input
-                                                name="monitor_refresh_rate_hz" type="number" class="form-control"></div>
+                                                name="refresh_rate_hz" type="number" class="form-control"></div>
                                         <div class="col-md-2"><label class="form-label">Panel</label><input
-                                                name="monitor_panel_type" class="form-control"></div>
+                                                name="panel_type" class="form-control"></div>
                                     </div>
                                 </div>
 
@@ -200,7 +200,7 @@
                                         <div class="col-md-6"><label class="form-label">Type (Air/Liquid)</label><input
                                                 name="cooling_type" class="form-control"></div>
                                         <div class="col-md-6"><label class="form-label">Fan Count</label><input
-                                                name="cooling_fan_count" type="number" min="0" class="form-control">
+                                                name="fan_count" type="number" min="0" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -242,9 +242,9 @@
                                     <h6>Cabinet Details</h6>
                                     <div class="row g-2">
                                         <div class="col-md-6"><label class="form-label">Form Factor</label><input
-                                                name="cabinet_form_factor" class="form-control"></div>
+                                                name="form_factor" class="form-control"></div>
                                         <div class="col-md-6"><label class="form-label">Color</label><input
-                                                name="cabinet_color" class="form-control"></div>
+                                                name="color" class="form-control"></div>
                                     </div>
                                 </div>
 
@@ -263,9 +263,9 @@
                                             </select>
                                         </div>
                                         <div class="col-md-4"><label class="form-label">Connection</label><input
-                                                name="accessory_connection" class="form-control"></div>
+                                                name="connection" class="form-control"></div>
                                         <div class="col-md-4"><label class="form-label">Color</label><input
-                                                name="accessory_color" class="form-control"></div>
+                                                name="color" class="form-control"></div>
                                     </div>
                                 </div>
 
@@ -285,7 +285,7 @@
         <!-- JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            // Auto-generate slug from name (simple slugify)
+                        // Convert name to slug
             function slugifyClient(s) {
                 return s.toString().toLowerCase().trim()
                     .replace(/[\s\W-]+/g, '-')
@@ -294,62 +294,87 @@
 
             const nameInput = document.getElementById('id_name');
             const slugInput = document.getElementById('id_slug');
-            const categorySelect = document.getElementById('id_category');
-            const previewImg = document.getElementById('preview');
-            const fileInput = document.getElementById('id_image');
-
-            // Update slug live (only if user hasn't typed a custom slug)
             let userEditedSlug = false;
+
+            // Detect manual slug editing
             slugInput.addEventListener('input', () => userEditedSlug = true);
+
+            // Auto-generate slug
             nameInput.addEventListener('input', () => {
                 if (!userEditedSlug) slugInput.value = slugifyClient(nameInput.value);
             });
 
             // Image preview
+            const fileInput = document.getElementById('id_image');
+            const previewImg = document.getElementById('preview');
+
             fileInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
-                if (!file) { previewImg.src = "{% static 'images/no-image.png' %}"; return; }
+                if (!file) { 
+                    previewImg.src = "{% static 'images/no-image.png' %}"; 
+                    return; 
+                }
                 const reader = new FileReader();
                 reader.onload = (ev) => previewImg.src = ev.target.result;
                 reader.readAsDataURL(file);
             });
 
-            // Show/hide detail sections based on category slug
-            function hideAllDetails() {
-                document.querySelectorAll('.details-section').forEach(s => s.style.display = 'none');
+            // ======================================================================
+            // SHOW / HIDE CATEGORY DETAIL SECTIONS
+            // ======================================================================
+
+            const categorySelect = document.getElementById("id_category");
+
+            // Disable or enable a section's inputs
+            function disableInputs(section, disabled) {
+                section.querySelectorAll("input, select, textarea").forEach(el => {
+                    el.disabled = disabled;
+                });
             }
 
+            // Hide all category sections
+            function hideAllDetails() {
+                document.querySelectorAll('.details-section').forEach(section => {
+                    section.style.display = 'none';
+                    disableInputs(section, true);
+                });
+            }
+
+            // Show only selected category section
             function showDetailForSlug(slug) {
                 hideAllDetails();
-                if (!slug) return;
-                // mapping slug -> details id (use same slugs used in Category.slug)
+
                 const map = {
                     'processor': 'details-cpu',
                     'gpu': 'details-gpu',
-                    'graphics-card': 'details-gpu',      // if your slug is 'graphics-card'
+                    'graphics-card': 'details-gpu',
                     'ram': 'details-ram',
                     'storage': 'details-storage',
                     'monitor': 'details-monitor',
                     'cooling': 'details-cooling',
                     'motherboard': 'details-motherboard',
                     'power-supply': 'details-powersupply',
-                    'powersupply': 'details-powersupply',
                     'cabinet': 'details-cabinet',
                     'accessory': 'details-accessory',
                     'accessories': 'details-accessory'
                 };
+
                 const target = map[slug];
-                if (target) document.getElementById(target).style.display = 'block';
+                if (target) {
+                    const section = document.getElementById(target);
+                    section.style.display = 'block';
+                    disableInputs(section, false);
+                }
             }
 
-            // when category changes, get selected option's data-slug
+            // When category changes
             categorySelect.addEventListener('change', () => {
                 const opt = categorySelect.selectedOptions[0];
                 const slug = opt ? (opt.dataset.slug || '').toLowerCase() : '';
                 showDetailForSlug(slug);
             });
 
-            // on load: try to show detail if category preselected
+            // On initial page load
             document.addEventListener('DOMContentLoaded', () => {
                 const opt = categorySelect.selectedOptions[0];
                 const slug = opt ? (opt.dataset.slug || '').toLowerCase() : '';

@@ -163,3 +163,7 @@ def add_prebuilt(request):
         # messages.success(request,'prebuilt pc added')
         return redirect('prebuilt_view')
     return render(request,'admin/add_prebuilt.html')
+
+def cabinets(request):
+    cabinets = CabinetDetails.objects.all()
+    return render(request, "users/cabinets.html", {"cabinets": cabinets})

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Cabinets{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'users/cabinets.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="product-page">
+
+    <!-- FILTER SIDEBAR -->
+    <aside class="filters">
+        <h2>Filters</h2>
+
+        <div class="filter-group">
+            <h4>Price Range</h4>
+            <input type="range" min="0" max="300" value="150">
+            <div class="price-values">
+                <span>$0</span>
+                <span>$300</span>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <h4>Category</h4>
+            <label><input type="checkbox"> Mini Tower</label>
+            <label><input type="checkbox"> Mid Tower</label>
+            <label><input type="checkbox"> Full Tower</label>
+        </div>
+
+        <div class="filter-group">
+            <h4>Brand</h4>
+            <label><input type="checkbox"> TechCase</label>
+            <label><input type="checkbox"> GamerGear</label>
+            <label><input type="checkbox"> MegaCase</label>
+            <label><input type="checkbox"> ModernTech</label>
+        </div>
+    </aside>
+
+    <!-- PRODUCTS SECTION -->
+    <main class="products">
+        <h2>Cabinets Found</h2>
+
+        <div class="product-grid">
+
+            <!-- DJANGO LOOP -->
+            {% for cabinet in cabinets %}
+            <div class="product-card">
+                <img src="{{ cabinet.image.url }}" alt="{{ cabinet.name }}">
+
+                <h3 class="product-name">{{ cabinet.name }}</h3>
+                <p class="product-desc">{{ cabinet.description }}</p>
+
+                <div class="product-bottom">
+                    <span class="price">${{ cabinet.price }}</span>
+                    <button class="add-btn">Add to Cart</button>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </main>
+
+</div>
+
+{% endblock %}
+
+
