@@ -1,0 +1,104 @@
+{% extends "index.html" %}
+{% block title %}Cooling{% endblock %}
+
+{% block content %}
+
+<div class="cooling-product-page">
+
+    <!-- FILTER SIDEBAR -->
+    <aside class="cooling-filters">
+        <h2>Filters</h2>
+
+        <form method="GET" action="{% url 'cooling' %}" id="filterForm">
+
+            <!-- PRICE -->
+            <div class="cooling-filter-group">
+                <h4>Price</h4>
+
+                 <input type="range" 
+                    id="priceSlider"
+                    name="price"
+                    class="price-slider"
+                    min="0"
+                    max="50000"
+                    value="{{ request.GET.price|default:50000 }}">
+
+                <div class="cooling-price-values">
+                    <span>₹0</span>
+                    <span id="priceValue">₹{{ request.GET.price|default:30000 }}</span>
+                </div>
+            </div>
+
+            <!-- COOLING TYPE -->
+            <div class="cooling-filter-group">
+                <h4>Cooling Type</h4>
+
+                <label>
+                    <input type="checkbox" name="cooling_type" value="Air"
+                    {% if "Air" in selected_types %}checked{% endif %}
+                    onchange="this.form.submit()">
+                    Air
+                </label>
+
+                <label>
+                    <input type="checkbox" name="cooling_type" value="Liquid"
+                    {% if "Liquid" in selected_types %}checked{% endif %}
+                    onchange="this.form.submit()">
+                    Liquid
+                </label>
+            </div>
+
+        </form>
+
+    </aside>
+
+    <!-- PRODUCT LIST -->
+    <main class="cooling-products">
+        <h2 style="color: white;">Cooling Products</h2>
+
+        <div class="cooling-product-grid">
+
+            {% for cooling in cooling %}
+            <a href="{% url 'product_detail' cooling.id %}" style="text-decoration: none;">
+            <div class="cooling-product-card">
+
+                <div class="cooling-img-box">
+                    <img src="{{ cooling.image.url }}" alt="{{ cooling.name }}">
+                </div>
+
+                <h3 class="cooling-product-name">{{ cooling.name }}</h3>
+
+                <div class="cooling-product-bottom">
+                    <span class="cooling-price">₹{{ cooling.price }}</span>
+                    <button class="cooling-add-btn">Add to Cart</button>
+                </div>
+
+            </div>
+            </a>
+            {% endfor %}
+
+        </div>
+    </main>
+
+</div>
+<script>
+    const slider = document.getElementById("priceSlider");
+    const priceVal = document.getElementById("priceValue");
+    const form = document.getElementById("filterForm");
+
+    // Initial fill (like cabinet style)
+    slider.style.setProperty("--val", (slider.value / slider.max * 100) + "%");
+
+    // Update while sliding
+    slider.oninput = function () {
+        priceVal.textContent = "₹" + this.value;
+        this.style.setProperty("--val", (this.value / this.max * 100) + "%");
+    };
+
+    // Submit when released
+    slider.onchange = function () {
+        form.submit();
+    };
+</script>
+
+{% endblock %}

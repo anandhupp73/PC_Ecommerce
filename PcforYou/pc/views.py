@@ -48,8 +48,9 @@ def admin_required(view_func):
 @admin_required
 def admin_dashboard(request):
     product_count = Product.objects.count()
-    prebuit_count = PrebuiltPC.objects.count()
-    return render(request,'admin/admin_dashboard.html')
+    # prebuit_count = PrebuiltPC.objects.count()
+    category_count = Category.objects.count()
+    return render(request,'admin/admin_dashboard.html',{'product_count':product_count,'category_count':category_count})
 
 @admin_required
 def add_product(request):
@@ -165,5 +166,109 @@ def add_prebuilt(request):
     return render(request,'admin/add_prebuilt.html')
 
 def cabinets(request):
-    cabinets = CabinetDetails.objects.all()
-    return render(request, "users/cabinets.html", {"cabinets": cabinets})
+
+    category = get_object_or_404(Category,name='Cabinet')
+    products = Product.objects.filter(category=category,is_available = True)
+
+     # ------- PRICE (single slider named "price") -------
+    max_price = request.GET.get("price")
+    try:
+        if max_price is not None and str(max_price).strip() != "":
+            max_price_int = int(max_price)
+            products = products.filter(price__lte=max_price_int)
+        else:
+            max_price_int = None
+    except (ValueError, TypeError):
+        # If someone passes a bad value, ignore it
+        max_price_int = None
+
+    # ------- FORM FACTOR -------
+    form_factors = request.GET.getlist("form_factor")  # multiple values possible
+    if form_factors:
+        from django.db.models import Q
+        q = Q()
+
+        for ff in form_factors:
+            words = ff.split()  # split "Mini Tower" → ["Mini", "Tower"]
+
+            sub_q = Q()
+            for w in words:
+                sub_q &= Q(cabinet_details__form_factor__icontains=w)
+
+            q |= sub_q
+
+        products = products.filter(q)
+    return render(request, "users/cabinets.html", {"cabinet":products,"selected_form_factors": form_factors,
+        "max_price": max_price,})
+
+def cooling(request):
+    category = get_object_or_404(Category, name="Cooling")
+    products = Product.objects.filter(category=category, is_available=True)
+
+    # Price filter
+    max_price = request.GET.get("price")
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    # Cooling type filter
+    selected_types = request.GET.getlist("cooling_type")  # <-- IMPORTANT
+
+    if selected_types:
+        products = products.filter(cooling_details__cooling_type__in=selected_types)
+
+    return render(request, "users/cooling.html", {
+        "cooling": products,
+        "selected_types": selected_types,
+        "max_price": max_price,
+    })
+
+def ram(request):
+
+    category = get_object_or_404(Category,name="RAM")
+    products = Product.objects.filter(category=category,is_available = True)
+
+    max_price = request.GET.get('price')
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+     # --- RAM TYPE FILTER (DDR4 / DDR5) ---
+    selected_types = request.GET.getlist("ram_type")
+    if selected_types:
+        products = products.filter(ram_details__ddr_type__in=selected_types)
+
+    # --- RAM SIZE FILTER (8, 16, 32...) ---
+    selected_sizes = request.GET.getlist("size")
+    if selected_sizes:
+        products = products.filter(ram_details__capacity_gb__in=selected_sizes)
+
+    ram_sizes = [8, 16, 32, 64, 128]
+
+    return render(request, "users/ram.html", {
+        "rams": products,
+        "selected_types": selected_types,
+        "selected_sizes": selected_sizes,
+        "ram_sizes": ram_sizes,
+    })
+
+# Product - detail - page ----------------------------
+
+def product_detail(request, id):
+    product = get_object_or_404(Product, id=id)
+
+    details = None
+
+    # Dynamically detect details based on category
+    if hasattr(product, "ram_details"):
+        details = product.ram_details
+    elif hasattr(product, "cabinet_details"):
+        details = product.cabinet_details
+    elif hasattr(product, "cooling_details"):
+        details = product.cooling_details
+    # Add more if needed
+
+    return render(request, "users/product_detail.html", {
+        "product": product,
+        "details": details,
+    })
+
+# -----------------------------------------------------------------

@@ -1,69 +1,107 @@
-{% extends "base.html" %}
-{% load static %}
+{% extends "index.html" %}
 {% block title %}Cabinets{% endblock %}
 
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'users/cabinets.css' %}">
-{% endblock %}
 
 {% block content %}
-    <div class="product-page">
+<div class="cabinet-product-page">
 
-    <!-- FILTER SIDEBAR -->
-    <aside class="filters">
-        <h2>Filters</h2>
+    <aside class="cabinet-filters">
+    <h2>Filters</h2>
 
-        <div class="filter-group">
-            <h4>Price Range</h4>
-            <input type="range" min="0" max="300" value="150">
-            <div class="price-values">
-                <span>$0</span>
-                <span>$300</span>
+    <form method="GET" id="filterForm" action="{% url 'cabinets' %}">
+
+        <!-- PRICE RANGE -->
+        <div class="cabinet-filter-group">
+            <h4>Max Price</h4>
+
+            <div class="price-slider-wrapper">
+                <input type="range"
+                    id="priceSlider"
+                    name="price"
+                    min="0"
+                    max="50000"
+                    value="{{ max_price|default:'50000' }}">
+                <div class="price-value">₹<span id="priceVal">{{ max_price|default:'30000' }}</span></div>
             </div>
         </div>
 
-        <div class="filter-group">
-            <h4>Category</h4>
-            <label><input type="checkbox"> Mini Tower</label>
-            <label><input type="checkbox"> Mid Tower</label>
-            <label><input type="checkbox"> Full Tower</label>
+        <!-- FORM FACTOR -->
+        <div class="cabinet-filter-group">
+            <h4>Form Factor</h4>
+
+            <label>
+                <input type="checkbox" name="form_factor" value="Mini Tower"
+                {% if selected_form_factors and 'Mini Tower' in selected_form_factors %}checked{% endif %}
+                onchange="document.getElementById('filterForm').submit()">
+                Mini Tower
+            </label>
+
+            <label>
+                <input type="checkbox" name="form_factor" value="Mid Tower"
+                {% if selected_form_factors and 'Mid Tower' in selected_form_factors %}checked{% endif %}
+                onchange="document.getElementById('filterForm').submit()">
+                Mid Tower
+            </label>
+
+            <label>
+                <input type="checkbox" name="form_factor" value="Full Tower"
+                {% if selected_form_factors and 'Full Tower' in selected_form_factors %}checked{% endif %}
+                onchange="document.getElementById('filterForm').submit()">
+                Full Tower
+            </label>
         </div>
 
-        <div class="filter-group">
-            <h4>Brand</h4>
-            <label><input type="checkbox"> TechCase</label>
-            <label><input type="checkbox"> GamerGear</label>
-            <label><input type="checkbox"> MegaCase</label>
-            <label><input type="checkbox"> ModernTech</label>
-        </div>
-    </aside>
+    </form>
+</aside>
+
 
     <!-- PRODUCTS SECTION -->
-    <main class="products">
+    <main class="cabinet-products">
         <h2>Cabinets Found</h2>
 
-        <div class="product-grid">
+        <div class="cabinet-product-grid">
 
             <!-- DJANGO LOOP -->
-            {% for cabinet in cabinets %}
-            <div class="product-card">
-                <img src="{{ cabinet.image.url }}" alt="{{ cabinet.name }}">
+            {% for cabinet in cabinet %}
+            <a href="{% url 'product_detail' cabinet.id %}" style="text-decoration: none;">
+            <div class="cabinet-product-card">
+                <div class="cabinet-img-box">
+                    <img src="{{ cabinet.image.url }}" alt="{{ cabinet.name }}">
+                </div>
 
-                <h3 class="product-name">{{ cabinet.name }}</h3>
-                <p class="product-desc">{{ cabinet.description }}</p>
+                <h3 class="cabinet-product-name">{{ cabinet.name }}</h3>
 
-                <div class="product-bottom">
-                    <span class="price">${{ cabinet.price }}</span>
-                    <button class="add-btn">Add to Cart</button>
+                <div class="cabinet-product-bottom">
+                    <span class="cabinet-price">₹{{ cabinet.price }}</span>
+                    <button class="cabinet-add-btn">Add to Cart</button>
                 </div>
             </div>
+            </a>
             {% endfor %}
 
         </div>
     </main>
 
 </div>
+    <script>
+    const slider = document.getElementById("priceSlider");
+    const priceVal = document.getElementById("priceVal");
+    const form = document.getElementById("filterForm");
+
+    // Set initial fill
+    slider.style.setProperty("--val", (slider.value / slider.max * 100) + "%");
+
+    // Update while sliding
+    slider.oninput = function () {
+        priceVal.textContent = this.value;
+        this.style.setProperty("--val", (this.value / this.max * 100) + "%");
+    };
+
+    // Submit when released
+    slider.onchange = function () {
+        form.submit();
+    };
+    </script>
+
 
 {% endblock %}
-
-

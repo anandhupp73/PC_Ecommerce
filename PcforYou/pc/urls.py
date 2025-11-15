@@ -19,6 +19,9 @@ urlpatterns = [
     #users section
 
     path('cabinets/', views.cabinets, name="cabinets"),
-    
+    path('cooling/',views.cooling,name="cooling"),
+    path('ram/',views.ram,name="ram"),
+    path("product/<int:id>/", views.product_detail, name="product_detail"),
+
 
 ]

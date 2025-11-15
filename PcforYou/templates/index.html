@@ -19,7 +19,7 @@
             <div class="navbar">
                 <div class="nav-inner">
                     <div class="nav-left">
-                        <a href="#" class="logo">
+                        <a href="{% url 'home' %}" class="logo">
                             <div class="logo-icon"></div>
                             <span class="logo-text">PC-FOR-YOU</span>
                         </a>
@@ -127,7 +127,7 @@
                 </div>
 
                 {% comment %} cooling {% endcomment %}
-
+                <a href="{% url 'cooling' %}" style="text-decoration: none;">
                 <div class="card">
                     <div class="icon-wrap">
                        <i data-lucide="fan" class="my-icon"></i>
@@ -137,6 +137,7 @@
                         cooling count 
                     </div>
                 </div>
+                </a>
                 
                 {% comment %} Motherboard  {% endcomment %}
 
@@ -152,7 +153,8 @@
 
                 {% comment %} ram  {% endcomment %}
 
-                 <div class="card">
+                <a href="{% url 'ram' %}" style="text-decoration: none;">
+                <div class="card">
                     <div class="icon-wrap">
                         <i data-lucide="memory-stick" class="my-icon"></i>
                     </div>
@@ -161,6 +163,7 @@
                         RAM count 
                     </div>
                 </div>
+                </a>
 
                 {% comment %} power supply  {% endcomment %}
 
@@ -175,8 +178,9 @@
                 </div>
 
                 {% comment %} Cabinets  {% endcomment %}
-
-                 <div class="card">
+                
+                <a href="{% url 'cabinets'%}" style="text-decoration: none;">
+                <div class="card">
                     <div class="icon-wrap">
                         <i data-lucide="pc-case" class="my-icon"></i>
                     </div>
@@ -185,6 +189,7 @@
                         Cabinets count 
                     </div>
                 </div>
+                </a>
 
                  {% comment %} Accessories  {% endcomment %}
 

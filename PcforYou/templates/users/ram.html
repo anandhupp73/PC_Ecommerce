@@ -1,0 +1,119 @@
+{% extends "index.html" %}
+{% block title %} RAM {% endblock %}
+
+{% block content %}
+
+<div class="ram-product-page">
+
+    <aside class="ram-filters">
+        <h2>Filters</h2>
+
+        <form method="GET" action="{% url 'ram' %}" id="filterForm">
+
+            <!-- PRICE -->
+            <div class="ram-filter-group">
+                <h4>Price</h4>
+
+                 <input type="range" 
+                    id="priceSlider"
+                    name="price"
+                    class="price-slider"
+                    min="0"
+                    max="50000"
+                    value="{{ request.GET.price|default:50000 }}">
+
+                <div class="cooling-price-values">
+                    <span>₹0</span>
+                    <span id="priceValue">₹{{ request.GET.price|default:30000 }}</span>
+                </div>
+            </div>
+
+            <!--Ram Types -->
+            <div class="ram-filter-group">
+                <h4>Ram Type</h4>
+
+                <label>
+                    <input type="checkbox" name="ram_type" value="DDR4"
+                    {% if "DDR4" in selected_types %}checked{% endif %}
+                    onchange="this.form.submit()">
+                    DDR4
+                </label>
+
+                <label>
+                    <input type="checkbox" name="ram_type" value="DDR5"
+                    {% if "DDR5" in selected_types %}checked{% endif %}
+                    onchange="this.form.submit()">
+                    DDR5
+                </label>
+            </div>
+
+            <!-- RAM SIZE -->
+            <div class="ram-filter-group">
+                <h4>RAM Size</h4>
+
+                {% for size in ram_sizes %}
+                    <label>
+                        <input type="checkbox" 
+                            name="size" 
+                            value="{{ size }}"
+                            {% if size|stringformat:"s" in selected_sizes %}checked{% endif %}
+                            onchange="this.form.submit()">
+                        {{ size }} GB
+                    </label>
+                {% endfor %}
+            </div>
+
+        </form>
+    </aside>
+
+    <!--Product LIST-->
+    <main class="ram-products">
+        <h2 style="color: white;">RAM Products</h2>
+
+        <div class="ram-product-grid">
+
+            {% for ram in rams %}
+            <a href="{% url 'product_detail' ram.id %}" style="text-decoration: none;">
+            <div class="ram-product-card">
+
+                <div class="ram-img-box">
+                    <img src="{{ ram.image.url }}" alt="{{ ram.name }}">
+                </div>
+
+                <h3 class="ram-product-name">{{ ram.name }}</h3>
+
+                <div class="ram-product-bottom">
+                    <span class="ram-price">₹{{ ram.price }}</span>
+                    <button class="ram-add-btn">Add to Cart</button>
+                </div>
+
+            </div>
+            </a>
+            {% endfor %}
+
+        </div>
+    </main>
+
+</div>
+
+<script>
+    const slider = document.getElementById("priceSlider");
+    const priceValue = document.getElementById("priceValue");
+    const form = document.getElementById("filterForm");
+
+    // Initial fill
+    slider.style.setProperty("--val", (slider.value / slider.max * 100) + "%");
+
+    // Live update
+    slider.oninput = function () {
+        priceValue.textContent = "₹" + this.value;
+        this.style.setProperty("--val", (this.value / this.max * 100) + "%");
+    };
+
+    // Submit when slider released
+    slider.onchange = function () {
+        form.submit();
+    };
+</script>
+
+{% endblock %}

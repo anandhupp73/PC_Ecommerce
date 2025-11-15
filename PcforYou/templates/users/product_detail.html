@@ -1,0 +1,66 @@
+{% extends "index.html" %}
+{% block title %} {{ product.name }} {% endblock %}
+
+{% block content %}
+
+<div class="product-detail-page">
+
+    <div class="product-detail-card">
+
+        <div class="product-img-box">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        </div>
+
+        <div class="product-info">
+
+            <h1>{{ product.name }}</h1>
+            <h2 class="price">₹{{ product.price }}</h2>
+
+            <p class="desc">{{ product.description }}</p>
+
+            <hr>
+
+            <h3>Specifications</h3>
+
+            {% if details %}
+                <table class="spec-table">
+
+                    {% if details.capacity_gb %}
+                    <tr><td>Capacity</td><td>{{ details.capacity_gb }} GB</td></tr>
+                    {% endif %}
+
+                    {% if details.ddr_type %}
+                    <tr><td>DDR Type</td><td>{{ details.ddr_type }}</td></tr>
+                    {% endif %}
+
+                    {% if details.speed_mhz %}
+                    <tr><td>Speed</td><td>{{ details.speed_mhz }} MHz</td></tr>
+                    {% endif %}
+
+                    {% if details.form_factor %}
+                    <tr><td>Form Factor</td><td>{{ details.form_factor }}</td></tr>
+                    {% endif %}
+
+                    {% if details.color %}
+                    <tr><td>Color</td><td>{{ details.color }}</td></tr>
+                    {% endif %}
+
+                    {% if details.cooling_type %}
+                    <tr><td>Cooling Type</td><td>{{ details.cooling_type }}</td></tr>
+                    {% endif %}
+
+                    {% if details.fan_count %}
+                    <tr><td>Fan Count</td><td>{{ details.fan_count }}</td></tr>
+                    {% endif %}
+
+                </table>
+            {% endif %}
+
+            <button class="add-to-cart">Add to Cart</button>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
