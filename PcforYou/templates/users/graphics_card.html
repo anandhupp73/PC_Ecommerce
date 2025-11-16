@@ -1,0 +1,109 @@
+{% extends "index.html" %}
+{% block title %}Graphics Cards{% endblock %}
+
+{% block content %}
+<div class="shopc-product-page">
+
+    <!-- FILTER SIDEBAR -->
+    <aside class="shopc-filters">
+        <h2>Filters</h2>
+
+        <form method="GET" action="{% url 'gpu' %}" id="filterForm">
+
+            <!-- PRICE -->
+            <div class="shopc-filter-group">
+                <h4>Price</h4>
+                <input type="range" 
+                       id="priceSlider"
+                       name="price"
+                       min="0"
+                       max="300000"
+                       value="{{ request.GET.price|default:300000 }}">
+                <div class="shopc-price-values">
+                    <span>₹0</span>
+                    <span id="priceValue">₹{{ request.GET.price|default:300000 }}</span>
+                </div>
+            </div>
+
+            <!-- VRAM -->
+            <div class="shopc-filter-group">
+                <h4>VRAM (GB)</h4>
+                {% for vram in vram_options %}
+                <label>
+                    <input type="checkbox" name="vram" value="{{ vram }}"
+                        {% if vram|stringformat:"s" in selected_vram %}checked{% endif %}
+                        onchange="this.form.submit()">
+                    {{ vram }} GB
+                </label>
+                {% endfor %}
+            </div>
+
+            <!-- BRAND -->
+            <div class="shopc-filter-group">
+                <h4>Brand</h4>
+                {% for brand in brand_options %}
+                <label>
+                    <input type="checkbox" name="brand" value="{{ brand }}"
+                        {% if brand in selected_brands %}checked{% endif %}
+                        onchange="this.form.submit()">
+                    {{ brand }}
+                </label>
+                {% endfor %}
+            </div>
+
+        </form>
+    </aside>
+
+    <!-- PRODUCT LIST -->
+    <main class="gpu-products">
+        <h2 style="color: white;">Graphics Cards</h2>
+
+        <div class="shopc-product-grid">
+
+            {% for gpu in gpus %}
+            <div class="shopc-product-card">
+                <a href="{% url 'product_detail' gpu.id %}" style="text-decoration: none;">
+                    <div class="shopc-img-box">
+                        {% if gpu.image %}
+                        <img src="{{ gpu.image.url }}" alt="{{ gpu.name }}">
+                        {% endif %}
+                    </div>
+
+                    <h3 class="shopc-product-name">{{ gpu.name }}</h3>
+
+                    <div class="shopc-product-bottom">
+                        <span class="shopc-price">₹{{ gpu.price }}</span>
+                        <form action="{% url 'add_to_cart' gpu.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="shopc-add-btn">Add to Cart</button>
+                        </form>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p style="color: white;">No products found for selected filters.</p>
+            {% endfor %}
+
+        </div>
+    </main>
+
+</div>
+
+<script>
+    const slider = document.getElementById("priceSlider");
+    const priceVal = document.getElementById("priceValue");
+    const form = document.getElementById("filterForm");
+
+    slider.style.setProperty("--val", (slider.value / slider.max * 100) + "%");
+
+    slider.oninput = function () {
+        priceVal.textContent = "₹" + this.value;
+        this.style.setProperty("--val", (this.value / this.max * 100) + "%");
+    };
+
+    slider.onchange = function () {
+        form.submit();
+    };
+</script>
+
+{% endblock %}

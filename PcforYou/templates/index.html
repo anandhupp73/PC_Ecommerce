@@ -24,9 +24,9 @@
                             <span class="logo-text">PC-FOR-YOU</span>
                         </a>
                         <nav>
-                            <a href="#shop">Components</a>
+                            <a href="{% url 'home' %}#shop">Components</a>
                             <a href="#">Pre-Built</a>
-                            <a href="#deals">Deals</a>
+                            <a href="{% url 'home' %}#deals">Deals</a>
                             <a href="#">Support</a>
                         </nav>
                     </div>
@@ -41,8 +41,13 @@
                                 <div class="user-dropdown" id="userDropdown"></div>
                         </div>
             
+                        <a href="{% url 'wishlist' %}">
+                            <button class="icon-button">
+                                <i class="fa-regular fa-heart" style="color: white;"></i>
+                            </button>
+                        </a>
 
-                        <a href="#">
+                        <a href="{% url 'cart' %}">
                             <button class="icon-button">
                                 <span class="cart-icon material-symbols-outlined">
                                     shopping_cart
@@ -92,6 +97,7 @@
 
                 {% comment %} graphics Cards {% endcomment %}
 
+                <a href="{% url 'gpu' %}" style="text-decoration: none;">
                 <div class="card">
                     <div class="icon-wrap">
                         <i data-lucide="box" class="my-icon"></i>
@@ -101,6 +107,7 @@
                         graphics card count 
                     </div>
                 </div>
+                </a>
 
                 {% comment %} storage  {% endcomment %}
 

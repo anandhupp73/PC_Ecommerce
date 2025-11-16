@@ -5,6 +5,8 @@ from django.contrib import messages
 from functools import wraps
 from .models import *
 from .forms import *
+from django.contrib.auth.decorators import login_required
+from decimal import Decimal
 
 # Create your views here.
 def index(request):
@@ -250,6 +252,37 @@ def ram(request):
         "ram_sizes": ram_sizes,
     })
 
+def gpu(request):
+    category = get_object_or_404(Category, name="Graphics Card")
+    products = Product.objects.filter(category=category, is_available=True)
+
+    # --- PRICE FILTER ---
+    max_price = request.GET.get('price')
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    # --- VRAM FILTER (4, 6, 8, 12, 16 GB) ---
+    selected_vram = request.GET.getlist("vram")
+    if selected_vram:
+        products = products.filter(gpu_details__vram_gb__in=selected_vram)
+
+    # --- BRAND FILTER ---
+    selected_brands = request.GET.getlist("brand")
+    if selected_brands:
+        products = products.filter(name__icontains=selected_brands[0])  # simple contains, or create a brand field
+
+    # Options for filters
+    vram_options = [ 8, 12, 16, 24, 32, 64]
+    brand_options = ["NVIDIA", "AMD"]  # or populate dynamically from products
+
+    return render(request, "users/graphics_card.html", {
+        "gpus": products,
+        "selected_vram": selected_vram,
+        "vram_options": vram_options,
+        "selected_brands": selected_brands,
+        "brand_options": brand_options,
+    })
+
 # Product - detail - page ----------------------------
 
 def product_detail(request, id):
@@ -264,6 +297,8 @@ def product_detail(request, id):
         details = product.cabinet_details
     elif hasattr(product, "cooling_details"):
         details = product.cooling_details
+    elif hasattr(product,"gpu_details"):
+        details = product.gpu_details
     # Add more if needed
 
     return render(request, "users/product_detail.html", {
@@ -272,3 +307,82 @@ def product_detail(request, id):
     })
 
 # -----------------------------------------------------------------
+
+@login_required
+def add_to_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    # Prevent duplicates
+    wishlist_item, created = Wishlist.objects.get_or_create(
+        user=request.user,
+        product=product
+    )
+
+    # if created:
+    #     messages.success(request, f"{product.name} added to your wishlist.")
+    # else:
+    #     messages.info(request, f"{product.name} is already in your wishlist.")
+
+    return redirect(request.META.get("HTTP_REFERER", "wishlist"))
+
+@login_required
+def wishlist_view(request):
+    wishlist_items = Wishlist.objects.filter(user=request.user).select_related("product", "product__category")
+    total_price = sum(item.product.price for item in wishlist_items)
+
+    return render(request, "users/wishlist.html", {
+        "wishlist_items": wishlist_items,
+        'total_price':total_price
+    })
+
+
+@login_required
+def remove_from_wishlist(request, product_id):
+    item = get_object_or_404(Wishlist, user=request.user, product_id=product_id)
+    item.delete()
+    return redirect("wishlist")
+
+@login_required
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+    return redirect('cart')
+
+@login_required
+def cart_view(request):
+    cart_items = Cart.objects.filter(user=request.user).select_related("product", "product__category")
+
+    subtotal = sum(item.total_price for item in cart_items)
+    shipping = Decimal('30') if subtotal > 0 else Decimal(0.00)
+    estimated_tax = (subtotal * Decimal('0.08')).quantize(Decimal('0.01'))   # 8% example
+    total = subtotal + shipping + estimated_tax
+
+    return render(request, "users/cart.html", {
+        "cart_items": cart_items,
+        "subtotal": subtotal,
+        "shipping": shipping,
+        "estimated_tax": estimated_tax,
+        "total": total,
+    })
+
+@login_required
+def update_cart_quantity(request, cart_id, action):
+    cart_item = get_object_or_404(Cart, id=cart_id, user=request.user)
+
+    if action == "increase":
+        cart_item.quantity += 1
+        cart_item.save()
+    elif action == "decrease" and cart_item.quantity > 1:
+        cart_item.quantity -= 1
+        cart_item.save()
+
+    return redirect("cart")
+
+@login_required
+def remove_from_cart(request, cart_id):
+    item = get_object_or_404(Cart, id=cart_id, user=request.user)
+    item.delete()
+    return redirect("cart")

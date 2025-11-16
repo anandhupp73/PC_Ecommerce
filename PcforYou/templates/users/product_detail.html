@@ -25,6 +25,8 @@
             {% if details %}
                 <table class="spec-table">
 
+                    {% comment %} RAM  {% endcomment %}
+
                     {% if details.capacity_gb %}
                     <tr><td>Capacity</td><td>{{ details.capacity_gb }} GB</td></tr>
                     {% endif %}
@@ -36,6 +38,8 @@
                     {% if details.speed_mhz %}
                     <tr><td>Speed</td><td>{{ details.speed_mhz }} MHz</td></tr>
                     {% endif %}
+                    
+                    {% comment %} CABINET  {% endcomment %}
 
                     {% if details.form_factor %}
                     <tr><td>Form Factor</td><td>{{ details.form_factor }}</td></tr>
@@ -45,6 +49,8 @@
                     <tr><td>Color</td><td>{{ details.color }}</td></tr>
                     {% endif %}
 
+                    {% comment %} COOLER  {% endcomment %}
+
                     {% if details.cooling_type %}
                     <tr><td>Cooling Type</td><td>{{ details.cooling_type }}</td></tr>
                     {% endif %}
@@ -53,10 +59,32 @@
                     <tr><td>Fan Count</td><td>{{ details.fan_count }}</td></tr>
                     {% endif %}
 
+                    {% comment %} GPU  {% endcomment %}
+
+                    {% if details.vram_gb %}
+                    <tr><td>RAM</td><td>{{ details.vram_gb }}</td></tr>
+                    {% endif %}
+
+                    {% if details.chipset %}
+                    <tr><td>Chipset</td><td>{{ details.chipset }}</td></tr>
+                    {% endif %}
+
+                    {% if details.interface %}
+                    <tr><td>Interface</td><td>{{ details.interface }}</td></tr>
+                    {% endif %}
+
                 </table>
             {% endif %}
+            
+            <form action="{% url 'add_to_cart' product.id %}" method="post">
+                {% csrf_token %}
+                <button class="add-to-cart">Add to Cart</button>
+            </form>
 
-            <button class="add-to-cart">Add to Cart</button>
+            <form action="{% url 'add_to_wishlist' product.id %}" method="post">
+                {% csrf_token %}
+                <button style="margin-top: 10px;">Add To Wishlist</button>
+            </form>
 
         </div>
     </div>

@@ -21,7 +21,16 @@ urlpatterns = [
     path('cabinets/', views.cabinets, name="cabinets"),
     path('cooling/',views.cooling,name="cooling"),
     path('ram/',views.ram,name="ram"),
+    path('gpu/',views.gpu,name="gpu"),
     path("product/<int:id>/", views.product_detail, name="product_detail"),
+    path("wishlist/", views.wishlist_view, name="wishlist"),
+    path("wishlist/add/<int:product_id>/", views.add_to_wishlist, name="add_to_wishlist"),
+    path("wishlist/remove/<int:product_id>/", views.remove_from_wishlist, name="remove_from_wishlist"),
+    path("cart/", views.cart_view, name="cart"),
+    path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path("cart/update/<int:cart_id>/<str:action>/", views.update_cart_quantity, name="update_cart"),
+    path("cart/remove/<int:cart_id>/", views.remove_from_cart, name="remove_cart_item"),
+
 
 
 ]

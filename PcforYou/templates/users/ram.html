@@ -84,7 +84,11 @@
 
                 <div class="ram-product-bottom">
                     <span class="ram-price">₹{{ ram.price }}</span>
-                    <button class="ram-add-btn">Add to Cart</button>
+                    {% comment %} <button class="ram-add-btn">Add to Cart</button> {% endcomment %}
+                    <form action="{% url 'add_to_cart' ram.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="ram-add-btn">Add to Cart</button>
+                    </form>
                 </div>
 
             </div>

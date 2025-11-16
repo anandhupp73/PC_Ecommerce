@@ -117,6 +117,7 @@ nav a:hover {
     border-radius: 6px;
     font-size: 0.9rem;
     outline: none;
+    color: white;
     transition: border-color 0.2s ease;
 }
 .search-input:focus {
@@ -1037,6 +1038,99 @@ button:hover {
     background: #0ea5e9;
 }
 
+/* shop by category except ram cool cab */
+
+/* PAGE LAYOUT */
+.shopc-product-page {
+    display: grid;
+    grid-template-columns: 260px auto;
+    gap: 25px;
+    margin: 20px;
+}
+
+/* SIDEBAR */
+.shopc-filters {
+    background: #0f172a;
+    padding: 20px;
+    border-radius: 15px;
+    color: #e2e8f0;
+    height: 350px;
+    margin-top: 80px;
+}
+
+.shopc-filter-group {
+    margin-bottom: 25px;
+}
+
+.shopc-filter-group h4 {
+    margin-bottom: 10px;
+    color: #38bdf8;
+}
+
+/* PRODUCT GRID */
+.shopc-product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 20px;
+}
+
+/* PRODUCT CARD */
+.shopc-product-card {
+    background: #111827;
+    border-radius: 18px;
+    padding: 15px;
+    transition: 0.3s;
+    box-shadow: 0 0 25px rgba(0,255,255,0.05);
+}
+
+.shopc-product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px rgba(0,255,255,0.15);
+}
+
+.shopc-img-box img {
+    width: 100%;
+    height: 230px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+/* NAME */
+.shopc-product-name {
+    margin-top: 14px;
+    font-size: 18px;
+    color: #f8fafc;
+}
+
+/* PRICE + BUTTON */
+.shopc-product-bottom {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.shopc-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #38bdf8;
+}
+
+.shopc-add-btn {
+    background: #38bdf8;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #000;
+    transition: 0.2s;
+}
+
+.shopc-add-btn:hover {
+    background: #0ea5e9;
+}
+
 /* product-details */
 
 .product-detail-page {
@@ -1062,3 +1156,6 @@ button:hover {
 .spec-table td {
     padding: 8px 20px;
 }
+
+/* wishlist page css ------------- */
+

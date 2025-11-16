@@ -20,12 +20,12 @@
                     name="price"
                     class="price-slider"
                     min="0"
-                    max="50000"
-                    value="{{ request.GET.price|default:50000 }}">
+                    max="100000"
+                    value="{{ request.GET.price|default:100000 }}">
 
                 <div class="cooling-price-values">
                     <span>₹0</span>
-                    <span id="priceValue">₹{{ request.GET.price|default:30000 }}</span>
+                    <span id="priceValue">₹{{ request.GET.price|default:100000 }}</span>
                 </div>
             </div>
 
@@ -70,7 +70,11 @@
 
                 <div class="cooling-product-bottom">
                     <span class="cooling-price">₹{{ cooling.price }}</span>
-                    <button class="cooling-add-btn">Add to Cart</button>
+                    {% comment %} <button class="cooling-add-btn">Add to Cart</button> {% endcomment %}
+                    <form action="{% url 'add_to_cart' cooling.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="cooling-add-btn">Add to Cart</button>
+                    </form>
                 </div>
 
             </div>
