@@ -7,6 +7,7 @@ from .models import *
 from .forms import *
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
+from django.db.models import Q
 
 # Create your views here.
 def index(request):
@@ -269,7 +270,11 @@ def gpu(request):
     # --- BRAND FILTER ---
     selected_brands = request.GET.getlist("brand")
     if selected_brands:
-        products = products.filter(name__icontains=selected_brands[0])  # simple contains, or create a brand field
+        brand_query = Q()
+        for brand in selected_brands:
+            brand_query |= Q(name__icontains=brand)
+
+        products = products.filter(brand_query)  # simple contains, or create a brand field
 
     # Options for filters
     vram_options = [ 8, 12, 16, 24, 32, 64]
@@ -279,6 +284,37 @@ def gpu(request):
         "gpus": products,
         "selected_vram": selected_vram,
         "vram_options": vram_options,
+        "selected_brands": selected_brands,
+        "brand_options": brand_options,
+    })
+
+
+def processors(request):
+    category = get_object_or_404(Category, name="Processor")
+    products = Product.objects.filter(category=category, is_available=True)
+
+    # --- PRICE FILTER ---
+    max_price = request.GET.get('price')
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+
+    # --- BRAND FILTER ---
+    # selected_brands = request.GET.getlist("brand")
+    # if selected_brands:
+    selected_brands = request.GET.getlist("brand")
+    if selected_brands:
+        brand_query = Q()
+        for brand in selected_brands:
+            brand_query |= Q(name__icontains=brand)
+
+        products = products.filter(brand_query)  # simple contains, or create a brand field
+
+    # Options for filters
+    brand_options = ["Intel", "AMD"]
+
+    return render(request, "users/processors.html", {
+        "processors": products,
         "selected_brands": selected_brands,
         "brand_options": brand_options,
     })
@@ -299,6 +335,8 @@ def product_detail(request, id):
         details = product.cooling_details
     elif hasattr(product,"gpu_details"):
         details = product.gpu_details
+    elif hasattr(product,"cpu_details"):
+        details = product.cpu_details
     # Add more if needed
 
     return render(request, "users/product_detail.html", {

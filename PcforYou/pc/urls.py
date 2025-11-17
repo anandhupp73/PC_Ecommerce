@@ -22,6 +22,7 @@ urlpatterns = [
     path('cooling/',views.cooling,name="cooling"),
     path('ram/',views.ram,name="ram"),
     path('gpu/',views.gpu,name="gpu"),
+    path('processor/',views.processors,name="processors"),
     path("product/<int:id>/", views.product_detail, name="product_detail"),
     path("wishlist/", views.wishlist_view, name="wishlist"),
     path("wishlist/add/<int:product_id>/", views.add_to_wishlist, name="add_to_wishlist"),

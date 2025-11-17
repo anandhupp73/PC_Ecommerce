@@ -82,9 +82,12 @@
             <h2 class="shop-title">Shop by Category</h2>
             <p class="shop-subtitle">Find exactly what you need for your build</p>
 
-            {% comment %} Processors  {% endcomment %}
-
+            
             <div class="cards">
+
+                {% comment %} Processors  {% endcomment %}
+
+                <a href="{% url 'processors' %}" style="text-decoration: none;">
                 <div class="card">
                     <div class="icon-wrap">
                         <i data-lucide="cpu" class="my-icon"></i>
@@ -94,6 +97,7 @@
                         Processors count 
                     </div>
                 </div>
+                </a>
 
                 {% comment %} graphics Cards {% endcomment %}
 

@@ -73,6 +73,25 @@
                     <tr><td>Interface</td><td>{{ details.interface }}</td></tr>
                     {% endif %}
 
+                    {% comment %} CPU  {% endcomment %}
+
+                    {% if details.core_count %}
+                    <tr><td>Cores</td><td>{{ details.core_count }}</td></tr>
+                    {% endif %}
+
+                    {% if details.thread_count %}
+                    <tr><td>Threads</td><td>{{ details.thread_count }}</td></tr>
+                    {% endif %}
+
+                    {% if details.base_clock_ghz %}
+                    <tr><td>Base Clock</td><td>{{ details.base_clock_ghz }}</td></tr>
+                    {% endif %}
+
+                    {% if details.socket_type %}
+                    <tr><td>Socket</td><td>{{ details.socket_type }}</td></tr>
+                    {% endif %}
+
+
                 </table>
             {% endif %}
             
