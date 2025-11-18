@@ -118,8 +118,8 @@ class MotherboardDetails(models.Model):
 class PowerSupplyDetails(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='powersupply_details')
     wattage = models.PositiveIntegerField()
-    efficiency_rating = models.CharField(max_length=10, blank=True, null=True)
-    modular = models.BooleanField(default=False)
+    efficiency_rating = models.CharField(max_length=30, blank=True, null=True)
+    modular = models.CharField(max_length=20,blank=True,null=True)
 
 class CabinetDetails(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='cabinet_details')
