@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+{% block title %}Order Detail{% endblock %}
+{% block content %}
+<h2 style="color: white;">Order #{{ order.id }}</h2>
+<p style="color: white;">Status: <span class="status-badge status-{{ order.status }}" style="color: white;">{{ order.get_status_display }}</span></p>
+
+<ul>
+{% for item in order.items.all %}
+    <li style="color: white;">{{ item.product.name }} x {{ item.quantity }} — ₹{{ item.total_price }}</li>
+{% endfor %}
+</ul>
+
+<p style="color: white;">Total: ₹{{ order.total_amount }}</p>
+
+{% if order.status in "PENDING,CONFIRMED" %}
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" name="cancel_order" class="cart-continue-btn">Cancel Order</button>
+</form>
+{% endif %}
+{% endblock %}

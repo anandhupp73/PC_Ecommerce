@@ -1157,5 +1157,40 @@ button:hover {
     padding: 8px 20px;
 }
 
-/* wishlist page css ------------- */
+.buy-now-div {
+    width: 100%;
+}
 
+.shopc-product-card > a:last-of-type {
+    display: block;
+    width: 100%;
+}
+
+.buy-now {
+    background: #38bdf8;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #000;
+    width: 100%;
+    margin-top: 12px;
+    transition: 0.2s;
+}
+
+/* This was wrong in your code */
+.buy-now:hover {
+    background: #0ea5e9;
+}
+
+/* processor  */
+
+.shopc-filters-pros {
+    background: #0f172a;
+    padding: 20px;
+    border-radius: 15px;
+    color: #e2e8f0;
+    height: 250px;
+    margin-top: 80px;
+}

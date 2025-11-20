@@ -223,7 +223,9 @@
 
         <div class="cart-summary-total">Total ₹{{ total }}</div>
 
-        <button class="cart-checkout-btn">Proceed to Checkout</button>
+        <form method="GET" action="{% url 'checkout_cart' %}">
+            <button class="cart-checkout-btn">Proceed to Checkout</button>
+        </form>
         <button class="cart-continue-btn">Continue Shopping</button>
     </div>
 

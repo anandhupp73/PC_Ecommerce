@@ -15,6 +15,8 @@ urlpatterns = [
     path('admin-dashboard/prebuilt-view/',views.prebuiltview,name="prebuilt_view"),
     path('admin-dashboard/prebuilt-detail/<slug:slug>/', views.prebuilt_pc_detail, name='prebuilt_pc_detail'),
     path('admin-dashboard/add-prebuilt/',views.add_prebuilt,name="add_prebuilt"),
+    path('admin-dashboard/order-manage/', views.admin_order_manage, name='admin_order_manage'),
+    path('admin-dashboard/update_status/', views.update_order_status, name='update_order_status'),
 
     #users section
 
@@ -31,6 +33,8 @@ urlpatterns = [
     path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path("cart/update/<int:cart_id>/<str:action>/", views.update_cart_quantity, name="update_cart"),
     path("cart/remove/<int:cart_id>/", views.remove_from_cart, name="remove_cart_item"),
+    path('checkout/', views.checkout_cart, name='checkout_cart'),
+    path('order/<int:order_id>/', views.order_detail, name='order_detail'),
 
 
 

@@ -8,6 +8,8 @@ from .forms import *
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
 from django.db.models import Q
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 
 # Create your views here.
 def index(request):
@@ -424,3 +426,55 @@ def remove_from_cart(request, cart_id):
     item = get_object_or_404(Cart, id=cart_id, user=request.user)
     item.delete()
     return redirect("cart")
+
+
+@login_required
+def checkout_cart(request):
+    cart_items = Cart.objects.filter(user=request.user)
+    if not cart_items.exists():
+        return redirect('cart')
+    
+    if request.method == "POST":
+        address = request.POST.get('address')
+        total_amount = sum(item.total_price for item in cart_items)
+        order = Order.objects.create(user=request.user, total_amount=total_amount, address=address)
+        for item in cart_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.price
+            )
+        cart_items.delete()
+        return redirect('order_detail', order_id=order.id)
+
+    subtotal = sum(item.total_price for item in cart_items)
+    return render(request, 'users/checkout_cart.html', {'cart_items': cart_items, 'subtotal': subtotal})
+
+@login_required
+def order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    if request.method == "POST" and 'cancel_order' in request.POST:
+        if order.status in ["PENDING", "CONFIRMED"]:
+            order.status = "CANCELLED"
+            order.save()
+    return render(request, 'users/order_detail.html', {'order': order})
+
+
+@admin_required
+def admin_order_manage(request):
+    orders = Order.objects.all().order_by('-created_at')
+    return render(request, 'admin/order_manage.html', {'orders': orders})
+
+@require_POST
+@admin_required
+def update_order_status(request):
+    order_id = request.POST.get('order_id')
+    new_status = request.POST.get('new_status')
+
+    order = get_object_or_404(Order, pk=order_id)
+    if new_status in dict(Order.STATUS_CHOICES):
+        order.status = new_status
+        order.save()
+        return JsonResponse({'success': True, 'new_status': order.status})
+    return JsonResponse({'success': False, 'error': 'Invalid status'})

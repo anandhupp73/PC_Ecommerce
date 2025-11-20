@@ -8,6 +8,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'admin/dash.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -20,7 +21,7 @@
             <a href="{% url 'view_products' %}"><i class="fa-solid fa-box"></i> Products</a>
             <a href="#"><i class="fa-solid fa-list"></i> Categories</a>
             <a href="{% url 'prebuilt_view' %}"><i class="fa-solid fa-computer"></i> Pre-built PCs</a>
-            <a href="#"><i class="fa-solid fa-cart-shopping"></i> Orders</a>
+            <a href="{% url 'admin_order_manage' %}"><i class="fa-solid fa-cart-shopping"></i> Orders</a>
             <a href="#"><i class="fa-solid fa-users"></i>Users</a>
         </nav>
     </div>
