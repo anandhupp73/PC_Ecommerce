@@ -1,18 +1,276 @@
 {% extends "index.html" %}
 {% block title %}Checkout{% endblock %}
+
+{% load static %}
+
 {% block content %}
-<h2>Checkout</h2>
-<form method="POST">
-    {% csrf_token %}
-    <label for="address">Shipping Address:</label><br>
-    <textarea name="address" id="address" rows="4" required></textarea><br><br>
-    <button type="submit" class="cart-checkout-btn">Place Order</button>
-</form>
-<h3>Order Summary</h3>
-<ul>
-    {% for item in cart_items %}
-    <li>{{ item.product.name }} x {{ item.quantity }} - ₹{{ item.total_price }}</li>
-    {% endfor %}
-</ul>
-<p>Subtotal: ₹{{ subtotal }}</p>
+
+<style>
+    /* VARIABLES based on the new screenshot's palette */
+    :root {
+        --page-bg: #1e2133; /* Dark background color */
+        --card-bg: #272a40; /* Slightly lighter dark card color */
+        --text-color: #e0e0e0; /* Light text color */
+        --secondary-text: #a0a0a0; /* Gray for secondary info */
+        --border-color: #3f4258; /* Border/separator color */
+        --accent-green: #33ff99; /* Primary accent green for total/button */
+        --accent-blue: #6c8cd1; /* Primary accent blue for selected border/radio */
+        --fee-color: #f97316; /* Orange for fees */
+        --spacing-unit: 30px;
+    }
+
+    /* GENERAL OVERRIDES */
+    body {
+        background-color: var(--page-bg);
+        color: var(--text-color);
+        font-family: sans-serif; /* Keep a generic, clean font */
+    }
+
+    /* MAIN LAYOUT */
+    .order-place-container {
+        max-width: 1050px;
+        margin: 40px auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--spacing-unit); /* Gap between the two main columns */
+    }
+
+    /* CARD */
+    .order-place-card,
+    .order-place-summary-card {
+        background: var(--card-bg);
+        padding: var(--spacing-unit);
+        border-radius: 12px; /* Soft corners */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Subtle dark shadow */
+        border: 1px solid var(--border-color); /* Subtle card definition */
+    }
+
+    /* TITLES (1. Shipping & Contact, 2. Choose Payment Method) */
+    .order-place-title,
+    .order-place-summary-title {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 25px; /* Separation from content */
+        color: var(--text-color);
+    }
+    
+    /* SHIPPING & CONTACT SECTION */
+    .order-place-card:nth-child(1) {
+        margin-bottom: var(--spacing-unit); /* Gap between sections 1 and 2, but we use the general form structure for this */
+    }
+
+    /* LABELS + INPUTS */
+    .order-place-label {
+        display: block;
+        font-weight: 500;
+        margin: 0 0 8px; /* Remove top margin, rely on title margin */
+        color: var(--secondary-text);
+        text-transform: uppercase;
+        font-size: 13px;
+    }
+
+    .order-place-textarea {
+        width: 94%;
+        padding: 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 15px;
+        color: var(--text-color);
+        background: #1e2133; /* Input darker than card */
+        resize: vertical;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    
+    .order-place-textarea:focus {
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 1px var(--accent-blue);
+        outline: none;
+    }
+
+    /* PAYMENT OPTIONS */
+    .order-place-payment {
+        display: flex;
+        align-items: center;
+        padding: 18px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        margin-bottom: 15px; /* Gap between payment options */
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .order-place-payment:hover {
+        border-color: var(--accent-blue);
+    }
+
+    .order-place-payment.selected {
+        border: 2px solid var(--accent-blue);
+        background: rgba(108, 140, 209, 0.1); /* Light blue tint for selected state */
+    }
+
+    .order-place-payment input {
+        margin-right: 12px;
+        /* Using default radio input for simplicity */
+    }
+
+    .order-place-payment span {
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .order-place-fee {
+        color: var(--fee-color); /* Orange fee color */
+        font-size: 13px;
+        margin-left: auto; /* Push fee to the right */
+        font-weight: 500;
+    }
+    
+    /* SUMMARY */
+    .order-place-summary-list {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
+
+    .order-place-summary-list li {
+        margin: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        color: var(--secondary-text);
+    }
+    
+    .order-place-summary-list li span:last-child {
+        color: var(--text-color);
+    }
+
+    .order-place-summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+        font-size: 16px;
+        color: var(--secondary-text);
+    }
+    
+    .order-place-summary-row span:last-child {
+        color: var(--text-color);
+    }
+
+    .order-place-summary-card hr {
+        border-color: var(--border-color);
+        margin: 15px 0;
+        border-style: solid;
+        border-width: 0 0 1px 0;
+    }
+
+    .order-place-total {
+        display: flex;
+        justify-content: space-between;
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .order-place-total span:first-child {
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--text-color);
+    }
+    
+    .order-place-total-amount {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--accent-green); /* Total in vibrant green */
+    }
+
+    /* BUTTON */
+    .order-place-btn {
+        width: 100%;
+        background: var(--accent-green);
+        color: var(--card-bg); /* Dark text on vibrant button */
+        border: none;
+        padding: 18px;
+        font-size: 18px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        margin-top: var(--spacing-unit);
+        transition: 0.2s;
+        box-shadow: 0 4px 10px rgba(51, 255, 153, 0.3);
+    }
+
+    .order-place-btn:hover {
+        background: #1aff8c; /* Slightly lighter green on hover */
+        box-shadow: 0 6px 15px rgba(51, 255, 153, 0.5);
+    }
+</style>
+
+<div class="order-place-container">
+
+    <form method="POST" class="order-place-left">
+        {% csrf_token %}
+
+        <div class="order-place-card">
+            <h2 class="order-place-title">1. Shipping & Contact</h2>
+
+            <label class="order-place-label">Shipping Address</label>
+            <textarea name="address" class="order-place-textarea" rows="4" placeholder="Enter your full shipping address" required></textarea>
+
+        </div>
+        
+        <div class="order-place-card" style="margin-top: 30px;">
+            <h2 class="order-place-title">2. Choose Payment Method</h2>
+
+            <label class="order-place-payment">
+                <input type="radio" name="payment" value="online">
+                <span>Pay Online (Credit Card / Wallet)</span>
+            </label>
+
+            <label class="order-place-payment selected">
+                <input type="radio" name="payment" value="cod" checked>
+                <span>Cash on Delivery (COD)</span>
+                <small class="order-place-fee">Fees may apply</small>
+            </label>
+        </div>
+
+        <button type="submit" class="order-place-btn">Place Order</button>
+    </form>
+    <div class="order-place-summary-card">
+        <h2 class="order-place-summary-title">Order Summary</h2>
+
+        <ul class="order-place-summary-list">
+            {% for item in cart_items %}
+            <li>
+                <span>{{ item.product.name }} × {{ item.quantity }}</span> 
+                <span>₹{{ item.total_price }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <p class="order-place-summary-row">
+            <span>Subtotal</span>
+            <span>₹{{ subtotal }}</span>
+        </p>
+
+        <p class="order-place-summary-row">
+            <span>Shipping</span>
+            <span>₹{{ shipping }}</span>
+        </p>
+
+        <p class="order-place-summary-row">
+            <span>Tax (8%)</span>
+            <span>₹{{ estimated_tax }}</span>
+        </p>
+
+        <hr>
+
+        <p class="order-place-total">
+            <span>Total</span>
+            <span class="order-place-total-amount">₹{{ total }}</span>
+        </p>
+
+    </div>
+
+</div>
+
+
 {% endblock %}

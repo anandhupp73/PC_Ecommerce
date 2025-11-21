@@ -55,32 +55,44 @@
 </aside>
 
 
-    <!-- PRODUCTS SECTION -->
+      <!-- PRODUCT LIST -->
     <main class="cabinet-products">
-        <h2>Cabinets Found</h2>
+        <h2 style="color: white;">Cabinets</h2>
 
-        <div class="cabinet-product-grid">
+        <div class="shopc-product-grid">
 
-            <!-- DJANGO LOOP -->
             {% for cabinet in cabinet %}
-            <a href="{% url 'product_detail' cabinet.id %}" style="text-decoration: none;">
-            <div class="cabinet-product-card">
-                <div class="cabinet-img-box">
-                    <img src="{{ cabinet.image.url }}" alt="{{ cabinet.name }}">
+            <div class="shopc-product-card">
+                <a href="{% url 'product_detail' cabinet.id %}" style="text-decoration: none;">
+                    <div class="shopc-img-box">
+                        {% if cabinet.image %}
+                        <img src="{{ cabinet.image.url }}" alt="{{ cabinet.name }}">
+                        {% endif %}
+                    </div>
+
+                    <h3 class="shopc-product-name">{{ cabinet.name }}</h3>
+
+                    <div class="shopc-product-bottom">
+                        <span class="shopc-price">₹{{ cabinet.price }}</span>
+                        <form action="{% url 'add_to_cart' cabinet.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="shopc-add-btn">Add to Cart</button>
+                        </form>
+                    </div>
+                </a>
+
+                {% comment %} buy-now  {% endcomment %}
+
+                
+                <div class="buy-now-div">
+                    <a href="#">
+                    <button class="buy-now">Buy Now</button>
+                    </a>
                 </div>
 
-                <h3 class="cabinet-product-name">{{ cabinet.name }}</h3>
-
-                <div class="cabinet-product-bottom">
-                    <span class="cabinet-price">₹{{ cabinet.price }}</span>
-                    {% comment %} <button class="cabinet-add-btn">Add to Cart</button> {% endcomment %}
-                    <form action="{% url 'add_to_cart' cabinet.id %}" method="post">
-                        {% csrf_token %}
-                        <button class="cabinet-add-btn">Add to Cart</button>
-                    </form>
-                </div>
             </div>
-            </a>
+            {% empty %}
+            <p style="color: white;">No products found for selected filters.</p>
             {% endfor %}
 
         </div>
