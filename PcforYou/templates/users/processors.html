@@ -42,7 +42,7 @@
     </aside>
 
     <!-- PRODUCT LIST -->
-    <main class="gpu-products">
+    <main class="processor-products">
         <h2 style="color: white;">Processors</h2>
 
         <div class="shopc-product-grid">
@@ -66,6 +66,13 @@
                         </form>
                     </div>
                 </a>
+
+                <div class="buy-now-div">
+                    <a href="{% url 'buy_now_checkout' pros.id %}">
+                    <button class="buy-now">Buy Now</button>
+                    </a>
+                </div>
+
             </div>
             {% empty %}
             <p style="color: white;">No products found for selected filters.</p>

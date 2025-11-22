@@ -321,6 +321,62 @@ def processors(request):
         "brand_options": brand_options,
     })
 
+def monitors(request):
+    category = get_object_or_404(Category,name="Monitor")
+    products = Product.objects.filter(category=category,is_available = True)
+
+    max_price = request.GET.get('price')
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    selected_size = request.GET.getlist('size')
+    if selected_size:
+        products = products.filter(monitor_details__size_inch__in=selected_size)
+
+    size_options = [24 , 27 , 32 , 34 ]
+
+    return render(request,'users/monitors.html',{
+        "monitors" : products,
+        "selected_size" : selected_size,
+        "size_options" : size_options
+    })
+
+def motherboards(request):
+    category = get_object_or_404(Category,name="Motherboard")
+    products = Product.objects.filter(category=category,is_available = True)
+
+    max_price = request.GET.get('price')
+    if max_price:
+        products = products.filter(price__lte = max_price)
+
+    selected_brands = request.GET.getlist('brand')
+    if selected_brands:
+        brand_query = Q()
+        for brand in selected_brands:
+            brand_query |= Q(name__icontains=brand)
+
+        products = products.filter(brand_query)  # simple contains, or create a brand field
+
+    # Options for filters
+    brand_options = ["ASUS", "MSI" , "GIGABYTE"]
+
+    return render(request, "users/motherboard.html", {
+        "motherboards": products,
+        "selected_brands": selected_brands,
+        "brand_options": brand_options,
+    })
+
+def powersupply(request):
+    category = get_object_or_404(Category,name="Power Supply")
+    products = Product.objects.filter(category=category,is_available = True)
+
+    max_price = request.GET.get('price')
+    if max_price:
+        products = products.filter(price__lte = max_price)
+
+    return render(request,'users/powersupply.html',{
+        "powersupply" : products
+    })
 # Product - detail - page ----------------------------
 
 def product_detail(request, id):
@@ -339,6 +395,12 @@ def product_detail(request, id):
         details = product.gpu_details
     elif hasattr(product,"cpu_details"):
         details = product.cpu_details
+    elif hasattr(product,'monitor_details'):
+        details = product.monitor_details
+    elif hasattr(product,"motherboard_details"):
+        details = product.motherboard_details
+    elif hasattr(product,'powersupply_details'):
+        details = product.powersupply_details
     # Add more if needed
 
     return render(request, "users/product_detail.html", {

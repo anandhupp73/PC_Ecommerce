@@ -25,6 +25,9 @@ urlpatterns = [
     path('ram/',views.ram,name="ram"),
     path('gpu/',views.gpu,name="gpu"),
     path('processor/',views.processors,name="processors"),
+    path('monitors/',views.monitors,name="monitors"),
+    path('motherboards/',views.motherboards,name="motherboards"),
+    path('powersupply/',views.powersupply,name="powersupply"),
     path("product/<int:id>/", views.product_detail, name="product_detail"),
     path("wishlist/", views.wishlist_view, name="wishlist"),
     path("wishlist/add/<int:product_id>/", views.add_to_wishlist, name="add_to_wishlist"),
@@ -34,6 +37,7 @@ urlpatterns = [
     path("cart/update/<int:cart_id>/<str:action>/", views.update_cart_quantity, name="update_cart"),
     path("cart/remove/<int:cart_id>/", views.remove_from_cart, name="remove_cart_item"),
     path('checkout/', views.checkout_cart, name='checkout_cart'),
+    path("checkout/buy/<int:product_id>/",views.checkout_cart, name="buy_now_checkout"),
     path('order/<int:order_id>/', views.order_detail, name='order_detail'),
 
 

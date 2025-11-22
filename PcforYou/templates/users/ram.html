@@ -73,9 +73,10 @@
         <div class="ram-product-grid">
 
             {% for ram in rams %}
-            <a href="{% url 'product_detail' ram.id %}" style="text-decoration: none;">
+            
             <div class="ram-product-card">
 
+                <a href="{% url 'product_detail' ram.id %}" style="text-decoration: none;">
                 <div class="ram-img-box">
                     <img src="{{ ram.image.url }}" alt="{{ ram.name }}">
                 </div>
@@ -90,9 +91,17 @@
                         <button class="ram-add-btn">Add to Cart</button>
                     </form>
                 </div>
+                </a>
+
+                
+                <div class="buy-now-div">
+                    <a href="{% url 'buy_now_checkout' ram.id %}">
+                    <button class="buy-now">Buy Now</button>
+                    </a>
+                </div>
 
             </div>
-            </a>
+            
             {% endfor %}
 
         </div>

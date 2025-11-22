@@ -8,7 +8,7 @@
     <aside class="shopc-filters">
         <h2>Filters</h2>
 
-        <form method="GET" action="{% url 'gpu' %}" id="filterForm">
+        <form method="GET" action="{% url 'powersupply' %}" id="filterForm">
 
             <!-- PRICE -->
             <div class="shopc-filter-group">
@@ -25,55 +25,29 @@
                 </div>
             </div>
 
-            <!-- VRAM -->
-            <div class="shopc-filter-group">
-                <h4>VRAM (GB)</h4>
-                {% for vram in vram_options %}
-                <label>
-                    <input type="checkbox" name="vram" value="{{ vram }}"
-                        {% if vram|stringformat:"s" in selected_vram %}checked{% endif %}
-                        onchange="this.form.submit()">
-                    {{ vram }} GB
-                </label>
-                {% endfor %}
-            </div>
-
-            <!-- BRAND -->
-            <div class="shopc-filter-group">
-                <h4>Brand</h4>
-                {% for brand in brand_options %}
-                <label>
-                    <input type="checkbox" name="brand" value="{{ brand }}"
-                        {% if brand in selected_brands %}checked{% endif %}
-                        onchange="this.form.submit()">
-                    {{ brand }}
-                </label>
-                {% endfor %}
-            </div>
-
         </form>
     </aside>
 
     <!-- PRODUCT LIST -->
-    <main class="gpu-products">
-        <h2 style="color: white;">Graphics Cards</h2>
+    <main class="powersupply-products">
+        <h2 style="color: white;">PowerSupply</h2>
 
         <div class="shopc-product-grid">
 
-            {% for gpu in gpus %}
+            {% for power in powersupply %}
             <div class="shopc-product-card">
-                <a href="{% url 'product_detail' gpu.id %}" style="text-decoration: none;">
+                <a href="{% url 'product_detail' power.id %}" style="text-decoration: none;">
                     <div class="shopc-img-box">
-                        {% if gpu.image %}
-                        <img src="{{ gpu.image.url }}" alt="{{ gpu.name }}">
+                        {% if power.image %}
+                        <img src="{{ power.image.url }}" alt="{{ power.name }}">
                         {% endif %}
                     </div>
 
-                    <h3 class="shopc-product-name">{{ gpu.name }}</h3>
+                    <h3 class="shopc-product-name">{{ power.name }}</h3>
 
                     <div class="shopc-product-bottom">
-                        <span class="shopc-price">₹{{ gpu.price }}</span>
-                        <form action="{% url 'add_to_cart' gpu.id %}" method="post">
+                        <span class="shopc-price">₹{{ power.price }}</span>
+                        <form action="{% url 'add_to_cart' power.id %}" method="post">
                             {% csrf_token %}
                             <button class="shopc-add-btn">Add to Cart</button>
                         </form>
@@ -84,7 +58,7 @@
 
                 
                 <div class="buy-now-div">
-                    <a href="{% url 'buy_now_checkout' gpu.id %}">
+                    <a href="{% url 'buy_now_checkout' power.id %}">
                     <button class="buy-now">Buy Now</button>
                     </a>
                 </div>

@@ -59,9 +59,10 @@
         <div class="cooling-product-grid">
 
             {% for cooling in cooling %}
-            <a href="{% url 'product_detail' cooling.id %}" style="text-decoration: none;">
+            
             <div class="cooling-product-card">
 
+                <a href="{% url 'product_detail' cooling.id %}" style="text-decoration: none;">
                 <div class="cooling-img-box">
                     <img src="{{ cooling.image.url }}" alt="{{ cooling.name }}">
                 </div>
@@ -76,9 +77,16 @@
                         <button class="cooling-add-btn">Add to Cart</button>
                     </form>
                 </div>
+                </a>
+
+                <div class="buy-now-div">
+                    <a href="{% url 'buy_now_checkout' cooling.id %}">
+                    <button class="buy-now">Buy Now</button>
+                    </a>
+                </div>
 
             </div>
-            </a>
+            
             {% endfor %}
 
         </div>

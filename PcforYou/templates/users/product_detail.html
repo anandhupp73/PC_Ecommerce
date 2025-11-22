@@ -91,6 +91,39 @@
                     <tr><td>Socket</td><td>{{ details.socket_type }}</td></tr>
                     {% endif %}
 
+                    {% comment %} monitor {% endcomment %}
+
+                    {% if details.size_inch %}
+                    <tr><td>Screen size</td><td>{{ details.size_inch }}</td></tr>
+                    {% endif %}
+
+                    {% if details.resolution %}
+                    <tr><td>Resolution</td><td>{{ details.resolution }}</td></tr>
+                    {% endif %}
+                    
+                    {% if details.refresh_rate_hz %}
+                    <tr><td>Refresh rate</td><td>{{ details.refresh_rate_hz }}</td></tr>
+                    {% endif %}
+
+                    {% if details.panel_type %}
+                    <tr><td>Panel</td><td>{{ details.panel_type }}</td></tr>
+                    {% endif %}
+
+                    {% comment %} motherboard takes values from others gpu cpu cabinet {% endcomment %}
+
+                    {% comment %} powersupply  {% endcomment %}
+
+                    {% if details.wattage %}
+                    <tr><td>Wattage</td><td>{{ details.wattage }}</td></tr>
+                    {% endif %}
+
+                    {% if details.efficiency_rating %}
+                    <tr><td>Efficiency rating</td><td>{{ details.efficiency_rating }}</td></tr>
+                    {% endif %}
+
+                    {% if details.modular %}
+                    <tr><td>Modular</td><td>{{ details.modular }}</td></tr>
+                    {% endif %}
 
                 </table>
             {% endif %}
