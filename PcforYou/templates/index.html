@@ -223,90 +223,48 @@
             </div>
         </div>
 
-        {% comment %} featured-section  {% endcomment %}
+        {% comment %} PreBuilt PC  {% endcomment %}
 
         <div class="featured-section" id="deals">
-            <h1>Featured Products</h1>
+            <h1>PreBuilt PC</h1>
             <p class="featured-subtitle">Hand-picked selections for your next build</p>
 
             <div class="products">
 
-                <div class="product-card">
+                {% for prebuilt in prebuilts %}
+                <div class="product-card" onclick="location.href='{% url 'prebuilt_detail' prebuilt.id %}'">
+                    
                     <div class="image-container">
-                        <img src="{% static 'images/amd-ryzen-9.jpg' %}" alt="amd">
-                        <span class="tag best-seller">Best Seller</span>
+                        <img src="{{ prebuilt.image.url }}" alt="{{ prebuilt.name }}">
+                        {% comment %} <span class="tag best-seller">Best Seller</span> {% endcomment %}
                     </div>
                     <div class="info">
-                        <p class="category">Processor</p>
-                        <h3>AMD Ryzen 9 7950X</h3>
-                        <p class="rating"> <i data-lucide="star" class="my-icon"></i> 4.8 <span>(1247)</span></p>
+                        <p class="category">Name</p>
+                        <h3>{{ prebuilt.name }}</h3>
+                        {% comment %} <p class="rating"> <i data-lucide="star" class="my-icon"></i> 4.8 <span>(1247)</span></p> {% endcomment %}
+                        <div class="prebuilt-pros">
+                            <span style="color: white;">Processor : </span>
+                            <span style="color: rgb(33, 173, 20);">{{ prebuilt.processor }}</span>
+                        </div>
+                        <div class="prebuilt-graph">
+                            <span style="color: white;">Graphics Card : </span>
+                            <span style="color: rgb(205, 83, 13);">{{ prebuilt.graphics_card }}</span>
+                        </div>
                         <div class="price-add">
-                            <p class="price">$699.99</p>
-                            <button class="add-btn">
-                                <i data-lucide="shopping-cart" style="width:18px; height:18px;"></i> Add
-                            </button>
+                            <p class="price">₹ {{ prebuilt.price }}</p>
+                            <a href="{% url 'buy_prebuilt' prebuilt.id %}" style="text-decoration: none;">
+                                <button class="add-btn">Buy Now</button>
+                            </a>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
 
-                <div class="product-card">
-                    <div class="image-container">
-                        <img src="{% static 'images/rtx-5090.png' %}" alt="amd">
-                        <span class="tag top-rated">Top Rated</span>
-                    </div>
-                    <div class="info">
-                        <p class="category">Graphics Card</p>
-                        <h3>NVIDIA RTX 5090</h3>
-                        <p class="rating"> <i data-lucide="star" class="my-icon"></i> 4.9 <span>(892)</span></p>
-                        <div class="price-add">
-                            <p class="price">$1599.99</p>
-                            <button class="add-btn">
-                                <i data-lucide="shopping-cart" style="width:18px; height:18px;"></i> Add
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="image-container">
-                        <img src="{% static 'images/samsung-990-pro.webp' %}" alt="amd">
-                        <span class="tag hot-deal">Hot Deal</span>
-                    </div>
-                    <div class="info">
-                        <p class="category">SSD Storage</p>
-                        <h3>Samsung 990 PRO 2TB</h3>
-                        <p class="rating"> <i data-lucide="star" class="my-icon"></i> 4.7 <span>(2156)</span></p>
-                        <div class="price-add">
-                            <p class="price">$160.99</p>
-                            <button class="add-btn">
-                                <i data-lucide="shopping-cart" style="width:18px; height:18px;"></i> Add
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="image-container">
-                        <img src="{% static 'images/crosshair-vengence-32gb.avif' %}" alt="amd">
-                        <span class="tag popular">Popular</span>
-                    </div>
-                    <div class="info">
-                        <p class="category">SSD Storage</p>
-                        <h3>Samsung 990 PRO 2TB</h3>
-                        <p class="rating"> <i data-lucide="star" class="my-icon"></i> 4.7 <span>(2156)</span></p>
-                        <div class="price-add">
-                            <p class="price">$199.99</p>
-                            <button class="add-btn">
-                                <i data-lucide="shopping-cart" style="width:18px; height:18px;"></i> Add
-                            </button>
-                        </div>
-                    </div>
-                </div>
 
             </div>
-
+            <a href="{% url 'prebuilt_list' %}">
             <button class="view-all">View All Products</button>
-
+            </a>
         </div>
 
         {% endblock %}

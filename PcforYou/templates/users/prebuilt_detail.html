@@ -1,0 +1,97 @@
+{% extends 'index.html' %}
+{% block title %}{{ pc.name }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .detail-container {
+    display: flex;
+    gap: 40px;
+    padding: 40px;
+    color: white;
+}
+
+.detail-image img {
+    width: 450px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.detail-info h1 {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.price {
+    font-size: 28px;
+    font-weight: bold;
+    color: #00ff99;
+}
+
+.spec {
+    margin: 15px 0;
+}
+
+.buy-btn {
+    background-color: #0077ff;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 10px;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+</style>
+
+<div class="detail-container">
+
+    <div class="detail-image">
+        <img src="{{ pc.image.url }}" alt="{{ pc.name }}">
+    </div>
+
+    <div class="detail-info">
+        <h1>{{ pc.name }}</h1>
+
+        <p class="price">₹ {{ pc.price }}</p>
+
+        <div class="spec">
+            <h3>Processor</h3>
+            <p>{{ pc.processor }}</p>
+        </div>
+
+        <div class="spec">
+            <h3>Graphics Card</h3>
+            <p>{{ pc.graphics_card }}</p>
+        </div>
+
+        {% if pc.ram %}
+        <div class="spec">
+            <h3>RAM</h3>
+            <p>{{ pc.ram }}</p>
+        </div>
+        {% endif %}
+
+        {% if pc.storage %}
+        <div class="spec">
+            <h3>Storage</h3>
+            <p>{{ pc.storage }}</p>
+        </div>
+        {% endif %}
+
+        {% if pc.motherboard %}
+        <div class="spec">
+            <h3>Motherboard</h3>
+            <p>{{ pc.motherboard }}</p>
+        </div>
+        {% endif %}
+
+        <a href="{% url 'buy_prebuilt' pc.id %}" style="text-decoration: none;">
+            <button class="buy-btn">Buy Now</button>
+        </a>
+    </div>
+
+</div>
+{% endblock %}

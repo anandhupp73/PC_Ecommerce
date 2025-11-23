@@ -1,0 +1,44 @@
+{% extends 'index.html' %}
+{% block title %}PreBuilt PC{% endblock %}
+
+{% block content %}
+<h1 class="title" style="padding: 20px 0;">All Pre-Built PCs</h1>
+
+<div class="products" style="padding: 0 25px;">
+    {% for prebuilt in prebuilts %}
+
+        
+        <div class="product-card" onclick="location.href='{% url 'prebuilt_detail' prebuilt.id %}'">
+
+            {% comment %} <a href="{% url 'prebuilt_detail' prebuilt.id %}" style="text-decoration: none;"> {% endcomment %}
+            <div class="image-container">
+                <img src="{{ prebuilt.image.url }}" alt="{{ prebuilt.name }}">
+            </div>
+
+            <div class="info">
+                <p class="category">Name</p>
+                <h3>{{ prebuilt.name }}</h3>
+
+                <div class="prebuilt-pros">
+                    <span style="color: white;">Processor : </span>
+                    <span style="color: rgb(33, 173, 20);">{{ prebuilt.processor }}</span>
+                </div>
+                
+                <div class="prebuilt-graph">
+                    <span style="color: white;">Graphics Card : </span>
+                    <span style="color: rgb(205, 83, 13);">{{ prebuilt.graphics_card }}</span>
+                </div>
+                {% comment %} </a> {% endcomment %}
+
+                <div class="price-add">
+                    <p class="price">₹ {{ prebuilt.price }}</p>
+                    <a href="{% url 'buy_prebuilt' prebuilt.id %}" style="text-decoration:none">
+                        <button class="add-btn">Buy Now</button>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -14,7 +14,9 @@ from django.http import JsonResponse
 # Create your views here.
 def index(request):
     
-    return render(request, 'index.html')
+    prebuilt_pcs = PrebuiltPC.objects.all().order_by('-created_at')[:4] 
+
+    return render(request, 'index.html',{'prebuilts':prebuilt_pcs})
 
 def admin_login(request):
     if request.method == 'POST':
@@ -106,7 +108,15 @@ def add_product(request):
         "categories": categories,
     })
 
+# ----------for users ----------
+def prebuilt_list(request):
+    prebuilts = PrebuiltPC.objects.all().order_by('-created_at')
+    return render(request, 'users/prebuilt_list.html', {'prebuilts': prebuilts})
 
+def prebuilt_detail(request, id):
+    pc = get_object_or_404(PrebuiltPC, id=id)
+    return render(request, 'users/prebuilt_detail.html', {'pc': pc})
+# ----------------------------------
     
 @admin_required
 def viewproducts(request):
@@ -490,29 +500,6 @@ def remove_from_cart(request, cart_id):
     return redirect("cart")
 
 
-# @login_required
-# def checkout_cart(request):
-#     cart_items = Cart.objects.filter(user=request.user)
-#     if not cart_items.exists():
-#         return redirect('cart')
-    
-#     if request.method == "POST":
-#         address = request.POST.get('address')
-#         total_amount = sum(item.total_price for item in cart_items)
-#         order = Order.objects.create(user=request.user, total_amount=total_amount, address=address)
-#         for item in cart_items:
-#             OrderItem.objects.create(
-#                 order=order,
-#                 product=item.product,
-#                 quantity=item.quantity,
-#                 price=item.product.price
-#             )
-#         cart_items.delete()
-#         return redirect('order_detail', order_id=order.id)
-
-#     subtotal = sum(item.total_price for item in cart_items)
-#     return render(request, 'users/checkout_cart.html', {'cart_items': cart_items, 'subtotal': subtotal})
-
 @login_required
 def checkout_cart(request, product_id=None):
     # BUY NOW MODE
@@ -571,6 +558,54 @@ def checkout_cart(request, product_id=None):
         'estimated_tax': estimated_tax,
         'total': total
     })
+
+@login_required
+def buy_prebuilt(request, pc_id):
+    prebuilt = PrebuiltPC.objects.get(id=pc_id)
+
+    # Fake cart-like item
+    class TempItem:
+        def __init__(self, pc):
+            self.product = pc  # reusing product variable name in template
+            self.quantity = 1
+            self.total_price = pc.price
+
+    cart_items = [TempItem(prebuilt)]
+
+    # Price calculation
+    subtotal = prebuilt.price
+    shipping = Decimal('30') if subtotal > 0 else Decimal('0.00')
+    estimated_tax = (subtotal * Decimal('0.08')).quantize(Decimal('0.01'))
+    total = subtotal + shipping + estimated_tax
+
+    # When form is submitted
+    if request.method == "POST":
+        address = request.POST.get('address')
+
+        order = Order.objects.create(
+            user=request.user,
+            total_amount=total,
+            address=address
+        )
+
+        # Store as PrebuiltPC order
+        OrderItem.objects.create(
+            order=order,
+            prebuilt_pc=prebuilt,
+            quantity=1,
+            price=prebuilt.price
+        )
+
+        return redirect('order_detail', order_id=order.id)
+
+    return render(request, 'users/checkout_cart.html', {
+        'cart_items': cart_items,
+        'subtotal': subtotal,
+        'shipping': shipping,
+        'estimated_tax': estimated_tax,
+        'total': total
+    })
+
 
 
 @login_required

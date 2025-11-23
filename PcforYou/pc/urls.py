@@ -20,6 +20,9 @@ urlpatterns = [
 
     #users section
 
+    path('prebuilt-pcs/', views.prebuilt_list, name='prebuilt_list'),
+    path('prebuilt/<int:id>/', views.prebuilt_detail, name='prebuilt_detail'),
+    path('buy-prebuilt/<int:pc_id>/', views.buy_prebuilt, name='buy_prebuilt'),
     path('cabinets/', views.cabinets, name="cabinets"),
     path('cooling/',views.cooling,name="cooling"),
     path('ram/',views.ram,name="ram"),

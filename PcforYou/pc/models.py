@@ -227,9 +227,26 @@ class Order(models.Model):
     def __str__(self):
         return f"Order #{self.id} - {self.user.username}"
 
+# class OrderItem(models.Model):
+#     order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+#     quantity = models.PositiveIntegerField(default=1)
+#     price = models.DecimalField(max_digits=10, decimal_places=2)
+
+#     @property
+#     def total_price(self):
+#         return self.quantity * self.price
+
+#     def __str__(self):
+#         return f"{self.product.name} x {self.quantity}"
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    # Allow either Product OR PrebuiltPC
+    product = models.ForeignKey(Product, null=True, blank=True, on_delete=models.SET_NULL)
+    prebuilt_pc = models.ForeignKey(PrebuiltPC, null=True, blank=True, on_delete=models.SET_NULL)
+
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
@@ -238,4 +255,8 @@ class OrderItem(models.Model):
         return self.quantity * self.price
 
     def __str__(self):
-        return f"{self.product.name} x {self.quantity}"
+        if self.product:
+            return f"{self.product.name} x {self.quantity}"
+        elif self.prebuilt_pc:
+            return f"{self.prebuilt_pc.name} (Prebuilt) x {self.quantity}"
+        return "Unknown Item"
