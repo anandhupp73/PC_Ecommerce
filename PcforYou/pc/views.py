@@ -10,6 +10,9 @@ from decimal import Decimal
 from django.db.models import Q
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
+from .utils import call_gemini_api
+import json
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def index(request):
@@ -57,7 +60,9 @@ def admin_dashboard(request):
     product_count = Product.objects.count()
     # prebuit_count = PrebuiltPC.objects.count()
     category_count = Category.objects.count()
-    return render(request,'admin/admin_dashboard.html',{'product_count':product_count,'category_count':category_count})
+    recent_orders = Order.objects.order_by("-created_at")[:5]
+
+    return render(request,'admin/admin_dashboard.html',{'product_count':product_count,'category_count':category_count,"recent_orders":recent_orders})
 
 @admin_required
 def add_product(request):
@@ -606,6 +611,10 @@ def buy_prebuilt(request, pc_id):
         'total': total
     })
 
+@login_required
+def orders_list(request):
+    orders = Order.objects.filter(user=request.user).order_by("-created_at")
+    return render(request, "users/orders_list.html", {"orders": orders})
 
 
 @login_required
@@ -635,3 +644,32 @@ def update_order_status(request):
         order.save()
         return JsonResponse({'success': True, 'new_status': order.status})
     return JsonResponse({'success': False, 'error': 'Invalid status'})
+
+# -------------------------pc builder compactability-----------------------------------
+
+def pc_builder(request):
+    context = {
+        "parts": ["CPU", "Motherboard", "RAM", "GPU", "Storage", "Cooling", "PSU", "Case"],
+        "cpus": Product.objects.filter(category__name="Processor"),
+        "gpus": Product.objects.filter(category__name="Graphics Card"),
+        "motherboards": Product.objects.filter(category__name="Motherboard"),
+        "rams": Product.objects.filter(category__name="RAM"),
+        "storages": Product.objects.filter(category__name="Storage"),
+        "psus": Product.objects.filter(category__name="Power Supply"),
+        "cases": Product.objects.filter(category__name="Cabinet"),
+        "coolings": Product.objects.filter(category__name="Cooling"),
+    }
+    return render(request, "users/pc_builder.html", context)
+
+@csrf_exempt
+def gemini_compat_check(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        prompt = data.get("prompt")
+        if not prompt:
+            return JsonResponse({"error": "No prompt provided"}, status=400)
+
+        result_text = call_gemini_api(prompt)
+        return JsonResponse({"response": result_text})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)

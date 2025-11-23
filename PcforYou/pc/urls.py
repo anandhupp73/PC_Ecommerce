@@ -41,8 +41,10 @@ urlpatterns = [
     path("cart/remove/<int:cart_id>/", views.remove_from_cart, name="remove_cart_item"),
     path('checkout/', views.checkout_cart, name='checkout_cart'),
     path("checkout/buy/<int:product_id>/",views.checkout_cart, name="buy_now_checkout"),
+    path("orders/", views.orders_list, name="orders_list"),
     path('order/<int:order_id>/', views.order_detail, name='order_detail'),
-
+    path("pc-builder/", views.pc_builder, name="pc_builder"),
+    path('api/gemini-compat-check/', views.gemini_compat_check, name='gemini-compat-check'),
 
 
 ]

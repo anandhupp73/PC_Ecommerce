@@ -1,21 +1,190 @@
 {% extends "index.html" %}
 {% block title %}Order Detail{% endblock %}
+
 {% block content %}
-<h2 style="color: white;">Order #{{ order.id }}</h2>
-<p style="color: white;">Status: <span class="status-badge status-{{ order.status }}" style="color: white;">{{ order.get_status_display }}</span></p>
+<style>
+/* ------- CARD CONTAINER ------- */
+.order-card {
+    width: 500px;
+    margin: 40px auto;
+    background: #ffffff10;
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    color: white;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-<ul>
-{% for item in order.items.all %}
-    <li style="color: white;">{{ item.product.name }} x {{ item.quantity }} — ₹{{ item.total_price }}</li>
-{% endfor %}
-</ul>
+/* ------- HEADING ------- */
+.order-card h2 {
+    font-size: 26px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
 
-<p style="color: white;">Total: ₹{{ order.total_amount }}</p>
+/* ------- TIMELINE ------- */
+.timeline {
+    margin: 20px 0;
+    padding-left: 20px;
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
+}
 
-{% if order.status in "PENDING,CONFIRMED" %}
-<form method="POST">
-    {% csrf_token %}
-    <button type="submit" name="cancel_order" class="cart-continue-btn">Cancel Order</button>
-</form>
-{% endif %}
+.step {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.step-point {
+    width: 14px;
+    height: 14px;
+    background: gray;
+    border-radius: 50%;
+    position: absolute;
+    left: -28px;
+    top: 4px;
+}
+
+.step.active .step-point {
+    background: #5a78ff;
+    box-shadow: 0px 0px 10px #5a78ff;
+}
+
+.step-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.step-date {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* ------- ORDER ITEMS ------- */
+.order-items {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.order-items li {
+    padding: 5px 0;
+}
+
+/* ------- FOOTER ------- */
+.order-footer {
+    margin-top: 25px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* ------- CANCEL BUTTON ------- */
+.cancel-btn {
+    margin-top: 25px;
+    background: #ff4d4d;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+}
+.cancel-btn:hover {
+    background: #ff1a1a;
+}
+</style>
+
+<div class="order-card">
+    <h2>Order Tracking <span style="color:#7d8bff;">#{{ order.id }}</span></h2>
+
+    <!-- TIMELINE UI -->
+    <div class="timeline">
+
+        <div class="step {% if order.status in 'PENDING,CONFIRMED,SHIPPED,OUT_FOR_DELIVERY,DELIVERED' %}active{% endif %}">
+            <div class="step-point"></div>
+            <div class="step-title">Confirmed & Processing</div>
+            <div class="step-date">
+                {% if order.status_date_confirmed %}
+                    {{ order.status_date_confirmed }}
+                {% else %}
+                    Expected
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="step {% if order.status in 'SHIPPED,OUT_FOR_DELIVERY,DELIVERED' %}active{% endif %}">
+            <div class="step-point"></div>
+            <div class="step-title">Shipped</div>
+            <div class="step-date">
+                {% if order.status_date_shipped %}
+                    {{ order.status_date_shipped }}
+                {% else %}
+                    Expected
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="step {% if order.status in 'OUT_FOR_DELIVERY,DELIVERED' %}active{% endif %}">
+            <div class="step-point"></div>
+            <div class="step-title">Out for Delivery</div>
+            <div class="step-date">
+                {% if order.status_date_out_for_delivery %}
+                    {{ order.status_date_out_for_delivery }}
+                {% else %}
+                    Expected
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="step {% if order.status == 'DELIVERED' %}active{% endif %}">
+            <div class="step-point"></div>
+            <div class="step-title">Delivered</div>
+            <div class="step-date">
+                {% if order.status_date_delivered %}
+                    {{ order.status_date_delivered }}
+                {% else %}
+                    Expected
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ORDER ITEMS -->
+    <div class="order-items">
+        <ul>
+            {% for item in order.items.all %}
+                <li>
+                    {% if item.product %}
+                        {{ item.product.name }}
+                    {% else %}
+                        {{ item.prebuilt_pc.name }}
+                    {% endif %}
+                    × {{ item.quantity }} — ₹{{ item.total_price }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <p style="margin-top: 15px; font-size: 17px;">
+        <strong>Total Amount:</strong> ₹{{ order.total_amount }}
+    </p>
+
+    <div class="order-footer">
+        Latest update: {{ order.updated_at }}<br>
+        Tracking Number: <span style="color:#7d8bff;">{{ order.tracking_number }}</span>
+    </div>
+
+    {% if order.status in "PENDING,CONFIRMED" %}
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" name="cancel_order" class="cancel-btn">
+            Cancel Order
+        </button>
+    </form>
+    {% endif %}
+</div>
+
 {% endblock %}

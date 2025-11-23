@@ -1,0 +1,132 @@
+{% extends "index.html" %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+
+<style>
+    .order-list-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+    color: white;
+}
+
+.order-list-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.order-list-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+.order-list-card {
+    display: block;
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 14px;
+    text-decoration: none;
+    color: white;
+    border: 1px solid #334155;
+    transition: 0.2s ease-in-out;
+}
+
+.order-list-card:hover {
+    border-color: #6366f1;
+    transform: scale(1.01);
+}
+
+.order-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-list-status {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.status-PENDING { background: #facc15; color: #000; }
+.status-CONFIRMED { background: #4ade80; color: #000; }
+.status-SHIPPED { background: #60a5fa; color: #000; }
+.status-DELIVERED { background: #34d399; color: #000; }
+.status-CANCELLED { background: #ef4444; color: #fff; }
+
+.order-list-date {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #cbd5e1;
+}
+
+.order-list-total {
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+.order-list-items p {
+    margin: 3px 0;
+}
+
+.order-list-more {
+    color: #a5b4fc;
+    font-size: 14px;
+}
+
+.order-list-empty {
+    font-size: 18px;
+    color: #cbd5e1;
+    margin-top: 20px;
+}
+
+</style>
+
+<div class="order-list-container">
+
+    <h2 class="order-list-title">My Orders</h2>
+
+    {% if orders %}
+        <div class="order-list-grid">
+            {% for order in orders %}
+            <a href="{% url 'order_detail' order.id %}" class="order-list-card">
+                
+                <div class="order-list-header">
+                    <h3>Order #{{ order.id }}</h3>
+                    <span class="order-list-status status-{{ order.status }}">
+                        {{ order.get_status_display }}
+                    </span>
+                </div>
+
+                <p class="order-list-date">Placed on {{ order.created_at|date:"M d, Y" }}</p>
+
+                <p class="order-list-total">Total: <strong>₹{{ order.total_amount }}</strong></p>
+
+                <div class="order-list-items">
+                    {% for item in order.items.all|slice:":2" %}
+                        <p>
+                            {% if item.product %}
+                                {{ item.product.name }} × {{ item.quantity }}
+                            {% else %}
+                                {{ item.prebuilt_pc.name }} × {{ item.quantity }}
+                            {% endif %}
+                        </p>
+                    {% endfor %}
+
+                    {% if order.items.count > 2 %}
+                        <p class="order-list-more">+ {{ order.items.count|add:"-2" }} more items</p>
+                    {% endif %}
+                </div>
+
+            </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="order-list-empty">You have no orders yet.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

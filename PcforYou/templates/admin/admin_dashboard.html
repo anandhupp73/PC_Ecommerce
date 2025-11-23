@@ -19,10 +19,10 @@
         <nav>
             <a href="{% url 'admin_dashboard' %}" class="active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
             <a href="{% url 'view_products' %}"><i class="fa-solid fa-box"></i> Products</a>
-            <a href="#"><i class="fa-solid fa-list"></i> Categories</a>
+            {% comment %} <a href="#"><i class="fa-solid fa-list"></i> Categories</a> {% endcomment %}
             <a href="{% url 'prebuilt_view' %}"><i class="fa-solid fa-computer"></i> Pre-built PCs</a>
             <a href="{% url 'admin_order_manage' %}"><i class="fa-solid fa-cart-shopping"></i> Orders</a>
-            <a href="#"><i class="fa-solid fa-users"></i>Users</a>
+            {% comment %} <a href="#"><i class="fa-solid fa-users"></i>Users</a> {% endcomment %}
         </nav>
     </div>
 
@@ -83,35 +83,30 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>ORD-001</td>
-                        <td>John Doe</td>
-                        <td>Gaming PC RTX 4090</td>
-                        <td><span class="status completed">Completed</span></td>
-                        <td>$2,499</td>
-                    </tr>
-                    <tr>
-                        <td>ORD-002</td>
-                        <td>Jane Smith</td>
-                        <td>AMD Ryzen 9 7950X</td>
-                        <td><span class="status processing">Processing</span></td>
-                        <td>$599</td>
-                    </tr>
-                    <tr>
-                        <td>ORD-003</td>
-                        <td>Mike Johnson</td>
-                        <td>Pre-built Gaming Rig</td>
-                        <td><span class="status shipped">Shipped</span></td>
-                        <td>$1,899</td>
-                    </tr>
-                    <tr>
-                        <td>ORD-004</td>
-                        <td>Sarah Williams</td>
-                        <td>RTX 4070 Ti</td>
-                        <td><span class="status pending">Pending</span></td>
-                        <td>$799</td>
-                    </tr>
-                </tbody>
+                {% for order in recent_orders %}
+                <tr>
+                    <td>ORD-{{ order.id }}</td>
+                    <td>{{ order.user.username }}</td>
+
+                    <td>
+                        {% if order.items.first.product %}
+                            {{ order.items.first.product.name }}
+                        {% else %}
+                            {{ order.items.first.prebuilt_pc.name }}
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <span class="status {{ order.status|lower }}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </td>
+
+                    <td>₹{{ order.total_amount }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
             </table>
         </div>
         {% endblock %}

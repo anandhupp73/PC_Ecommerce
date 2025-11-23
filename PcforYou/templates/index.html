@@ -25,8 +25,8 @@
                         </a>
                         <nav>
                             <a href="{% url 'home' %}#shop">Components</a>
-                            <a href="#">Pre-Built</a>
-                            <a href="{% url 'home' %}#deals">Deals</a>
+                            <a href="{% url 'home' %}#prebuilt">Pre-Built</a>
+                            {% comment %} <a href="{% url 'orders_list' %}">Orders</a> {% endcomment %}
                             <a href="#">Support</a>
                         </nav>
                     </div>
@@ -225,7 +225,7 @@
 
         {% comment %} PreBuilt PC  {% endcomment %}
 
-        <div class="featured-section" id="deals">
+        <div class="featured-section" id="prebuilt">
             <h1>PreBuilt PC</h1>
             <p class="featured-subtitle">Hand-picked selections for your next build</p>
 
@@ -369,6 +369,7 @@
                 </div>
                 <a href="#">Profile</a>
                 <a href="{% url 'account_logout' %}" id="logoutBtn">Logout</a>
+                <a href ="{% url 'orders_list' %}">Orders</a>
             `;
         } else {
             dropdown.innerHTML = `
