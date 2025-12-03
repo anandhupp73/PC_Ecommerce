@@ -476,7 +476,7 @@ function collectSelectedParts() {
 /* ------------------------------
    GEMINI API REQUEST
 -------------------------------*/
-async function getGeminiResult() {
+{% comment %} async function getGeminiResult() {
     const selectedParts = collectSelectedParts();
 
     // Safety: ensure at least CPU + Motherboard selected
@@ -522,6 +522,71 @@ Give a clear explanation including:
         document.getElementById("geminiResult").innerHTML =
             '<p style="color:red;">Error contacting Gemini API</p>';
     }
+}  {% endcomment %}
+
+async function getGeminiResult() {
+    const selectedParts = collectSelectedParts();
+
+    // Safety: ensure at least CPU + Motherboard selected
+    if (!selectedParts.cpu || !selectedParts.motherboard) {
+        alert("Please select at least a CPU and a Motherboard!");
+        return;
+    }
+
+    // Re-inserting the full prompt content and adding instructions 
+    // for robust, structured output to prevent empty responses.
+    const prompt = `
+You are a professional PC compatibility engine. Analyze the following PC parts list.
+Your response MUST be detailed, well-structured using Markdown headings (##) and bolding (**), and must include all requested points.
+
+Selected PC Parts (in JSON format):
+${JSON.stringify(selectedParts, null, 2)}
+
+Give a clear explanation including:
+- CPU ↔ Motherboard socket compatibility
+- RAM type compatibility (DDR standard)
+- Motherboard form factor ↔ Case support
+- GPU power draw ↔ PSU wattage (check if PSU is sufficient)
+- Cooling ↔ CPU TDP (check if cooling is sufficient)
+- Storage interface support (e.g., M.2 NVMe, SATA)
+- Overall system bottlenecks (e.g., CPU too slow for GPU, or vice versa)
+- Safety recommendations (e.g., BIOS update, cable management, power headroom)
+- "Build Verdict" score out of 10 (based on compatibility and balance)
+`;
+
+    // Set initial loading message
+    document.getElementById("geminiResult").innerHTML = '<p style="color:#15C6E9;">Loading analysis from Gemini AI...</p>';
+    openGeminiModal(); // Open modal immediately with loading message
+
+    try {
+        const response = await fetch("/api/gemini-compat-check/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({ prompt }),
+        });
+
+        const data = await response.json();
+
+        // 💡 CRITICAL CHANGE: Handle non-200 responses (like 400 or 500)
+        if (!response.ok) {
+            // Display the error message returned from the Django view
+            document.getElementById("geminiResult").innerHTML = 
+                `<p style="color:var(--color-error);">⚠️ Server Error:</p><p>${data.error || 'Unknown error occurred.'}</p>`;
+            return;
+        }
+
+        // SUCCESS PATH (HTTP 200)
+        document.getElementById("geminiResult").innerHTML =
+            data.response.replace(/\n/g, "<br>");
+
+    } catch (error) {
+        // NETWORK ERROR PATH (e.g., server offline, CORS issue)
+        document.getElementById("geminiResult").innerHTML =
+            '<p style="color:var(--color-error);">Fatal Network Error: Could not connect to the server.</p>';
+    }
 }
 
 /* ------------------------------

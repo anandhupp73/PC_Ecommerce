@@ -664,12 +664,25 @@ def pc_builder(request):
 @csrf_exempt
 def gemini_compat_check(request):
     if request.method == "POST":
-        data = json.loads(request.body)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format in request body."}, status=400)
+            
         prompt = data.get("prompt")
+        
         if not prompt:
             return JsonResponse({"error": "No prompt provided"}, status=400)
 
+        # 1. Call the updated Gemini API utility function
         result_text = call_gemini_api(prompt)
+
+        # 2. Check for the error prefix from utils.py
+        if result_text.startswith("ERROR:"):
+            # Return a 500 status if the utility function signalled an error
+            return JsonResponse({"error": result_text}, status=500)
+            
+        # 3. Success
         return JsonResponse({"response": result_text})
 
-    return JsonResponse({"error": "Invalid request"}, status=400)
+    return JsonResponse({"error": "Invalid request method. Only POST is allowed."}, status=400)

@@ -28,10 +28,10 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-c@#)g^0)pbu%1*mgo3%&)k6fptd!%u3_7m)t3xa@4rkh69i7#w'
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
-if not OPENAI_API_KEY:
-    raise ValueError("OPENAI_API_KEY is not set in environment variables")
+if not GEMINI_API_KEY:
+    print("WARNING: GEMINI_API_KEY not found in environment variables or .env file.")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
