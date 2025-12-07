@@ -45,6 +45,8 @@ urlpatterns = [
     path('order/<int:order_id>/', views.order_detail, name='order_detail'),
     path("pc-builder/", views.pc_builder, name="pc_builder"),
     path('api/gemini-compat-check/', views.gemini_compat_check, name='gemini-compat-check'),
+    # ---------------------pdf-------------
+    path("generate-pdf/",views.generate_report_pdf, name="generate_pdf"),
 
 
 ]

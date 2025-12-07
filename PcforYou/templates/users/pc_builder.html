@@ -280,9 +280,9 @@
 
 </div>
 
-<div id="compatibility" class="compat-box">
+{% comment %} <div id="compatibility" class="compat-box">
     Your build compatibility results will appear here. Select at least a CPU and Motherboard.
-</div>
+</div> {% endcomment %}
 
 <div id="componentModal" class="modal">
     <div class="modal-content">
@@ -300,13 +300,16 @@
         <div id="geminiResult" style="margin-top: 20px;">
             <p>Waiting for the analysis...</p>
         </div>
+        <button onclick="downloadPDF()" class="gemini-pdf-btn">📄 Download PDF</button>
     </div>
+    
 </div>
 
 <button onclick="getGeminiResult()" class="gemini-btn">
     🔍 Ask Gemini AI for Detailed Check
 </button>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
 
 /* ---------------------------------
@@ -411,6 +414,7 @@ let currentPart = null;
 /* ------------------------------
    OPEN MODAL
 -------------------------------*/
+
 function openModal(part) {
     currentPart = part.toLowerCase();
     document.getElementById("modalTitle").innerText = `Select ${part}`;
@@ -419,20 +423,24 @@ function openModal(part) {
     modalArea.innerHTML = "";
 
     componentData[currentPart].forEach(item => {
+        // Fallback specs display for the modal list
+        let modalSpecs = item.specs || item.socket || item.ddr || item.power || item.type_detail || item.watt || item.form;
         modalArea.innerHTML += `
             <div class="modal-item" onclick="selectComponent('${currentPart}', '${item.id}')">
-                <img src="${item.img}">
+                <img src="${item.img}" alt="${item.name}" style="max-width: 90%; max-height: 80px; object-fit: contain;">
                 <h4>${item.name}</h4>
+                <p style="font-size: 11px; color: var(--color-text-subtle); margin-top: 5px;">${modalSpecs}</p>
             </div>
         `;
     });
 
-    document.getElementById("componentModal").style.display = "flex"; // Use flex for centering
+    document.getElementById("componentModal").style.display = "flex";
 }
 
 function closeModal() {
     document.getElementById("componentModal").style.display = "none";
 }
+
 
 /* ------------------------------
    HANDLE SELECT COMPONENT
@@ -460,7 +468,7 @@ function getSelectedData(partKey) {
 }
 
 function collectSelectedParts() {
-    return {
+    const parts = {
         cpu: getSelectedData("cpu"),
         motherboard: getSelectedData("motherboard"),
         ram: getSelectedData("ram"),
@@ -470,89 +478,51 @@ function collectSelectedParts() {
         psu: getSelectedData("psu"),
         case: getSelectedData("case")
     };
+
+    // Remove null items
+    const filtered = {};
+    for (const [key, value] of Object.entries(parts)) {
+        if (value !== null) filtered[key] = value;
+    }
+    return filtered;
 }
 
 
-/* ------------------------------
-   GEMINI API REQUEST
--------------------------------*/
-{% comment %} async function getGeminiResult() {
-    const selectedParts = collectSelectedParts();
-
-    // Safety: ensure at least CPU + Motherboard selected
-    if (!selectedParts.cpu || !selectedParts.motherboard) {
-        alert("Please select at least a CPU and a Motherboard!");
-        return;
-    }
-
-    const prompt = `
-You are a PC compatibility engine. Analyze these PC parts:
-
-${JSON.stringify(selectedParts, null, 2)}
-
-Give a clear explanation including:
-- CPU ↔ Motherboard socket compatibility
-- RAM type compatibility
-- Motherboard form factor ↔ Case support
-- GPU power draw ↔ PSU wattage
-- Cooling ↔ CPU TDP
-- Storage interface support
-- Overall bottlenecks
-- Safety recommendations
-- "Build Verdict" score out of 10
-`;
-
-    try {
-        const response = await fetch("/api/gemini-compat-check/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCookie("csrftoken"),
-            },
-            body: JSON.stringify({ prompt }),
-        });
-
-        const data = await response.json();
-
-        document.getElementById("geminiResult").innerHTML =
-            data.response.replace(/\n/g, "<br>");
-
-        openGeminiModal();
-    } catch (error) {
-        document.getElementById("geminiResult").innerHTML =
-            '<p style="color:red;">Error contacting Gemini API</p>';
-    }
-}  {% endcomment %}
 
 async function getGeminiResult() {
     const selectedParts = collectSelectedParts();
 
-    // Safety: ensure at least CPU + Motherboard selected
-    if (!selectedParts.cpu || !selectedParts.motherboard) {
-        alert("Please select at least a CPU and a Motherboard!");
-        return;
-    }
+    // Safety: ensure at least ANY two components selected
+    const selectedCount = Object.values(selectedParts).filter(p => p !== null).length;
+
+    if (selectedCount < 2) {
+        alert("Please select at least TWO components before running the AI compatibility check!");
+        return;
+    }
+
 
     // Re-inserting the full prompt content and adding instructions 
     // for robust, structured output to prevent empty responses.
-    const prompt = `
-You are a professional PC compatibility engine. Analyze the following PC parts list.
-Your response MUST be detailed, well-structured using Markdown headings (##) and bolding (**), and must include all requested points.
+    const prompt = `
+    You are a professional PC compatibility engine.
 
-Selected PC Parts (in JSON format):
-${JSON.stringify(selectedParts, null, 2)}
+    You will receive a JSON object containing ONLY the components selected by the user. 
+    If a component is NOT present in the JSON, you MUST NOT mention it, MUST NOT describe it, and MUST NOT give recommendations for it.
 
-Give a clear explanation including:
-- CPU ↔ Motherboard socket compatibility
-- RAM type compatibility (DDR standard)
-- Motherboard form factor ↔ Case support
-- GPU power draw ↔ PSU wattage (check if PSU is sufficient)
-- Cooling ↔ CPU TDP (check if cooling is sufficient)
-- Storage interface support (e.g., M.2 NVMe, SATA)
-- Overall system bottlenecks (e.g., CPU too slow for GPU, or vice versa)
-- Safety recommendations (e.g., BIOS update, cable management, power headroom)
-- "Build Verdict" score out of 10 (based on compatibility and balance)
-`;
+    ❗ VERY IMPORTANT RULE:
+    Only analyze components that exist in the JSON. If CPU is missing, do not talk about CPU. If RAM is missing, do not talk about RAM. If Case is missing, do not talk about cases. DO NOT mention missing components AT ALL.
+
+    Provide a structured, clean Markdown report analyzing ONLY the provided parts.
+
+    Required sections:
+    - Component Overview (ONLY list provided parts)
+    - Compatibility Checks (ONLY between provided parts)
+    - Performance / Power / Form Factor observations (ONLY if relevant to the parts given)
+    - Final Verdict (0–10) based on ONLY the provided components
+
+    Here is the provided parts list:
+    ${JSON.stringify(selectedParts, null, 2)}
+    `;
 
     // Set initial loading message
     document.getElementById("geminiResult").innerHTML = '<p style="color:#15C6E9;">Loading analysis from Gemini AI...</p>';
@@ -580,7 +550,7 @@ Give a clear explanation including:
 
         // SUCCESS PATH (HTTP 200)
         document.getElementById("geminiResult").innerHTML =
-            data.response.replace(/\n/g, "<br>");
+            marked.parse(data.response); 
 
     } catch (error) {
         // NETWORK ERROR PATH (e.g., server offline, CORS issue)
@@ -613,6 +583,43 @@ function getCookie(name) {
     });
     return cookieValue;
 }
+
+{% comment %} ---------------------------pdfreport---------------- {% endcomment %}
+
+async function downloadPDF() {
+
+    const selectedParts = collectSelectedParts();
+    const reportHtml = document.getElementById("geminiResult").innerHTML;
+
+    const response = await fetch("/generate-pdf/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({
+            selected_parts: selectedParts,
+            ai_report: reportHtml
+        }),
+    });
+
+    if (!response.ok) {
+        alert("Error generating PDF");
+        return;
+    }
+
+    // Convert response to file
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "PC_Compatibility_Report.pdf";
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+
 </script>
 
 {% endblock %}

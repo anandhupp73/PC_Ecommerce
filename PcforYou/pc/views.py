@@ -13,6 +13,11 @@ from django.http import JsonResponse
 from .utils import call_gemini_api
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from weasyprint import HTML
+import tempfile
+
 
 # Create your views here.
 def index(request):
@@ -686,3 +691,24 @@ def gemini_compat_check(request):
         return JsonResponse({"response": result_text})
 
     return JsonResponse({"error": "Invalid request method. Only POST is allowed."}, status=400)
+
+#-------------------pdf report ---------------------------------------------------
+def generate_report_pdf(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        selected_parts = data.get("selected_parts", {})
+        ai_report = data.get("ai_report", "")
+
+        # Render HTML template → string
+        html_string = render_to_string("users/report.html", {
+            "selected_parts": selected_parts,
+            "ai_report": ai_report
+        })
+
+        # Create PDF file in memory
+        pdf_file = HTML(string=html_string).write_pdf()
+
+        response = HttpResponse(pdf_file, content_type="application/pdf")
+        response["Content-Disposition"] = "attachment; filename=PC_Compatibility_Report.pdf"
+        return response
