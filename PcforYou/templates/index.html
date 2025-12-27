@@ -20,7 +20,9 @@
                 <div class="nav-inner">
                     <div class="nav-left">
                         <a href="{% url 'home' %}" class="logo">
-                            <div class="logo-icon"></div>
+                            <div class="logo-icon">
+                                <img src="{% static 'images/pcforyoulogo.png' %}" alt="">
+                            </div>
                             <span class="logo-text">PC-FOR-YOU</span>
                         </a>
                         <nav>
@@ -63,7 +65,7 @@
          {% comment %} part with pc img   {% endcomment %}
 
         <div class="hero">
-            <img src="{%static 'images/pc.jpg' %}" alt="pc" class="hero-bg">
+            <img src="{%static 'images/heroimg.jpg' %}" alt="pc" class="hero-bg">
             <div class="hero-overlay"></div>
 
             <div class="hero-content">
