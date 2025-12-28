@@ -139,6 +139,20 @@
                     <tr><td>Form Factor</td><td>{{ details.form_factor }}</td></tr>
                     {% endif %} {% endcomment %}
 
+                    {% comment %} accessories  {% endcomment %}
+
+                    {% if details.accessory_type %}
+                    <tr><td>Accessory Type</td><td>{{ details.accessory_type }}</td></tr>
+                    {% endif %}
+
+                    {% if details.connection %}
+                    <tr><td>Connection</td><td>{{ details.connection }}</td></tr>
+                    {% endif %}
+
+                    {% comment %} {% if details.color %}
+                    <tr><td>Color</td><td>{{ details.color_type }}</td></tr>
+                    {% endif %} {% endcomment %}
+
 
                 </table>
             {% endif %}

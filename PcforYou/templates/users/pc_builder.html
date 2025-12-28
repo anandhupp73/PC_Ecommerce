@@ -42,7 +42,15 @@
         gap: 30px;
         padding: 5px 20px;
     }
-
+    .builder-grid {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    @media (min-width: 1200px) {
+    .builder-grid {
+        grid-template-columns: repeat(4, 1fr);
+        }
+    }
     .component-card {
         background: var(--color-card-bg);
         padding: 25px;
@@ -257,6 +265,32 @@
         line-height: 1.7;
         color: #C0CCDD;
     }
+    #addToCartBtn {
+        display: none;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+    .builder-actions {
+        max-width: 1400px;        
+        margin: 40px auto 0;    
+        padding: 0 20px;
+        display: flex;
+        justify-content: center; 
+        gap: 20px;
+    }
+
+@media (max-width: 768px) {
+    .builder-actions {
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .builder-actions .gemini-btn {
+        width: 100%;
+        max-width: 320px;
+    }
+}
+
 
 </style>
 
@@ -305,9 +339,16 @@
     
 </div>
 
-<button onclick="getGeminiResult()" class="gemini-btn">
-    🔍 Ask Gemini AI for Detailed Check
-</button>
+<div class="builder-actions">
+    <button onclick="getGeminiResult()" class="gemini-btn">
+        🔍 Ask Gemini AI for Detailed Check
+    </button>
+
+    <button id="addToCartBtn" class="gemini-btn" onclick="addBuildToCart()">
+        🛒 Add Entire Build to Cart
+    </button>
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
@@ -410,6 +451,7 @@ const componentData = {
 };
 
 let currentPart = null;
+let geminiScore = 0;
 
 /* ------------------------------
    OPEN MODAL
@@ -459,6 +501,7 @@ function selectComponent(part, id) {
     runCompatibility();
 }
 
+
 function getSelectedData(partKey) {
     const items = componentData[partKey];
     if (!items) return null;
@@ -490,6 +533,8 @@ function collectSelectedParts() {
 
 
 async function getGeminiResult() {
+    document.getElementById("addToCartBtn").style.display = "none";
+
     const selectedParts = collectSelectedParts();
 
     // Safety: ensure at least ANY two components selected
@@ -551,6 +596,19 @@ async function getGeminiResult() {
         // SUCCESS PATH (HTTP 200)
         document.getElementById("geminiResult").innerHTML =
             marked.parse(data.response); 
+
+            const match = data.response.match(/(\d+)\s*(?:\/|out of)\s*10/i);
+
+            if (match) {
+                geminiScore = parseInt(match[1]);
+
+                if (geminiScore >= 8) {
+                    document.getElementById("addToCartBtn").style.display = "inline-block";
+                } else {
+                    document.getElementById("addToCartBtn").style.display = "none";
+                    alert("⚠ Compatibility score below 8. Build not recommended.");
+                }
+            }
 
     } catch (error) {
         // NETWORK ERROR PATH (e.g., server offline, CORS issue)
@@ -618,6 +676,42 @@ async function downloadPDF() {
     a.click();
     URL.revokeObjectURL(url);
 }
+
+function collectSelectedProductIds() {
+    const selectedParts = collectSelectedParts();
+    return Object.values(selectedParts).map(part => part.id);
+}
+
+async function addBuildToCart() {
+    if (geminiScore < 8) {
+    alert("❌ Cannot add to cart. Compatibility score must be at least 8/10.");
+    return;
+    }
+
+    const productIds = collectSelectedProductIds();
+
+    if (productIds.length === 0) {
+        alert("No components selected to add to cart.");
+        return;
+    }
+
+    try {
+        for (const productId of productIds) {
+            await fetch(`/cart/add/${productId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                }
+            });
+        }
+
+        alert("✅ Entire build added to cart successfully!");
+    } catch (error) {
+        console.error(error);
+        alert("❌ Failed to add build to cart.");
+    }
+}
+
 
 
 </script>

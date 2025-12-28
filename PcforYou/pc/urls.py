@@ -9,14 +9,14 @@ urlpatterns = [
 
     path('admin-login/',views.admin_login,name="admin_login"),
     path('admin-logout/',views.admin_logout,name="admin_logout"),
-    path('admin-dashboard/',views.admin_dashboard,name="admin_dashboard"),
-    path('admin-dashboard/view-products/',views.viewproducts,name="view_products"),
-    path('admin-dashboard/add-products/',views.add_product,name="add_products"),
-    path('admin-dashboard/prebuilt-view/',views.prebuiltview,name="prebuilt_view"),
-    path('admin-dashboard/prebuilt-detail/<slug:slug>/', views.prebuilt_pc_detail, name='prebuilt_pc_detail'),
-    path('admin-dashboard/add-prebuilt/',views.add_prebuilt,name="add_prebuilt"),
-    path('admin-dashboard/order-manage/', views.admin_order_manage, name='admin_order_manage'),
-    path('admin-dashboard/update_status/', views.update_order_status, name='update_order_status'),
+    path('admin/',views.admin_dashboard,name="admin_dashboard"),
+    path('admin/view-products/',views.viewproducts,name="view_products"),
+    path('admin/add-products/',views.add_product,name="add_products"),
+    path('admin/prebuilt-view/',views.prebuiltview,name="prebuilt_view"),
+    path('admin/prebuilt-detail/<slug:slug>/', views.prebuilt_pc_detail, name='prebuilt_pc_detail'),
+    path('admin/add-prebuilt/',views.add_prebuilt,name="add_prebuilt"),
+    path('admin/order-manage/', views.admin_order_manage, name='admin_order_manage'),
+    path('admin/update_status/', views.update_order_status, name='update_order_status'),
 
     #users section
 
@@ -32,6 +32,7 @@ urlpatterns = [
     path('motherboards/',views.motherboards,name="motherboards"),
     path('powersupply/',views.powersupply,name="powersupply"),
     path('storages/',views.storages,name="storages"),
+    path('accessories/',views.accessories,name="accessories"),
     path("product/<int:id>/", views.product_detail, name="product_detail"),
     path("wishlist/", views.wishlist_view, name="wishlist"),
     path("wishlist/add/<int:product_id>/", views.add_to_wishlist, name="add_to_wishlist"),

@@ -416,7 +416,32 @@ def storages(request):
     type_options = ["HDD" , "SSD" , "NVMe"]
 
 
-    return render(request,'users/storages.html',{"storages" : products,"type_options" : type_options,"selected_types":selected_types})
+    return render(request,'users/storages.html',
+                  {"storages" : products,
+                   "type_options" : type_options,
+                   "selected_types":selected_types})
+
+def accessories(request):
+    category = get_object_or_404(Category,name="Accessories")
+    products = Product.objects.filter(category=category,is_available = True)
+
+    max_price = request.GET.get('price')
+    if max_price:
+        products = products.filter(price__lte = max_price)
+
+    selected_types = request.GET.getlist('type')
+
+    if selected_types:
+        products = products.filter(
+            accessory_details__accessory_type__in=selected_types
+        )
+
+    type_options = ["Mouse" , "Keyboard" , "Headset"]
+
+    return render(request,'users/accessories.html',
+                  {"accessories" : products , 
+                   "type_options" : type_options , 
+                   "selected_types" : selected_types})
 
 # Product - detail - page ----------------------------
 
@@ -444,6 +469,8 @@ def product_detail(request, id):
         details = product.powersupply_details
     elif hasattr(product,'storage_details'):
         details = product.storage_details
+    elif hasattr(product,'accessory_details'):
+        details = product.accessory_details
     # Add more if needed
 
     return render(request, "users/product_detail.html", {
@@ -716,6 +743,7 @@ def gemini_compat_check(request):
     return JsonResponse({"error": "Invalid request method. Only POST is allowed."}, status=400)
 
 #-------------------pdf report ---------------------------------------------------
+
 def generate_report_pdf(request):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -723,15 +751,26 @@ def generate_report_pdf(request):
         selected_parts = data.get("selected_parts", {})
         ai_report = data.get("ai_report", "")
 
-        # Render HTML template → string
-        html_string = render_to_string("users/report.html", {
-            "selected_parts": selected_parts,
-            "ai_report": ai_report
-        })
+        # 🔥 CRITICAL FIX: convert image URLs to absolute URLs
+        for part in selected_parts.values():
+            if part.get("img"):
+                part["img"] = request.build_absolute_uri(part["img"])
 
-        # Create PDF file in memory
-        pdf_file = HTML(string=html_string).write_pdf()
+        html_string = render_to_string(
+            "users/report.html",
+            {
+                "selected_parts": selected_parts,
+                "ai_report": ai_report
+            }
+        )
+
+        pdf_file = HTML(
+            string=html_string,
+            base_url=request.build_absolute_uri("/")  # 🔥 important
+        ).write_pdf()
 
         response = HttpResponse(pdf_file, content_type="application/pdf")
-        response["Content-Disposition"] = "attachment; filename=PC_Compatibility_Report.pdf"
+        response["Content-Disposition"] = (
+            "attachment; filename=PC_Compatibility_Report.pdf"
+        )
         return response

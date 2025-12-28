@@ -1,0 +1,107 @@
+{% extends "index.html" %}
+{% block title %}Accessories{% endblock %}
+
+{% block content %}
+<div class="shopc-product-page">
+
+    <!-- FILTER SIDEBAR -->
+    <aside class="shopc-filters">
+        <h2>Filters</h2>
+
+        <form method="GET" action="{% url 'accessories' %}" id="filterForm">
+
+            <!-- PRICE -->
+            <div class="shopc-filter-group">
+                <h4>Price</h4>
+                <input type="range" 
+                       id="priceSlider"
+                       name="price"
+                       min="0"
+                       max="300000"
+                       value="{{ request.GET.price|default:300000 }}">
+                <div class="shopc-price-values">
+                    <span>₹0</span>
+                    <span id="priceValue">₹{{ request.GET.price|default:300000 }}</span>
+                </div>
+            </div>
+
+            <!-- VRAM -->
+            <div class="shopc-filter-group">
+                <h4>Type</h4>
+                {% for type in type_options %}
+                <label>
+                    <input type="checkbox" name="type" value="{{ type }}"
+                        {% if type|stringformat:"s" in selected_types %}checked{% endif %}
+                        onchange="this.form.submit()">
+                    {{ type }}
+                </label>
+                {% endfor %}
+            </div>
+
+
+        </form>
+    </aside>
+
+    <!-- PRODUCT LIST -->
+    <main class="accesories-products">
+        <h2 style="color: white;">Accessories</h2>
+
+        <div class="shopc-product-grid">
+
+            {% for access in accessories %}
+            <div class="shopc-product-card">
+                <a href="{% url 'product_detail' access.id %}" style="text-decoration: none;">
+                    <div class="shopc-img-box">
+                        {% if access.image %}
+                        <img src="{{ access.image.url }}" alt="{{ access.name }}">
+                        {% endif %}
+                    </div>
+                    
+                    <h3 class="shopc-product-name">{{ access.name }}</h3>
+
+                    <div class="shopc-product-bottom">
+                        <span class="shopc-price">₹{{ access.price }}</span>
+                        <form action="{% url 'add_to_cart' access.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="shopc-add-btn">Add to Cart</button>
+                        </form>
+                    </div>
+                </a>
+
+                {% comment %} buy-now  {% endcomment %}
+
+                
+                <div class="buy-now-div">
+                    <a href="{% url 'buy_now_checkout' access.id %}">
+                    <button class="buy-now">Buy Now</button>
+                    </a>
+                </div>
+
+            </div>
+            {% empty %}
+            <p style="color: white;">No products found for selected filters.</p>
+            {% endfor %}
+
+        </div>
+    </main>
+
+</div>
+
+<script>
+    const slider = document.getElementById("priceSlider");
+    const priceVal = document.getElementById("priceValue");
+    const form = document.getElementById("filterForm");
+
+    slider.style.setProperty("--val", (slider.value / slider.max * 100) + "%");
+
+    slider.oninput = function () {
+        priceVal.textContent = "₹" + this.value;
+        this.style.setProperty("--val", (this.value / this.max * 100) + "%");
+    };
+
+    slider.onchange = function () {
+        form.submit();
+    };
+</script>
+
+{% endblock %}

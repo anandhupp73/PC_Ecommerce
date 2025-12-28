@@ -19,10 +19,19 @@
         }
 
         .part-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
             padding: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             border: 1px solid #ddd;
             border-radius: 6px;
+        }
+
+        .part-box img {
+            width: 90px;
+            height: auto;
+            object-fit: contain;
         }
 
         pre {
@@ -42,7 +51,11 @@
 
 {% for key, part in selected_parts.items %}
 <div class="part-box">
-    <strong>{{ key|title }}:</strong> {{ part.name }}
+    <img src="{{ part.img }}" alt="{{ part.name }}">
+    <div>
+        <strong>{{ key|title }}</strong><br>
+        {{ part.name }}
+    </div>
 </div>
 {% endfor %}
 
