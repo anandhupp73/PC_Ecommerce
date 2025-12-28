@@ -125,6 +125,21 @@
                     <tr><td>Modular</td><td>{{ details.modular }}</td></tr>
                     {% endif %}
 
+                    {% comment %} storage {% endcomment %}
+
+                    {% comment %} {% if details.capacity_gb %}
+                    <tr><td>GB</td><td>{{ details.capacity_gb }}</td></tr>
+                    {% endif %} {% endcomment %}
+
+                    {% if details.storage_type %}
+                    <tr><td>Storage Type</td><td>{{ details.storage_type }}</td></tr>
+                    {% endif %}
+
+                    {% comment %} {% if details.form_factor %}
+                    <tr><td>Form Factor</td><td>{{ details.form_factor }}</td></tr>
+                    {% endif %} {% endcomment %}
+
+
                 </table>
             {% endif %}
             

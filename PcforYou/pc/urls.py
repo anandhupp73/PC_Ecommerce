@@ -31,6 +31,7 @@ urlpatterns = [
     path('monitors/',views.monitors,name="monitors"),
     path('motherboards/',views.motherboards,name="motherboards"),
     path('powersupply/',views.powersupply,name="powersupply"),
+    path('storages/',views.storages,name="storages"),
     path("product/<int:id>/", views.product_detail, name="product_detail"),
     path("wishlist/", views.wishlist_view, name="wishlist"),
     path("wishlist/add/<int:product_id>/", views.add_to_wishlist, name="add_to_wishlist"),

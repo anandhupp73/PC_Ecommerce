@@ -169,6 +169,7 @@
     color: white;
     border-radius: 8px;
     cursor: pointer;
+    font-size: 18px;
 }
 </style>
 
@@ -226,7 +227,9 @@
         <form method="GET" action="{% url 'checkout_cart' %}">
             <button class="cart-checkout-btn">Proceed to Checkout</button>
         </form>
+        <a href="{% url 'home' %}" style="text-decoration : none ;">
         <button class="cart-continue-btn">Continue Shopping</button>
+        </a>
     </div>
 
 </div>

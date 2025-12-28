@@ -397,6 +397,27 @@ def powersupply(request):
     return render(request,'users/powersupply.html',{
         "powersupply" : products
     })
+
+def storages(request):
+    category = get_object_or_404(Category,name="Storage")
+    products = Product.objects.filter(category=category,is_available = True)
+
+    max_price = request.GET.get('price')
+    if max_price:
+        products = products.filter(price__lte = max_price)
+
+    selected_types = request.GET.getlist('type')
+
+    if selected_types:
+        products = products.filter(
+            storage_details__storage_type__in=selected_types
+        )
+
+    type_options = ["HDD" , "SSD" , "NVMe"]
+
+
+    return render(request,'users/storages.html',{"storages" : products,"type_options" : type_options,"selected_types":selected_types})
+
 # Product - detail - page ----------------------------
 
 def product_detail(request, id):
@@ -421,6 +442,8 @@ def product_detail(request, id):
         details = product.motherboard_details
     elif hasattr(product,'powersupply_details'):
         details = product.powersupply_details
+    elif hasattr(product,'storage_details'):
+        details = product.storage_details
     # Add more if needed
 
     return render(request, "users/product_detail.html", {

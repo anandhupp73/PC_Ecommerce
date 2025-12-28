@@ -1,5 +1,5 @@
 {% extends "index.html" %}
-{% block title %}PowerSupply{% endblock %}
+{% block title %}Storages{% endblock %}
 
 {% block content %}
 <div class="shopc-product-page">
@@ -8,7 +8,7 @@
     <aside class="shopc-filters">
         <h2>Filters</h2>
 
-        <form method="GET" action="{% url 'powersupply' %}" id="filterForm">
+        <form method="GET" action="{% url 'storages' %}" id="filterForm">
 
             <!-- PRICE -->
             <div class="shopc-filter-group">
@@ -25,29 +25,55 @@
                 </div>
             </div>
 
+            <!-- VRAM -->
+            <div class="shopc-filter-group">
+                <h4>Storage Type</h4>
+                {% for type in type_options %}
+                <label>
+                    <input type="checkbox" name="type" value="{{ type }}"
+                        {% if type|stringformat:"s" in selected_types %}checked{% endif %}
+                        onchange="this.form.submit()">
+                    {{ type }}
+                </label>
+                {% endfor %}
+            </div>
+
+            {% comment %} <!-- BRAND -->
+            <div class="shopc-filter-group">
+                <h4>Brand</h4>
+                {% for brand in brand_options %}
+                <label>
+                    <input type="checkbox" name="brand" value="{{ brand }}"
+                        {% if brand in selected_brands %}checked{% endif %}
+                        onchange="this.form.submit()">
+                    {{ brand }}
+                </label>
+                {% endfor %}
+            </div> {% endcomment %}
+
         </form>
     </aside>
 
     <!-- PRODUCT LIST -->
-    <main class="powersupply-products">
-        <h2 style="color: white;">PowerSupply</h2>
+    <main class="storage-products">
+        <h2 style="color: white;">Storages</h2>
 
         <div class="shopc-product-grid">
 
-            {% for power in powersupply %}
+            {% for storage in storages %}
             <div class="shopc-product-card">
-                <a href="{% url 'product_detail' power.id %}" style="text-decoration: none;">
+                <a href="{% url 'product_detail' storage.id %}" style="text-decoration: none;">
                     <div class="shopc-img-box">
-                        {% if power.image %}
-                        <img src="{{ power.image.url }}" alt="{{ power.name }}">
+                        {% if storage.image %}
+                        <img src="{{ storage.image.url }}" alt="{{ storage.name }}">
                         {% endif %}
                     </div>
 
-                    <h3 class="shopc-product-name">{{ power.name }}</h3>
+                    <h3 class="shopc-product-name">{{ storage.name }}</h3>
 
                     <div class="shopc-product-bottom">
-                        <span class="shopc-price">₹{{ power.price }}</span>
-                        <form action="{% url 'add_to_cart' power.id %}" method="post">
+                        <span class="shopc-price">₹{{ storage.price }}</span>
+                        <form action="{% url 'add_to_cart' storage.id %}" method="post">
                             {% csrf_token %}
                             <button class="shopc-add-btn">Add to Cart</button>
                         </form>
@@ -58,7 +84,7 @@
 
                 
                 <div class="buy-now-div">
-                    <a href="{% url 'buy_now_checkout' power.id %}">
+                    <a href="{% url 'buy_now_checkout' storage.id %}">
                     <button class="buy-now">Buy Now</button>
                     </a>
                 </div>
