@@ -51,6 +51,12 @@
         grid-template-columns: repeat(4, 1fr);
         }
     }
+    @media (min-width: 768px) and (max-width: 1199px) {
+        .builder-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
     .component-card {
         background: var(--color-card-bg);
         padding: 25px;
@@ -500,7 +506,6 @@ function selectComponent(part, id) {
     `;
 
     closeModal();
-    runCompatibility();
 }
 
 
@@ -572,7 +577,7 @@ async function getGeminiResult() {
     `;
 
     // Set initial loading message
-    document.getElementById("geminiResult").innerHTML = '<p style="color:#15C6E9;">Loading analysis from Gemini AI...</p>';
+    document.getElementById("geminiResult").innerHTML = '<p style="color:#15C6E9;">Loading analysis...</p>';
     openGeminiModal(); // Open modal immediately with loading message
 
     try {
