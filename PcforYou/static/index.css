@@ -1233,3 +1233,146 @@ button:hover {
     height: 250px;
     margin-top: 80px;
 }
+
+/* ===============================
+   PROFILE PAGE STYLES
+================================ */
+
+.profile-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #0f1624;
+    border-radius: 14px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+}
+
+.profile-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 26px;
+    color: #00d9ff;
+}
+
+/* FORM */
+.profile-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+/* PROFILE IMAGE */
+.profile-image {
+    grid-column: span 2;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-image img.avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #00d9ff;
+    margin-bottom: 10px;
+}
+
+.profile-image input[type="file"] {
+    display: block;
+    margin: 0 auto;
+    color: #ccc;
+}
+
+/* INPUTS */
+.profile-form input,
+.profile-form textarea {
+    width: 100%;
+    padding: 12px;
+    background: #1b2336;
+    border: 1px solid #2c3755;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.profile-form input::placeholder,
+.profile-form textarea::placeholder {
+    color: #9aa4c2;
+}
+
+.profile-form input:focus,
+.profile-form textarea:focus {
+    outline: none;
+    border-color: #00d9ff;
+    box-shadow: 0 0 6px rgba(0, 217, 255, 0.4);
+}
+
+/* EMAIL FIELD (DISABLED) */
+.profile-form input[disabled] {
+    background: #111827;
+    color: #8a94b8;
+    cursor: not-allowed;
+}
+
+/* ADDRESS */
+.profile-form textarea {
+    grid-column: span 2;
+    min-height: 90px;
+    resize: none;
+}
+
+/* SAVE BUTTON */
+.profile-save-btn {
+    grid-column: span 2;
+    padding: 14px;
+    background: linear-gradient(135deg, #00d9ff, #007bff);
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.profile-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 217, 255, 0.4);
+}
+
+/* ORDERS BUTTON */
+.prof-orders-btn {
+    display: block;
+    margin-top: 25px;
+    text-align: center;
+    padding: 12px;
+    border-radius: 10px;
+    background: #1b2336;
+    color: #00d9ff;
+    text-decoration: none;
+    border: 1px solid #00d9ff;
+    transition: 0.3s;
+}
+
+.prof-orders-btn:hover {
+    background: #00d9ff;
+    color: #000;
+}
+
+/* Ensure the email field stays styled correctly next to Name */
+.email-field {
+    cursor: not-allowed;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .profile-form {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-form textarea,
+    .profile-save-btn {
+        grid-column: span 1;
+    }
+}

@@ -774,3 +774,29 @@ def generate_report_pdf(request):
             "attachment; filename=PC_Compatibility_Report.pdf"
         )
         return response
+    
+# ----------------------- profile ----------------
+
+@login_required
+def profile_view(request):
+    profile, created = Profile.objects.get_or_create(
+        profile_user=request.user
+    )
+
+    if request.method == "POST":
+        profile.display_name = request.POST.get("display_name")
+        profile.user_phone = request.POST.get("user_phone")
+        profile.user_address = request.POST.get("user_address")
+        profile.user_city = request.POST.get("user_city")
+        profile.user_state = request.POST.get("user_state")
+        profile.user_pincode = request.POST.get("user_pincode")
+
+        if request.FILES.get("user_image"):
+            profile.user_image = request.FILES.get("user_image")
+
+        profile.save()
+        return redirect("profile")
+
+    return render(request, "users/profile.html", {
+        "profile": profile
+    })

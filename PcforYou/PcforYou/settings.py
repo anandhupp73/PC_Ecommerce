@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'pc',
+    # 'pc',
+    'pc.apps.PcConfig',
 
     # Required by allauth
     'django.contrib.sites',

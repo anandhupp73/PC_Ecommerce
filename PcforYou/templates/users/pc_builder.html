@@ -341,7 +341,7 @@
 
 <div class="builder-actions">
     <button onclick="getGeminiResult()" class="gemini-btn">
-        🔍 Ask Gemini AI for Detailed Check
+        🔍 Ask AI for Detailed Check
     </button>
 
     <button id="addToCartBtn" class="gemini-btn" onclick="addBuildToCart()">
@@ -352,6 +352,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
+
+const IS_LOGGED_IN = {{ request.user.is_authenticated|yesno:"true,false" }};
 
 /* ---------------------------------
    LOAD PRODUCT DATA FROM DJANGO 
@@ -569,29 +571,29 @@ async function getGeminiResult() {
     ${JSON.stringify(selectedParts, null, 2)}
     `;
 
-    // Set initial loading message
-    document.getElementById("geminiResult").innerHTML = '<p style="color:#15C6E9;">Loading analysis from Gemini AI...</p>';
-    openGeminiModal(); // Open modal immediately with loading message
+    // Set initial loading message
+    document.getElementById("geminiResult").innerHTML = '<p style="color:#15C6E9;">Loading analysis from Gemini AI...</p>';
+    openGeminiModal(); // Open modal immediately with loading message
 
-    try {
-        const response = await fetch("/api/gemini-compat-check/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCookie("csrftoken"),
-            },
-            body: JSON.stringify({ prompt }),
-        });
+    try {
+        const response = await fetch("/api/gemini-compat-check/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({ prompt }),
+        });
 
-        const data = await response.json();
+         const data = await response.json();
 
-        // 💡 CRITICAL CHANGE: Handle non-200 responses (like 400 or 500)
-        if (!response.ok) {
-            // Display the error message returned from the Django view
-            document.getElementById("geminiResult").innerHTML = 
-                `<p style="color:var(--color-error);">⚠️ Server Error:</p><p>${data.error || 'Unknown error occurred.'}</p>`;
-            return;
-        }
+         // 💡 CRITICAL CHANGE: Handle non-200 responses (like 400 or 500)
+         if (!response.ok) {
+             // Display the error message returned from the Django view
+             document.getElementById("geminiResult").innerHTML = 
+                `<p style="color:var(--color-error);">⚠️ Server Error:</p><p>${data.error || 'Unknown error occurred.'}</p>`;
+            return;
+        }
 
         // SUCCESS PATH (HTTP 200)
         document.getElementById("geminiResult").innerHTML =
@@ -603,11 +605,19 @@ async function getGeminiResult() {
                 geminiScore = parseInt(match[1]);
 
                 if (geminiScore >= 8) {
-                    document.getElementById("addToCartBtn").style.display = "inline-block";
+
+                    if (IS_LOGGED_IN) {
+                        document.getElementById("addToCartBtn").style.display = "inline-block";
+                    } else {
+                        document.getElementById("addToCartBtn").style.display = "none";
+                        alert("🔒 Please login to add this build to your cart.");
+                    }
+
                 } else {
                     document.getElementById("addToCartBtn").style.display = "none";
                     alert("⚠ Compatibility score below 8. Build not recommended.");
                 }
+
             }
 
     } catch (error) {

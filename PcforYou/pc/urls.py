@@ -20,6 +20,8 @@ urlpatterns = [
 
     #users section
 
+    path("profile/", views.profile_view, name="profile"),
+
     path('prebuilt-pcs/', views.prebuilt_list, name='prebuilt_list'),
     path('prebuilt/<int:id>/', views.prebuilt_detail, name='prebuilt_detail'),
     path('buy-prebuilt/<int:pc_id>/', views.buy_prebuilt, name='buy_prebuilt'),

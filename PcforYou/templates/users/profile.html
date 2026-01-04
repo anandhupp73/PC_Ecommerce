@@ -1,0 +1,42 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+
+    <h2>My Profile</h2>
+
+    <form method="POST" enctype="multipart/form-data" action="{% url 'profile' %}" class="profile-form">
+        {% csrf_token %}
+
+        <div class="profile-image">
+            <img src="{{ profile.user_image.url }}" class="avatar">
+            <input type="file" name="user_image">
+        </div>
+
+        <input type="text" name="display_name" placeholder="Full Name" value="{{ profile.display_name }}">
+
+
+        <input type="email" value="{{ request.user.email }}" disabled >
+
+        <input type="text" name="user_phone" placeholder="Phone" value="{{ profile.user_phone }}">
+
+        <textarea name="user_address" placeholder="Address">{{ profile.user_address }}</textarea>
+
+        <input type="text" name="user_city" placeholder="City" value="{{ profile.user_city }}">
+
+        <input type="text" name="user_state" placeholder="State" value="{{ profile.user_state }}">
+
+        <input type="text" name="user_pincode" placeholder="Pincode" value="{{ profile.user_pincode }}">
+
+        <button type="submit" class="profile-save-btn">Save Profile</button>
+    </form>
+
+    <hr>
+
+    <a href="{% url 'orders_list' %}" class="prof-orders-btn">
+        View Orders
+    </a>
+
+</div>
+{% endblock %}

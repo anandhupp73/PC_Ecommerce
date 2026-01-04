@@ -373,7 +373,7 @@
                 <div style="padding: 8px 12px; color: #aaa; font-size: 14px;">
                     Hello, ${userEmail}
                 </div>
-                <a href="#">Profile</a>
+                <a href="{% url 'profile' %}">Profile</a>
                 <a href="{% url 'account_logout' %}" id="logoutBtn">Logout</a>
                 <a href ="{% url 'orders_list' %}">Orders</a>
             `;

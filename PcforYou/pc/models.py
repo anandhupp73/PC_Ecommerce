@@ -227,18 +227,6 @@ class Order(models.Model):
     def __str__(self):
         return f"Order #{self.id} - {self.user.username}"
 
-# class OrderItem(models.Model):
-#     order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-#     quantity = models.PositiveIntegerField(default=1)
-#     price = models.DecimalField(max_digits=10, decimal_places=2)
-
-#     @property
-#     def total_price(self):
-#         return self.quantity * self.price
-
-#     def __str__(self):
-#         return f"{self.product.name} x {self.quantity}"
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
@@ -260,3 +248,17 @@ class OrderItem(models.Model):
         elif self.prebuilt_pc:
             return f"{self.prebuilt_pc.name} (Prebuilt) x {self.quantity}"
         return "Unknown Item"
+    
+
+class Profile(models.Model):
+    profile_user = models.OneToOneField(User, on_delete=models.CASCADE,related_name="profile")
+    display_name = models.CharField(max_length=100, blank=True)
+    user_phone = models.CharField(max_length=15, blank=True)
+    user_address = models.TextField(blank=True)
+    user_city = models.CharField(max_length=100, blank=True)
+    user_state = models.CharField(max_length=100, blank=True)
+    user_pincode = models.CharField(max_length=10, blank=True)
+    user_image = models.ImageField(upload_to="profiles/", default="profiles/default.png",blank=True,null=True)
+
+    def __str__(self):
+        return self.profile_user.username
