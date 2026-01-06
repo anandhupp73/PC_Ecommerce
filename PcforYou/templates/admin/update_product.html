@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Products</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'admin/add_prod.css'%}">
+</head>
+
+<body>
+
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <div class="card p-4">
+                        <h3 class="mb-3">Update Product</h3>
+
+                          <!-- ✅ Message area -->
+                            {% if messages %}
+                                <div class="mb-3">
+                                    {% for message in messages %}
+                                        <div 
+                                            class="alert 
+                                            {% if message.tags %}
+                                                alert-{{ message.tags }}
+                                            {% else %}
+                                                alert-info
+                                            {% endif %}
+                                            alert-dismissible fade show" 
+                                            role="alert">
+                                            {{ message }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                        <form method="POST" enctype="multipart/form-data" action="{% url 'update_product' product.id %}">
+                            {% csrf_token %}
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Product Name <span class="required">*</span></label>
+                                    <input id="id_name" name="name" required class="form-control"
+                                        placeholder="e.g. Intel Core i9-14900K">
+                                    <div class="form-text form-note">Name will be used to auto-generate slug (you can
+                                        edit slug manually
+                                        below).</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Category <span class="required">*</span></label>
+                                    <select id="id_category" name="category" class="form-select" required>
+                                        <option value="">— Select category —</option>
+                                        {% for c in categories %}
+                                        <option value="{{ c.id }}" data-slug="{{ c.slug|default:'' }}">{{ c.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Slug</label>
+                                    <input id="id_slug" name="slug" class="form-control"
+                                        placeholder="auto-generated-from-name">
+                                    <div class="form-text muted">Lowercase, hyphens only (auto-generated if left blank).
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Price (INR)</label>
+                                    <input name="price" type="number" step="0.01" min="0" class="form-control"
+                                        placeholder="e.g. 89999.00">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Stock quantity</label>
+                                    <input name="stock_quantity" type="number" min="0" class="form-control" value="0">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Available</label>
+                                    <select name="is_available" class="form-select">
+                                        <option value="1" selected>Yes</option>
+                                        <option value="0">No</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Upload image</label>
+                                    <input id="id_image" name="image" type="file" accept="image/*" class="form-control">
+                                </div>
+
+                                <div class="col-12">
+                                    <img id="preview" class="image-preview" src="{% static 'images/no-image.png' %}"
+                                        alt="image preview">
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label">Description</label>
+                                    <textarea name="description" rows="4" class="form-control"
+                                        placeholder="Short description (optional)"></textarea>
+                                </div>
+
+                                <!-- ====== Category-specific details sections ====== -->
+                                <!-- We'll show only the section matching selected category slug -->
+
+                                <!-- CPU -->
+                                <div id="details-cpu" class="details-section">
+                                    <h6>CPU Details</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-3"><label class="form-label">Cores</label><input
+                                                name="core_count" type="number" min="1" class="form-control" required></div>
+                                        <div class="col-md-3"><label class="form-label">Threads</label><input
+                                                name="thread_count" type="number" min="1" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-3"><label class="form-label">Base Clock (GHz)</label><input
+                                                name="base_clock_ghz" step="0.01" class="form-control" required></div>
+                                        <div class="col-md-3"><label class="form-label">Socket</label><input
+                                                name="socket_type" class="form-control" required></div>
+                                    </div>
+                                </div>
+
+                                <!-- GPU -->
+                                <div id="details-gpu" class="details-section">
+                                    <h6>GPU Details</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-3"><label class="form-label">VRAM (GB)</label><input
+                                                name="vram_gb" type="number" min="1" class="form-control"></div>
+                                        <div class="col-md-5"><label class="form-label">Chipset</label><input
+                                                name="chipset" class="form-control"></div>
+                                        <div class="col-md-4"><label class="form-label">Interface</label><input
+                                                name="interface" class="form-control" placeholder="e.g. PCIe 4.0">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- RAM -->
+                                <div id="details-ram" class="details-section">
+                                    <h6>RAM Details</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-3"><label class="form-label">Capacity (GB)</label><input
+                                                name="capacity_gb" type="number" min="1" class="form-control"></div>
+                                        <div class="col-md-3"><label class="form-label">Speed (MHz)</label><input
+                                                name="speed_mhz" type="number" min="1" class="form-control"></div>
+                                        <div class="col-md-3"><label class="form-label">DDR Type</label><input
+                                                name="ddr_type" class="form-control" placeholder="DDR4 / DDR5">
+                                        </div>
+                                        <div class="col-md-3"><label class="form-label">Module Count</label><input
+                                                name="module_count" type="number" min="1" class="form-control"
+                                                value="1"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Storage -->
+                                <div id="details-storage" class="details-section">
+                                    <h6>Storage Details</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-3"><label class="form-label">Capacity (GB)</label><input
+                                                name="capacity_gb" type="number" min="1" class="form-control">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Type</label>
+                                            <select name="storage_type" class="form-select">
+                                                <option value="">— Select —</option>
+                                                <option value="HDD">HDD</option>
+                                                <option value="SSD">SSD</option>
+                                                <option value="NVMe">NVMe</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-5"><label class="form-label">Form Factor</label><input
+                                                name="form_factor" class="form-control"
+                                                placeholder='e.g. 2.5", M.2 2280'></div>
+                                    </div>
+                                </div>
+
+                                <!-- Monitor -->
+                                <div id="details-monitor" class="details-section">
+                                    <h6>Monitor Details</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-3"><label class="form-label">Size (inches)</label><input
+                                                name="size_inch" step="0.1" class="form-control"></div>
+                                        <div class="col-md-4"><label class="form-label">Resolution</label><input
+                                                name="resolution" class="form-control"
+                                                placeholder="e.g. 1920x1080"></div>
+                                        <div class="col-md-3"><label class="form-label">Refresh Rate (Hz)</label><input
+                                                name="refresh_rate_hz" type="number" class="form-control"></div>
+                                        <div class="col-md-2"><label class="form-label">Panel</label><input
+                                                name="panel_type" class="form-control"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Cooling -->
+                                <div id="details-cooling" class="details-section">
+                                    <h6>Cooling Details</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-6"><label class="form-label">Type (Air/Liquid)</label><input
+                                                name="cooling_type" class="form-control"></div>
+                                        <div class="col-md-6"><label class="form-label">Fan Count</label><input
+                                                name="fan_count" type="number" min="0" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Motherboard -->
+                                <div id="details-motherboard" class="details-section">
+                                    <h6>Motherboard Details</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-4"><label class="form-label">Chipset</label><input
+                                                name="chipset" class="form-control"></div>
+                                        <div class="col-md-4"><label class="form-label">Socket</label><input
+                                                name="socket_type" class="form-control"></div>
+                                        <div class="col-md-4"><label class="form-label">Form Factor</label><input
+                                                name="form_factor" class="form-control"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Power Supply -->
+                                <div id="details-powersupply" class="details-section">
+                                    <h6>Power Supply Details</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-4"><label class="form-label">Wattage (W)</label><input
+                                                name="wattage" type="number" class="form-control"></div>
+                                        <div class="col-md-4"><label class="form-label">Efficiency Rating</label><input
+                                                name="efficiency_rating" class="form-control"></div>
+                                        <div class="col-md-4"><label class="form-label">Modular</label>
+                                            <select name="modular" class="form-select">
+                                                <option value="">— Select —</option>
+                                                <option value="Full">Full</option>
+                                                <option value="Semi">Semi</option>
+                                                <option value="Non-modular">Non-modular</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Cabinet -->
+                                <div id="details-cabinet" class="details-section">
+                                    <h6>Cabinet Details</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-6"><label class="form-label">Form Factor</label><input
+                                                name="form_factor" class="form-control"></div>
+                                        <div class="col-md-6"><label class="form-label">Color</label><input
+                                                name="color" class="form-control"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Accessory -->
+                                <div id="details-accessory" class="details-section">
+                                    <h6>Accessory Details</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-4"><label class="form-label">Type</label>
+                                            <select name="accessory_type" class="form-select">
+                                                <option value="">— Select —</option>
+                                                <option>Mouse</option>
+                                                <option>Keyboard</option>
+                                                <option>Headset</option>
+                                                <option>Monitor</option>
+                                                <option>Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4"><label class="form-label">Connection</label><input
+                                                name="connection" class="form-control"></div>
+                                        <div class="col-md-4"><label class="form-label">Color</label><input
+                                                name="color" class="form-control"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="col-12 text-end mt-3">
+                                    <a href="{% url 'view_products' %}" class="btn btn-light me-2">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">Save Product</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+                        // Convert name to slug
+            function slugifyClient(s) {
+                return s.toString().toLowerCase().trim()
+                    .replace(/[\s\W-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+            }
+
+            const nameInput = document.getElementById('id_name');
+            const slugInput = document.getElementById('id_slug');
+            let userEditedSlug = false;
+
+            // Detect manual slug editing
+            slugInput.addEventListener('input', () => userEditedSlug = true);
+
+            // Auto-generate slug
+            nameInput.addEventListener('input', () => {
+                if (!userEditedSlug) slugInput.value = slugifyClient(nameInput.value);
+            });
+
+            // Image preview
+            const fileInput = document.getElementById('id_image');
+            const previewImg = document.getElementById('preview');
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) { 
+                    previewImg.src = "{% static 'images/no-image.png' %}"; 
+                    return; 
+                }
+                const reader = new FileReader();
+                reader.onload = (ev) => previewImg.src = ev.target.result;
+                reader.readAsDataURL(file);
+            });
+
+            // ======================================================================
+            // SHOW / HIDE CATEGORY DETAIL SECTIONS
+            // ======================================================================
+
+            const categorySelect = document.getElementById("id_category");
+
+            // Disable or enable a section's inputs
+            function disableInputs(section, disabled) {
+                section.querySelectorAll("input, select, textarea").forEach(el => {
+                    el.disabled = disabled;
+                });
+            }
+
+            // Hide all category sections
+            function hideAllDetails() {
+                document.querySelectorAll('.details-section').forEach(section => {
+                    section.style.display = 'none';
+                    disableInputs(section, true);
+                });
+            }
+
+            // Show only selected category section
+            function showDetailForSlug(slug) {
+                hideAllDetails();
+
+                const map = {
+                    'processor': 'details-cpu',
+                    'gpu': 'details-gpu',
+                    'graphics-card': 'details-gpu',
+                    'ram': 'details-ram',
+                    'storage': 'details-storage',
+                    'monitor': 'details-monitor',
+                    'cooling': 'details-cooling',
+                    'motherboard': 'details-motherboard',
+                    'power-supply': 'details-powersupply',
+                    'cabinet': 'details-cabinet',
+                    'accessory': 'details-accessory',
+                    'accessories': 'details-accessory'
+                };
+
+                const target = map[slug];
+                if (target) {
+                    const section = document.getElementById(target);
+                    section.style.display = 'block';
+                    disableInputs(section, false);
+                }
+            }
+
+            // When category changes
+            categorySelect.addEventListener('change', () => {
+                const opt = categorySelect.selectedOptions[0];
+                const slug = opt ? (opt.dataset.slug || '').toLowerCase() : '';
+                showDetailForSlug(slug);
+            });
+
+            // On initial page load
+            document.addEventListener('DOMContentLoaded', () => {
+                const opt = categorySelect.selectedOptions[0];
+                const slug = opt ? (opt.dataset.slug || '').toLowerCase() : '';
+                showDetailForSlug(slug);
+            });
+        </script>
+
+    </body>
+
+</html>

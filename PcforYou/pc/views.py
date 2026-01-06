@@ -118,6 +118,90 @@ def add_product(request):
         "categories": categories,
     })
 
+@admin_required
+def update_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    categories = Category.objects.all()
+
+    # Map category slug → (DetailModel, DetailForm)
+    detail_map = {
+        "processor": (CPUDetails, CPUDetailsForm),
+        "graphics-card": (GPUDetails, GPUDetailsForm),
+        "gpu": (GPUDetails, GPUDetailsForm),
+        "ram": (RAMDetails, RAMDetailsForm),
+        "storage": (StorageDetails, StorageDetailsForm),
+        "monitor": (MonitorDetails, MonitorDetailsForm),
+        "cooling": (CoolingDetails, CoolingDetailsForm),
+        "motherboard": (MotherboardDetails, MotherboardDetailsForm),
+        "power-supply": (PowerSupplyDetails, PowerSupplyDetailsForm),
+        "cabinet": (CabinetDetails, CabinetDetailsForm),
+        "accessory": (AccessoryDetails, AccessoryDetailsForm),
+        "accessories": (AccessoryDetails, AccessoryDetailsForm),
+    }
+
+    cat_slug = product.category.slug.lower()
+    detail_instance = None
+    detail_form = None
+
+    if cat_slug in detail_map:
+        DetailModel, DetailForm = detail_map[cat_slug]
+        detail_instance = DetailModel.objects.filter(product=product).first()
+
+    if request.method == "POST":
+        product_form = ProductForm(
+            request.POST,
+            request.FILES,
+            instance=product
+        )
+
+        if product_form.is_valid():
+            product = product_form.save()
+
+            if cat_slug in detail_map:
+                DetailModel, DetailForm = detail_map[cat_slug]
+
+                detail_form = DetailForm(
+                    request.POST,
+                    instance=detail_instance
+                )
+
+                if detail_form.is_valid():
+                    detail = detail_form.save(commit=False)
+                    detail.product = product
+                    detail.save()
+                else:
+                    print(detail_form.errors)
+
+            messages.success(request, "✅ Product updated successfully!")
+            return redirect("view_products")
+        else:
+            messages.error(request, "⚠️ Please fix the errors below.")
+    else:
+        product_form = ProductForm(instance=product)
+        if detail_instance:
+            detail_form = detail_map[cat_slug][1](instance=detail_instance)
+
+    return render(request, "admin/update_product.html", {
+        "product": product,
+        "product_form": product_form,
+        "detail_form": detail_form,
+        "categories": categories,
+    })
+
+@admin_required
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == "POST":
+        product.delete()  # cascades detail models
+        messages.success(request, "🗑️ Product deleted successfully.")
+        return redirect("view_products")
+
+    return render(request, "admin/delete_product_confirm.html", {
+        "product": product
+    })
+
+
 # ----------for users ----------
 def prebuilt_list(request):
     prebuilts = PrebuiltPC.objects.all().order_by('-created_at')

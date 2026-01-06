@@ -48,8 +48,17 @@
 					{% endif %}
 				</td>
 				<td class="dropdown">
-					<a href="#" class="edit-btn" style="padding: 5px;"><i class="fa-solid fa-pen"></i></a>
-					<a href="#" class="delete-btn" style="padding: 5px; color: red;"><i class="fa-solid fa-trash"></i></a>
+					<a href="{% url 'update_product' product.id %}" class="edit-btn" title="Edit" style="padding: 5px;"><i class="fa-solid fa-pen"></i></a>
+					<a href="#" class="delete-btn" style="padding: 5px; color: red;" title="Delete"
+						onclick="confirmDelete({{ product.id }}); return false;">
+						<i class="fa-solid fa-trash"></i>
+					</a>
+
+					<form id="delete-form-{{ product.id }}" 
+						action="{% url 'delete_product' product.id %}" 
+						method="POST" style="display: none;">
+						{% csrf_token %}
+					</form>
 				</td>
 			</tr>
 			{% empty %}
@@ -60,4 +69,17 @@
 		</tbody>
 	</table>
 </div>
+
+<script>
+function confirmDelete(productId) {
+    // Show a Yes / No popup
+    if (confirm("Do you really want to delete this product?")) {
+        // If user clicks Yes, submit the hidden form
+        document.getElementById(`delete-form-${productId}`).submit();
+    }
+    // If user clicks No, do nothing
+}
+</script>
+
+
 {% endblock %}
