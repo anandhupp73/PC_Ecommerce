@@ -120,10 +120,10 @@ def add_product(request):
 
 @admin_required
 def update_product(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = get_object_or_404(Product, pk=product_id)
     categories = Category.objects.all()
 
-    # Map category slug → (DetailModel, DetailForm)
+    # Map category slug → (Model, Form)
     detail_map = {
         "processor": (CPUDetails, CPUDetailsForm),
         "graphics-card": (GPUDetails, GPUDetailsForm),
@@ -144,8 +144,8 @@ def update_product(request, product_id):
     detail_form = None
 
     if cat_slug in detail_map:
-        DetailModel, DetailForm = detail_map[cat_slug]
-        detail_instance = DetailModel.objects.filter(product=product).first()
+        model, form_class = detail_map[cat_slug]
+        detail_instance = model.objects.filter(product=product).first()
 
     if request.method == "POST":
         product_form = ProductForm(
@@ -157,10 +157,14 @@ def update_product(request, product_id):
         if product_form.is_valid():
             product = product_form.save()
 
-            if cat_slug in detail_map:
-                DetailModel, DetailForm = detail_map[cat_slug]
+            cat_slug = product.category.slug.lower()
 
-                detail_form = DetailForm(
+            if cat_slug in detail_map:
+                model, form_class = detail_map[cat_slug]
+
+                detail_instance = model.objects.filter(product=product).first()
+
+                detail_form = form_class(
                     request.POST,
                     instance=detail_instance
                 )
@@ -172,14 +176,17 @@ def update_product(request, product_id):
                 else:
                     print(detail_form.errors)
 
-            messages.success(request, "✅ Product updated successfully!")
+            messages.success(request, "✅ Product updated successfully")
             return redirect("view_products")
         else:
-            messages.error(request, "⚠️ Please fix the errors below.")
+            messages.error(request, "⚠️ Please fix the errors below")
+
     else:
         product_form = ProductForm(instance=product)
-        if detail_instance:
-            detail_form = detail_map[cat_slug][1](instance=detail_instance)
+
+        if cat_slug in detail_map and detail_instance:
+            model, form_class = detail_map[cat_slug]
+            detail_form = form_class(instance=detail_instance)
 
     return render(request, "admin/update_product.html", {
         "product": product,
@@ -187,6 +194,7 @@ def update_product(request, product_id):
         "detail_form": detail_form,
         "categories": categories,
     })
+
 
 @admin_required
 def delete_product(request, product_id):

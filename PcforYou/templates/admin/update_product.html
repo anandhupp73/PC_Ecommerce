@@ -3,385 +3,383 @@
 
 <head>
     <meta charset="UTF-8">
+    <title>Update Product</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Products</title>
+
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'admin/add_prod.css'%}">
+    <link rel="stylesheet" href="{% static 'admin/add_prod.css' %}">
 </head>
 
 <body>
 
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-9">
-                    <div class="card p-4">
-                        <h3 class="mb-3">Update Product</h3>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card p-4">
 
-                          <!-- ✅ Message area -->
-                            {% if messages %}
-                                <div class="mb-3">
-                                    {% for message in messages %}
-                                        <div 
-                                            class="alert 
-                                            {% if message.tags %}
-                                                alert-{{ message.tags }}
-                                            {% else %}
-                                                alert-info
-                                            {% endif %}
-                                            alert-dismissible fade show" 
-                                            role="alert">
-                                            {{ message }}
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                    {% endfor %}
+                <h3 class="mb-3">Update Product</h3>
+
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                    {{ message }}
+                    <button class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <form method="POST" enctype="multipart/form-data" action="{% url 'update_product' product.id %}">
+                    {% csrf_token %}
+                    <div class="row g-3">
+
+                        <!-- ================= BASIC INFO ================= -->
+                        <div class="col-md-6">
+                            <label class="form-label">Product Name</label>
+                            <input id="id_name" name="name" class="form-control" value="{{ product.name }}" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Product Slug</label>
+                            <input id="id_product_slug" name="slug" class="form-control"
+                                   value="{{ product.slug|default:product.name|slugify }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Category</label>
+                            <select id="id_category" name="category" class="form-select" required>
+                                {% for c in categories %}
+                                <option value="{{ c.id }}" data-slug="{{ c.slug|default:c.name|slugify }}"
+                                    {% if product.category.id == c.id %}selected{% endif %}>
+                                    {{ c.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Price (₹)</label>
+                            <input name="price" type="number" step="0.01" value="{{ product.price }}" class="form-control">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Stock</label>
+                            <input name="stock_quantity" type="number" value="{{ product.stock_quantity }}" class="form-control">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Available</label>
+                            <select name="is_available" class="form-select">
+                                <option value="1" {% if product.is_available %}selected{% endif %}>Yes</option>
+                                <option value="0" {% if not product.is_available %}selected{% endif %}>No</option>
+                            </select>
+                        </div>
+
+                        <!-- IMAGE -->
+                        <div class="col-md-6">
+                            <label class="form-label">Change Image</label>
+                            <input id="id_image" name="image" type="file" class="form-control">
+                        </div>
+
+                        <div class="col-md-6">
+                            <img id="preview" class="image-preview"
+                                 src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/no-image.png' %}{% endif %}">
+                        </div>
+
+                        <!-- DESCRIPTION -->
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" rows="4" class="form-control">{{ product.description }}</textarea>
+                        </div>
+
+                        <!-- ================= CPU ================= -->
+                        <div id="details-cpu" class="details-section">
+                            <h6>CPU Details</h6>
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <input name="core_count" class="form-control"
+                                           value="{{ product.cpu_details.core_count|default:'' }}" placeholder="Cores">
                                 </div>
-                            {% endif %}
-
-                        <form method="POST" enctype="multipart/form-data" action="{% url 'update_product' product.id %}">
-                            {% csrf_token %}
-
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Product Name <span class="required">*</span></label>
-                                    <input id="id_name" name="name" required class="form-control"
-                                        placeholder="e.g. Intel Core i9-14900K">
-                                    <div class="form-text form-note">Name will be used to auto-generate slug (you can
-                                        edit slug manually
-                                        below).</div>
+                                <div class="col-md-3">
+                                    <input name="thread_count" class="form-control"
+                                           value="{{ product.cpu_details.thread_count|default:'' }}" placeholder="Threads">
                                 </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label">Category <span class="required">*</span></label>
-                                    <select id="id_category" name="category" class="form-select" required>
-                                        <option value="">— Select category —</option>
-                                        {% for c in categories %}
-                                        <option value="{{ c.id }}" data-slug="{{ c.slug|default:'' }}">{{ c.name }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
+                                <div class="col-md-3">
+                                    <input name="base_clock_ghz" class="form-control"
+                                           value="{{ product.cpu_details.base_clock_ghz|default:'' }}" placeholder="Base Clock">
                                 </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label">Slug</label>
-                                    <input id="id_slug" name="slug" class="form-control"
-                                        placeholder="auto-generated-from-name">
-                                    <div class="form-text muted">Lowercase, hyphens only (auto-generated if left blank).
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label">Price (INR)</label>
-                                    <input name="price" type="number" step="0.01" min="0" class="form-control"
-                                        placeholder="e.g. 89999.00">
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">Stock quantity</label>
-                                    <input name="stock_quantity" type="number" min="0" class="form-control" value="0">
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">Available</label>
-                                    <select name="is_available" class="form-select">
-                                        <option value="1" selected>Yes</option>
-                                        <option value="0">No</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">Upload image</label>
-                                    <input id="id_image" name="image" type="file" accept="image/*" class="form-control">
-                                </div>
-
-                                <div class="col-12">
-                                    <img id="preview" class="image-preview" src="{% static 'images/no-image.png' %}"
-                                        alt="image preview">
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label">Description</label>
-                                    <textarea name="description" rows="4" class="form-control"
-                                        placeholder="Short description (optional)"></textarea>
-                                </div>
-
-                                <!-- ====== Category-specific details sections ====== -->
-                                <!-- We'll show only the section matching selected category slug -->
-
-                                <!-- CPU -->
-                                <div id="details-cpu" class="details-section">
-                                    <h6>CPU Details</h6>
-                                    <div class="row g-2">
-                                        <div class="col-md-3"><label class="form-label">Cores</label><input
-                                                name="core_count" type="number" min="1" class="form-control" required></div>
-                                        <div class="col-md-3"><label class="form-label">Threads</label><input
-                                                name="thread_count" type="number" min="1" class="form-control" required>
-                                        </div>
-                                        <div class="col-md-3"><label class="form-label">Base Clock (GHz)</label><input
-                                                name="base_clock_ghz" step="0.01" class="form-control" required></div>
-                                        <div class="col-md-3"><label class="form-label">Socket</label><input
-                                                name="socket_type" class="form-control" required></div>
-                                    </div>
-                                </div>
-
-                                <!-- GPU -->
-                                <div id="details-gpu" class="details-section">
-                                    <h6>GPU Details</h6>
-                                    <div class="row g-2">
-                                        <div class="col-md-3"><label class="form-label">VRAM (GB)</label><input
-                                                name="vram_gb" type="number" min="1" class="form-control"></div>
-                                        <div class="col-md-5"><label class="form-label">Chipset</label><input
-                                                name="chipset" class="form-control"></div>
-                                        <div class="col-md-4"><label class="form-label">Interface</label><input
-                                                name="interface" class="form-control" placeholder="e.g. PCIe 4.0">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- RAM -->
-                                <div id="details-ram" class="details-section">
-                                    <h6>RAM Details</h6>
-                                    <div class="row g-2">
-                                        <div class="col-md-3"><label class="form-label">Capacity (GB)</label><input
-                                                name="capacity_gb" type="number" min="1" class="form-control"></div>
-                                        <div class="col-md-3"><label class="form-label">Speed (MHz)</label><input
-                                                name="speed_mhz" type="number" min="1" class="form-control"></div>
-                                        <div class="col-md-3"><label class="form-label">DDR Type</label><input
-                                                name="ddr_type" class="form-control" placeholder="DDR4 / DDR5">
-                                        </div>
-                                        <div class="col-md-3"><label class="form-label">Module Count</label><input
-                                                name="module_count" type="number" min="1" class="form-control"
-                                                value="1"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Storage -->
-                                <div id="details-storage" class="details-section">
-                                    <h6>Storage Details</h6>
-                                    <div class="row g-2">
-                                        <div class="col-md-3"><label class="form-label">Capacity (GB)</label><input
-                                                name="capacity_gb" type="number" min="1" class="form-control">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Type</label>
-                                            <select name="storage_type" class="form-select">
-                                                <option value="">— Select —</option>
-                                                <option value="HDD">HDD</option>
-                                                <option value="SSD">SSD</option>
-                                                <option value="NVMe">NVMe</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-5"><label class="form-label">Form Factor</label><input
-                                                name="form_factor" class="form-control"
-                                                placeholder='e.g. 2.5", M.2 2280'></div>
-                                    </div>
-                                </div>
-
-                                <!-- Monitor -->
-                                <div id="details-monitor" class="details-section">
-                                    <h6>Monitor Details</h6>
-                                    <div class="row g-2">
-                                        <div class="col-md-3"><label class="form-label">Size (inches)</label><input
-                                                name="size_inch" step="0.1" class="form-control"></div>
-                                        <div class="col-md-4"><label class="form-label">Resolution</label><input
-                                                name="resolution" class="form-control"
-                                                placeholder="e.g. 1920x1080"></div>
-                                        <div class="col-md-3"><label class="form-label">Refresh Rate (Hz)</label><input
-                                                name="refresh_rate_hz" type="number" class="form-control"></div>
-                                        <div class="col-md-2"><label class="form-label">Panel</label><input
-                                                name="panel_type" class="form-control"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Cooling -->
-                                <div id="details-cooling" class="details-section">
-                                    <h6>Cooling Details</h6>
-                                    <div class="row g-2">
-                                        <div class="col-md-6"><label class="form-label">Type (Air/Liquid)</label><input
-                                                name="cooling_type" class="form-control"></div>
-                                        <div class="col-md-6"><label class="form-label">Fan Count</label><input
-                                                name="fan_count" type="number" min="0" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Motherboard -->
-                                <div id="details-motherboard" class="details-section">
-                                    <h6>Motherboard Details</h6>
-                                    <div class="row g-2">
-                                        <div class="col-md-4"><label class="form-label">Chipset</label><input
-                                                name="chipset" class="form-control"></div>
-                                        <div class="col-md-4"><label class="form-label">Socket</label><input
-                                                name="socket_type" class="form-control"></div>
-                                        <div class="col-md-4"><label class="form-label">Form Factor</label><input
-                                                name="form_factor" class="form-control"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Power Supply -->
-                                <div id="details-powersupply" class="details-section">
-                                    <h6>Power Supply Details</h6>
-                                    <div class="row g-2">
-                                        <div class="col-md-4"><label class="form-label">Wattage (W)</label><input
-                                                name="wattage" type="number" class="form-control"></div>
-                                        <div class="col-md-4"><label class="form-label">Efficiency Rating</label><input
-                                                name="efficiency_rating" class="form-control"></div>
-                                        <div class="col-md-4"><label class="form-label">Modular</label>
-                                            <select name="modular" class="form-select">
-                                                <option value="">— Select —</option>
-                                                <option value="Full">Full</option>
-                                                <option value="Semi">Semi</option>
-                                                <option value="Non-modular">Non-modular</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Cabinet -->
-                                <div id="details-cabinet" class="details-section">
-                                    <h6>Cabinet Details</h6>
-                                    <div class="row g-2">
-                                        <div class="col-md-6"><label class="form-label">Form Factor</label><input
-                                                name="form_factor" class="form-control"></div>
-                                        <div class="col-md-6"><label class="form-label">Color</label><input
-                                                name="color" class="form-control"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Accessory -->
-                                <div id="details-accessory" class="details-section">
-                                    <h6>Accessory Details</h6>
-                                    <div class="row g-2">
-                                        <div class="col-md-4"><label class="form-label">Type</label>
-                                            <select name="accessory_type" class="form-select">
-                                                <option value="">— Select —</option>
-                                                <option>Mouse</option>
-                                                <option>Keyboard</option>
-                                                <option>Headset</option>
-                                                <option>Monitor</option>
-                                                <option>Other</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4"><label class="form-label">Connection</label><input
-                                                name="connection" class="form-control"></div>
-                                        <div class="col-md-4"><label class="form-label">Color</label><input
-                                                name="color" class="form-control"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Submit -->
-                                <div class="col-12 text-end mt-3">
-                                    <a href="{% url 'view_products' %}" class="btn btn-light me-2">Cancel</a>
-                                    <button type="submit" class="btn btn-primary">Save Product</button>
+                                <div class="col-md-3">
+                                    <input name="socket_type" class="form-control"
+                                           value="{{ product.cpu_details.socket_type|default:'' }}" placeholder="Socket">
                                 </div>
                             </div>
-                        </form>
+                        </div>
+
+                        <!-- ================= GPU ================= -->
+                        <div id="details-gpu" class="details-section">
+                            <h6>GPU Details</h6>
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <input name="vram_gb" class="form-control"
+                                           value="{{ product.gpu_details.vram_gb|default:'' }}" placeholder="VRAM (GB)">
+                                </div>
+                                <div class="col-md-5">
+                                    <input name="chipset" class="form-control"
+                                           value="{{ product.gpu_details.chipset|default:'' }}" placeholder="Chipset">
+                                </div>
+                                <div class="col-md-4">
+                                    <input name="interface" class="form-control"
+                                           value="{{ product.gpu_details.interface|default:'' }}" placeholder="Interface">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= RAM ================= -->
+                        <div id="details-ram" class="details-section">
+                            <h6>RAM Details</h6>
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <input name="capacity_gb" class="form-control"
+                                           value="{{ product.ram_details.capacity_gb|default:'' }}" placeholder="Capacity (GB)">
+                                </div>
+                                <div class="col-md-3">
+                                    <input name="speed_mhz" class="form-control"
+                                           value="{{ product.ram_details.speed_mhz|default:'' }}" placeholder="Speed (MHz)">
+                                </div>
+                                <div class="col-md-3">
+                                    <input name="ddr_type" class="form-control"
+                                           value="{{ product.ram_details.ddr_type|default:'' }}" placeholder="DDR Type">
+                                </div>
+                                <div class="col-md-3">
+                                    <input name="module_count" class="form-control"
+                                           value="{{ product.ram_details.module_count|default:1 }}" placeholder="Modules">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= STORAGE ================= -->
+                        <div id="details-storage" class="details-section">
+                            <h6>Storage Details</h6>
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <input name="capacity_gb" class="form-control"
+                                           value="{{ product.storage_details.capacity_gb|default:'' }}" placeholder="Capacity (GB)">
+                                </div>
+                                <div class="col-md-4">
+                                    <select name="storage_type" class="form-select">
+                                        <option value="">— Select —</option>
+                                        <option value="HDD" {% if product.storage_details.storage_type == "HDD" %}selected{% endif %}>HDD</option>
+                                        <option value="SSD" {% if product.storage_details.storage_type == "SSD" %}selected{% endif %}>SSD</option>
+                                        <option value="NVMe" {% if product.storage_details.storage_type == "NVMe" %}selected{% endif %}>NVMe</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-5">
+                                    <input name="form_factor" class="form-control"
+                                           value="{{ product.storage_details.form_factor|default:'' }}" placeholder="Form Factor">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= MONITOR ================= -->
+                        <div id="details-monitor" class="details-section">
+                            <h6>Monitor Details</h6>
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <input name="size_inch" class="form-control"
+                                           value="{{ product.monitor_details.size_inch|default:'' }}" placeholder="Size (inch)">
+                                </div>
+                                <div class="col-md-4">
+                                    <input name="resolution" class="form-control"
+                                           value="{{ product.monitor_details.resolution|default:'' }}" placeholder="Resolution">
+                                </div>
+                                <div class="col-md-3">
+                                    <input name="refresh_rate_hz" class="form-control"
+                                           value="{{ product.monitor_details.refresh_rate_hz|default:'' }}" placeholder="Refresh Rate">
+                                </div>
+                                <div class="col-md-2">
+                                    <input name="panel_type" class="form-control"
+                                           value="{{ product.monitor_details.panel_type|default:'' }}" placeholder="Panel">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= COOLING ================= -->
+                        <div id="details-cooling" class="details-section">
+                            <h6>Cooling Details</h6>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <input name="cooling_type" class="form-control"
+                                           value="{{ product.cooling_details.cooling_type|default:'' }}" placeholder="Air / Liquid">
+                                </div>
+                                <div class="col-md-6">
+                                    <input name="fan_count" class="form-control"
+                                           value="{{ product.cooling_details.fan_count|default:'' }}" placeholder="Fan Count">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= MOTHERBOARD ================= -->
+                        <div id="details-motherboard" class="details-section">
+                            <h6>Motherboard Details</h6>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <input name="chipset" class="form-control"
+                                           value="{{ product.motherboard_details.chipset|default:'' }}" placeholder="Chipset">
+                                </div>
+                                <div class="col-md-4">
+                                    <input name="socket_type" class="form-control"
+                                           value="{{ product.motherboard_details.socket_type|default:'' }}" placeholder="Socket">
+                                </div>
+                                <div class="col-md-4">
+                                    <input name="form_factor" class="form-control"
+                                           value="{{ product.motherboard_details.form_factor|default:'' }}" placeholder="Form Factor">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= POWER SUPPLY ================= -->
+                        <div id="details-powersupply" class="details-section">
+                            <h6>Power Supply Details</h6>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <input name="wattage" class="form-control"
+                                           value="{{ product.powersupply_details.wattage|default:'' }}" placeholder="Wattage">
+                                </div>
+                                <div class="col-md-4">
+                                    <input name="efficiency_rating" class="form-control"
+                                           value="{{ product.powersupply_details.efficiency_rating|default:'' }}" placeholder="Efficiency">
+                                </div>
+                                <div class="col-md-4">
+                                    <select name="modular" class="form-select">
+                                        <option value="">— Select —</option>
+                                        <option value="Full" {% if product.powersupply_details.modular == "Full" %}selected{% endif %}>Full</option>
+                                        <option value="Semi" {% if product.powersupply_details.modular == "Semi" %}selected{% endif %}>Semi</option>
+                                        <option value="Non-modular" {% if product.powersupply_details.modular == "Non-modular" %}selected{% endif %}>Non-modular</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= CABINET ================= -->
+                        <div id="details-cabinet" class="details-section">
+                            <h6>Cabinet Details</h6>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <input name="form_factor" class="form-control"
+                                           value="{{ product.cabinet_details.form_factor|default:'' }}" placeholder="Form Factor">
+                                </div>
+                                <div class="col-md-6">
+                                    <input name="color" class="form-control"
+                                           value="{{ product.cabinet_details.color|default:'' }}" placeholder="Color">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= ACCESSORY ================= -->
+                        <div id="details-accessory" class="details-section">
+                            <h6>Accessory Details</h6>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <select name="accessory_type" class="form-select">
+                                        <option value="">— Select —</option>
+                                        <option value="Mouse" {% if product.accessory_details.accessory_type == "Mouse" %}selected{% endif %}>Mouse</option>
+                                        <option value="Keyboard" {% if product.accessory_details.accessory_type == "Keyboard" %}selected{% endif %}>Keyboard</option>
+                                        <option value="Headset" {% if product.accessory_details.accessory_type == "Headset" %}selected{% endif %}>Headset</option>
+                                        <option value="Other" {% if product.accessory_details.accessory_type == "Other" %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input name="connection" class="form-control"
+                                           value="{{ product.accessory_details.connection|default:'' }}" placeholder="Connection">
+                                </div>
+                                <div class="col-md-4">
+                                    <input name="color" class="form-control"
+                                           value="{{ product.accessory_details.color|default:'' }}" placeholder="Color">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= ACTION BUTTONS ================= -->
+                        <div class="col-12 text-end mt-3">
+                            <a href="{% url 'view_products' %}" class="btn btn-light me-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">Update Product</button>
+                        </div>
 
                     </div>
-                </div>
+                </form>
+
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-                        // Convert name to slug
-            function slugifyClient(s) {
-                return s.toString().toLowerCase().trim()
-                    .replace(/[\s\W-]+/g, '-')
-                    .replace(/^-+|-+$/g, '');
-            }
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-            const nameInput = document.getElementById('id_name');
-            const slugInput = document.getElementById('id_slug');
-            let userEditedSlug = false;
+<script>
+    const categorySelect = document.getElementById("id_category");
 
-            // Detect manual slug editing
-            slugInput.addEventListener('input', () => userEditedSlug = true);
+    function disableInputs(section, disabled) {
+        section.querySelectorAll("input, select, textarea").forEach(el => el.disabled = disabled);
+    }
 
-            // Auto-generate slug
-            nameInput.addEventListener('input', () => {
-                if (!userEditedSlug) slugInput.value = slugifyClient(nameInput.value);
-            });
+    function hideAllDetails() {
+        document.querySelectorAll('.details-section').forEach(section => {
+            section.style.display = 'none';
+            disableInputs(section, true);
+        });
+    }
 
-            // Image preview
-            const fileInput = document.getElementById('id_image');
-            const previewImg = document.getElementById('preview');
+    function showDetailForSlug(slug) {
+        hideAllDetails();
+        const map = {
+            'processor': 'details-cpu',
+            'gpu': 'details-gpu',
+            'graphics-card': 'details-gpu',
+            'ram': 'details-ram',
+            'storage': 'details-storage',
+            'monitor': 'details-monitor',
+            'cooling': 'details-cooling',
+            'motherboard': 'details-motherboard',
+            'power-supply': 'details-powersupply',
+            'cabinet': 'details-cabinet',
+            'accessory': 'details-accessory',
+            'accessories': 'details-accessory'
+        };
+        if (map[slug]) {
+            const section = document.getElementById(map[slug]);
+            section.style.display = 'block';
+            disableInputs(section, false);
+        }
+    }
 
-            fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) { 
-                    previewImg.src = "{% static 'images/no-image.png' %}"; 
-                    return; 
-                }
-                const reader = new FileReader();
-                reader.onload = (ev) => previewImg.src = ev.target.result;
-                reader.readAsDataURL(file);
-            });
+    // Update product slug as user types name
+    document.getElementById('id_name').addEventListener('input', e => {
+        const name = e.target.value;
+        document.getElementById('id_product_slug').value = name.toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w-]+/g, '');
+    });
 
-            // ======================================================================
-            // SHOW / HIDE CATEGORY DETAIL SECTIONS
-            // ======================================================================
+    // Show details based on selected category
+    categorySelect.addEventListener('change', () => {
+        const slug = categorySelect.selectedOptions[0].dataset.slug.toLowerCase();
+        showDetailForSlug(slug);
+    });
 
-            const categorySelect = document.getElementById("id_category");
+    document.addEventListener('DOMContentLoaded', () => {
+        const slug = categorySelect.selectedOptions[0].dataset.slug.toLowerCase();
+        showDetailForSlug(slug);
+    });
 
-            // Disable or enable a section's inputs
-            function disableInputs(section, disabled) {
-                section.querySelectorAll("input, select, textarea").forEach(el => {
-                    el.disabled = disabled;
-                });
-            }
+    // Image preview
+    document.getElementById('id_image').addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => document.getElementById('preview').src = ev.target.result;
+        reader.readAsDataURL(file);
+    });
+</script>
 
-            // Hide all category sections
-            function hideAllDetails() {
-                document.querySelectorAll('.details-section').forEach(section => {
-                    section.style.display = 'none';
-                    disableInputs(section, true);
-                });
-            }
-
-            // Show only selected category section
-            function showDetailForSlug(slug) {
-                hideAllDetails();
-
-                const map = {
-                    'processor': 'details-cpu',
-                    'gpu': 'details-gpu',
-                    'graphics-card': 'details-gpu',
-                    'ram': 'details-ram',
-                    'storage': 'details-storage',
-                    'monitor': 'details-monitor',
-                    'cooling': 'details-cooling',
-                    'motherboard': 'details-motherboard',
-                    'power-supply': 'details-powersupply',
-                    'cabinet': 'details-cabinet',
-                    'accessory': 'details-accessory',
-                    'accessories': 'details-accessory'
-                };
-
-                const target = map[slug];
-                if (target) {
-                    const section = document.getElementById(target);
-                    section.style.display = 'block';
-                    disableInputs(section, false);
-                }
-            }
-
-            // When category changes
-            categorySelect.addEventListener('change', () => {
-                const opt = categorySelect.selectedOptions[0];
-                const slug = opt ? (opt.dataset.slug || '').toLowerCase() : '';
-                showDetailForSlug(slug);
-            });
-
-            // On initial page load
-            document.addEventListener('DOMContentLoaded', () => {
-                const opt = categorySelect.selectedOptions[0];
-                const slug = opt ? (opt.dataset.slug || '').toLowerCase() : '';
-                showDetailForSlug(slug);
-            });
-        </script>
-
-    </body>
-
+</body>
 </html>
