@@ -1,4 +1,6 @@
 {% extends "admin/admin_dashboard.html" %} 
+{% load tz %}
+
 
 {% block title %}Admin Order Management{% endblock %}
 
@@ -25,11 +27,39 @@
             <tr>
                 <td><span class="order-id">#{{ order.id }}</span></td>
 
-                <td><span class="customer-name">{{ order.user }}</span></td>
+                {% comment %} <td><span class="customer-name">{{ order.user }}</span></td> {% endcomment %}
+
+                <td>
+                    <div class="customer-name">
+                        {% comment %} <strong>{{ order.user.profile.display_name|default:order.user.username }}</strong> {% endcomment %}
+                    </div>
+
+                    <div style="font-size: 13px; color: #9ca3af; margin-top: 4px;">
+                        {{ order.address|linebreaksbr }}
+                    </div>
+
+                    <div style="margin-top: 6px; font-size: 13px;">
+                        <strong>Products:</strong>
+                        <ul style="margin: 4px 0 0 16px; padding: 0;">
+                            {% for item in order.items.all %}
+                                <li>
+                                    {% if item.product %}
+                                        {{ item.product.name }}
+                                    {% elif item.prebuilt_pc %}
+                                        {{ item.prebuilt_pc.name }}
+                                    {% endif %}
+                                    × {{ item.quantity }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </td>
 
                 <td><span class="order-total">${{ order.total_amount }}</span></td>
 
+                {% localtime on %}
                 <td><span class="order-date">{{ order.created_at|date:"Y-m-d H:i" }}</span></td>
+                {% endlocaltime %}
 
                 <td>
                     <span class="status-badge status-{{ order.status }}">

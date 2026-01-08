@@ -176,7 +176,7 @@ def update_product(request, product_id):
                 else:
                     print(detail_form.errors)
 
-            messages.success(request, "✅ Product updated successfully")
+            # messages.success(request, "✅ Product updated successfully")
             return redirect("view_products")
         else:
             messages.error(request, "⚠️ Please fix the errors below")
@@ -651,14 +651,29 @@ def remove_from_cart(request, cart_id):
     item.delete()
     return redirect("cart")
 
-
 @login_required
 def checkout_cart(request, product_id=None):
-    # BUY NOW MODE
-    if product_id:
-        product = Product.objects.get(id=product_id)
+    # ==========================
+    # GET PROFILE (READ ONLY)
+    # ==========================
+    profile = getattr(request.user, "profile", None)
 
-        # Create a fake cart-like object to reuse code
+    # Prefill checkout fields from profile
+    checkout_data = {
+        "full_name": profile.display_name if profile else "",
+        "phone": profile.user_phone if profile else "",
+        "address": profile.user_address if profile else "",
+        "city": profile.user_city if profile else "",
+        "state": profile.user_state if profile else "",
+        "pincode": profile.user_pincode if profile else "",
+    }
+
+    # ==========================
+    # BUY NOW MODE
+    # ==========================
+    if product_id:
+        product = get_object_or_404(Product, id=product_id)
+
         class TempItem:
             def __init__(self, product):
                 self.product = product
@@ -667,28 +682,49 @@ def checkout_cart(request, product_id=None):
 
         cart_items = [TempItem(product)]
 
+    # ==========================
+    # CART MODE
+    # ==========================
     else:
-        # NORMAL CART MODE
         cart_items = list(Cart.objects.filter(user=request.user))
         if not cart_items:
-            return redirect('cart')
+            return redirect("cart")
 
-    # --- PRICE CALCULATIONS ---
+    # ==========================
+    # PRICE CALCULATION
+    # ==========================
     subtotal = sum(item.total_price for item in cart_items)
-    shipping = Decimal('30') if subtotal > 0 else Decimal('0.00')
-    estimated_tax = (subtotal * Decimal('0.08')).quantize(Decimal('0.01'))
+    shipping = Decimal("30.00") if subtotal > 0 else Decimal("0.00")
+    estimated_tax = (subtotal * Decimal("0.08")).quantize(Decimal("0.01"))
     total = subtotal + shipping + estimated_tax
 
-    # --- HANDLE ORDER SUBMISSION ---
+    # ==========================
+    # ORDER SUBMIT
+    # ==========================
     if request.method == "POST":
-        address = request.POST.get('address')
+        full_name = request.POST.get("full_name", "").strip()
+        phone = request.POST.get("phone", "").strip()
+        address_line = request.POST.get("address", "").strip()
+        city = request.POST.get("city", "").strip()
+        state = request.POST.get("state", "").strip()
+        pincode = request.POST.get("pincode", "").strip()
+        payment_method = request.POST.get("payment", "cod")
 
+        # 🔥 Combine into ONE snapshot address
+        combined_address = f"""{full_name}
+        {address_line}
+        {city}, {state} - {pincode}
+        Phone: {phone}
+        Payment: {payment_method.upper()}""".strip()
+
+        # Create Order
         order = Order.objects.create(
             user=request.user,
             total_amount=total,
-            address=address
+            address=combined_address
         )
 
+        # Create Order Items
         for item in cart_items:
             OrderItem.objects.create(
                 order=order,
@@ -697,50 +733,85 @@ def checkout_cart(request, product_id=None):
                 price=item.product.price
             )
 
-        # Clear cart only if it was a CART checkout
+        # Clear cart only for cart checkout
         if not product_id:
             Cart.objects.filter(user=request.user).delete()
 
-        return redirect('order_detail', order_id=order.id)
+        return redirect("order_detail", order_id=order.id)
 
-    return render(request, 'users/checkout_cart.html', {
-        'cart_items': cart_items,
-        'subtotal': subtotal,
-        'shipping': shipping,
-        'estimated_tax': estimated_tax,
-        'total': total
+    # ==========================
+    # RENDER CHECKOUT
+    # ==========================
+    return render(request, "users/checkout_cart.html", {
+        "cart_items": cart_items,
+        "subtotal": subtotal,
+        "shipping": shipping,
+        "estimated_tax": estimated_tax,
+        "total": total,
+        "checkout_data": checkout_data,
     })
 
 @login_required
 def buy_prebuilt(request, pc_id):
-    prebuilt = PrebuiltPC.objects.get(id=pc_id)
+    prebuilt = get_object_or_404(PrebuiltPC, id=pc_id)
 
-    # Fake cart-like item
+    # ==========================
+    # FAKE CART ITEM
+    # ==========================
     class TempItem:
         def __init__(self, pc):
-            self.product = pc  # reusing product variable name in template
+            self.product = pc   # reused in template
             self.quantity = 1
             self.total_price = pc.price
 
     cart_items = [TempItem(prebuilt)]
 
-    # Price calculation
+    # ==========================
+    # PRICE CALCULATION
+    # ==========================
     subtotal = prebuilt.price
-    shipping = Decimal('30') if subtotal > 0 else Decimal('0.00')
-    estimated_tax = (subtotal * Decimal('0.08')).quantize(Decimal('0.01'))
+    shipping = Decimal("30.00") if subtotal > 0 else Decimal("0.00")
+    estimated_tax = (subtotal * Decimal("0.08")).quantize(Decimal("0.01"))
     total = subtotal + shipping + estimated_tax
 
-    # When form is submitted
+    # ==========================
+    # PREFILL FROM PROFILE
+    # ==========================
+    profile = getattr(request.user, "profile", None)
+    checkout_data = {
+        "full_name": profile.display_name if profile else "",
+        "phone": profile.user_phone if profile else "",
+        "address": profile.user_address if profile else "",
+        "city": profile.user_city if profile else "",
+        "state": profile.user_state if profile else "",
+        "pincode": profile.user_pincode if profile else "",
+    }
+
+    # ==========================
+    # ORDER SUBMIT
+    # ==========================
     if request.method == "POST":
-        address = request.POST.get('address')
+        full_name = request.POST.get("full_name", "").strip()
+        phone = request.POST.get("phone", "").strip()
+        address_line = request.POST.get("address", "").strip()
+        city = request.POST.get("city", "").strip()
+        state = request.POST.get("state", "").strip()
+        pincode = request.POST.get("pincode", "").strip()
+        payment_method = request.POST.get("payment", "cod")
+
+        combined_address = f"""{full_name}
+{address_line}
+{city}, {state} - {pincode}
+Phone: {phone}
+Payment: {payment_method.upper()}""".strip()
 
         order = Order.objects.create(
             user=request.user,
             total_amount=total,
-            address=address
+            address=combined_address
         )
 
-        # Store as PrebuiltPC order
+        # Store PrebuiltPC order
         OrderItem.objects.create(
             order=order,
             prebuilt_pc=prebuilt,
@@ -748,15 +819,20 @@ def buy_prebuilt(request, pc_id):
             price=prebuilt.price
         )
 
-        return redirect('order_detail', order_id=order.id)
+        return redirect("order_detail", order_id=order.id)
 
-    return render(request, 'users/checkout_cart.html', {
-        'cart_items': cart_items,
-        'subtotal': subtotal,
-        'shipping': shipping,
-        'estimated_tax': estimated_tax,
-        'total': total
+    # ==========================
+    # RENDER CHECKOUT
+    # ==========================
+    return render(request, "users/checkout_cart.html", {
+        "cart_items": cart_items,
+        "subtotal": subtotal,
+        "shipping": shipping,
+        "estimated_tax": estimated_tax,
+        "total": total,
+        "checkout_data": checkout_data,
     })
+
 
 @login_required
 def orders_list(request):
@@ -776,8 +852,14 @@ def order_detail(request, order_id):
 
 @admin_required
 def admin_order_manage(request):
-    orders = Order.objects.all().order_by('-created_at')
-    return render(request, 'admin/order_manage.html', {'orders': orders})
+    orders = (
+        Order.objects
+        .select_related("user")
+        .prefetch_related("items", "items__product", "items__prebuilt_pc")
+        .order_by("-created_at")
+    )
+    return render(request, "admin/order_manage.html", {"orders": orders})
+
 
 @require_POST
 @admin_required
@@ -871,24 +953,20 @@ def generate_report_pdf(request):
 
 @login_required
 def profile_view(request):
-    profile, created = Profile.objects.get_or_create(
-        profile_user=request.user
-    )
+    profile, _ = Profile.objects.get_or_create(profile_user=request.user)
 
     if request.method == "POST":
-        profile.display_name = request.POST.get("display_name")
-        profile.user_phone = request.POST.get("user_phone")
-        profile.user_address = request.POST.get("user_address")
-        profile.user_city = request.POST.get("user_city")
-        profile.user_state = request.POST.get("user_state")
-        profile.user_pincode = request.POST.get("user_pincode")
+        profile.display_name = request.POST.get("display_name", profile.display_name)
+        profile.user_phone = request.POST.get("user_phone", profile.user_phone)
+        profile.user_address = request.POST.get("user_address", profile.user_address)
+        profile.user_city = request.POST.get("user_city", profile.user_city)
+        profile.user_state = request.POST.get("user_state", profile.user_state)
+        profile.user_pincode = request.POST.get("user_pincode", profile.user_pincode)
 
         if request.FILES.get("user_image"):
-            profile.user_image = request.FILES.get("user_image")
+            profile.user_image = request.FILES["user_image"]
 
         profile.save()
         return redirect("profile")
 
-    return render(request, "users/profile.html", {
-        "profile": profile
-    })
+    return render(request, "users/profile.html", {"profile": profile})

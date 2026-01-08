@@ -1,6 +1,5 @@
 {% extends "index.html" %}
 {% block title %}Checkout{% endblock %}
-
 {% load static %}
 
 {% block content %}
@@ -8,62 +7,53 @@
 <style>
     /* VARIABLES based on the new screenshot's palette */
     :root {
-        --page-bg: #1e2133; /* Dark background color */
-        --card-bg: #272a40; /* Slightly lighter dark card color */
-        --text-color: #e0e0e0; /* Light text color */
-        --secondary-text: #a0a0a0; /* Gray for secondary info */
-        --border-color: #3f4258; /* Border/separator color */
-        --accent-green: #33ff99; /* Primary accent green for total/button */
-        --accent-blue: #6c8cd1; /* Primary accent blue for selected border/radio */
-        --fee-color: #f97316; /* Orange for fees */
+        --page-bg: #1e2133;
+        --card-bg: #272a40;
+        --text-color: #e0e0e0;
+        --secondary-text: #a0a0a0;
+        --border-color: #3f4258;
+        --accent-green: #33ff99;
+        --accent-blue: #6c8cd1;
+        --fee-color: #f97316;
         --spacing-unit: 30px;
     }
 
-    /* GENERAL OVERRIDES */
     body {
         background-color: var(--page-bg);
         color: var(--text-color);
-        font-family: sans-serif; /* Keep a generic, clean font */
+        font-family: sans-serif;
     }
 
-    /* MAIN LAYOUT */
     .order-place-container {
         max-width: 1050px;
         margin: 40px auto;
         display: grid;
         grid-template-columns: 2fr 1fr;
-        gap: var(--spacing-unit); /* Gap between the two main columns */
+        gap: var(--spacing-unit);
     }
 
-    /* CARD */
     .order-place-card,
     .order-place-summary-card {
         background: var(--card-bg);
         padding: var(--spacing-unit);
-        border-radius: 12px; /* Soft corners */
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Subtle dark shadow */
-        border: 1px solid var(--border-color); /* Subtle card definition */
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        border: 1px solid var(--border-color);
+        align-self: start;
     }
 
-    /* TITLES (1. Shipping & Contact, 2. Choose Payment Method) */
     .order-place-title,
     .order-place-summary-title {
         font-size: 22px;
         font-weight: 600;
-        margin-bottom: 25px; /* Separation from content */
+        margin-bottom: 25px;
         color: var(--text-color);
     }
-    
-    /* SHIPPING & CONTACT SECTION */
-    .order-place-card:nth-child(1) {
-        margin-bottom: var(--spacing-unit); /* Gap between sections 1 and 2, but we use the general form structure for this */
-    }
 
-    /* LABELS + INPUTS */
     .order-place-label {
         display: block;
         font-weight: 500;
-        margin: 0 0 8px; /* Remove top margin, rely on title margin */
+        margin: 0 0 8px;
         color: var(--secondary-text);
         text-transform: uppercase;
         font-size: 13px;
@@ -76,25 +66,24 @@
         border-radius: 8px;
         font-size: 15px;
         color: var(--text-color);
-        background: #1e2133; /* Input darker than card */
+        background: #1e2133;
         resize: vertical;
         transition: border-color 0.2s, box-shadow 0.2s;
     }
-    
+
     .order-place-textarea:focus {
         border-color: var(--accent-blue);
         box-shadow: 0 0 0 1px var(--accent-blue);
         outline: none;
     }
 
-    /* PAYMENT OPTIONS */
     .order-place-payment {
         display: flex;
         align-items: center;
         padding: 18px;
         border: 1px solid var(--border-color);
         border-radius: 10px;
-        margin-bottom: 15px; /* Gap between payment options */
+        margin-bottom: 15px;
         cursor: pointer;
         transition: 0.2s ease;
     }
@@ -103,14 +92,13 @@
         border-color: var(--accent-blue);
     }
 
-    .order-place-payment.selected {
+    {% comment %} .order-place-payment.selected {
         border: 2px solid var(--accent-blue);
-        background: rgba(108, 140, 209, 0.1); /* Light blue tint for selected state */
-    }
+        background: rgba(108, 140, 209, 0.1);
+    } {% endcomment %}
 
     .order-place-payment input {
         margin-right: 12px;
-        /* Using default radio input for simplicity */
     }
 
     .order-place-payment span {
@@ -119,13 +107,12 @@
     }
 
     .order-place-fee {
-        color: var(--fee-color); /* Orange fee color */
+        color: var(--fee-color);
         font-size: 13px;
-        margin-left: auto; /* Push fee to the right */
+        margin-left: auto;
         font-weight: 500;
     }
-    
-    /* SUMMARY */
+
     .order-place-summary-list {
         list-style: none;
         padding: 0;
@@ -139,7 +126,7 @@
         justify-content: space-between;
         color: var(--secondary-text);
     }
-    
+
     .order-place-summary-list li span:last-child {
         color: var(--text-color);
     }
@@ -151,7 +138,7 @@
         font-size: 16px;
         color: var(--secondary-text);
     }
-    
+
     .order-place-summary-row span:last-child {
         color: var(--text-color);
     }
@@ -175,18 +162,17 @@
         font-size: 18px;
         color: var(--text-color);
     }
-    
+
     .order-place-total-amount {
         font-size: 24px;
         font-weight: 800;
-        color: var(--accent-green); /* Total in vibrant green */
+        color: var(--accent-green);
     }
 
-    /* BUTTON */
     .order-place-btn {
         width: 100%;
         background: var(--accent-green);
-        color: var(--card-bg); /* Dark text on vibrant button */
+        color: var(--card-bg);
         border: none;
         padding: 18px;
         font-size: 18px;
@@ -199,8 +185,13 @@
     }
 
     .order-place-btn:hover {
-        background: #1aff8c; /* Slightly lighter green on hover */
+        background: #1aff8c;
         box-shadow: 0 6px 15px rgba(51, 255, 153, 0.5);
+    }
+    @media (max-width: 768px) {
+        .order-place-container {
+            grid-template-columns: 1fr; /* Stack them vertically */
+        }
     }
 </style>
 
@@ -209,14 +200,63 @@
     <form method="POST" class="order-place-left">
         {% csrf_token %}
 
+        <!-- 🔥 UPDATED SHIPPING & CONTACT BOX -->
         <div class="order-place-card">
             <h2 class="order-place-title">1. Shipping & Contact</h2>
 
-            <label class="order-place-label">Shipping Address</label>
-            <textarea name="address" class="order-place-textarea" rows="4" placeholder="Enter your full shipping address" required></textarea>
+            <label class="order-place-label">Full Name</label>
+            <input type="text"
+                   name="full_name"
+                   class="order-place-textarea"
+                   value="{{ checkout_data.full_name }}"
+                   required>
 
+            <br><br>
+
+            <label class="order-place-label">Phone Number</label>
+            <input type="text"
+                   name="phone"
+                   class="order-place-textarea"
+                   value="{{ checkout_data.phone }}"
+                   required>
+
+            <br><br>
+
+            <label class="order-place-label">State</label>
+            <input type="text"
+                   name="state"
+                   class="order-place-textarea"
+                   value="{{ checkout_data.state }}"
+                   required>
+
+            <br><br>
+
+            <label class="order-place-label">City</label>
+            <input type="text"
+                   name="city"
+                   class="order-place-textarea"
+                   value="{{ checkout_data.city }}"
+                   required>
+
+            <br><br>
+
+            <label class="order-place-label">Pincode</label>
+            <input type="text"
+                   name="pincode"
+                   class="order-place-textarea"
+                   value="{{ checkout_data.pincode }}"
+                   required>
+
+            <br><br>
+
+            <label class="order-place-label">Full Address</label>
+            <textarea name="address"
+                      class="order-place-textarea"
+                      rows="4"
+                      required>{{ checkout_data.address }}</textarea>
         </div>
-        
+
+        <!-- 🔒 PAYMENT METHOD (UNCHANGED) -->
         <div class="order-place-card" style="margin-top: 30px;">
             <h2 class="order-place-title">2. Choose Payment Method</h2>
 
@@ -234,13 +274,15 @@
 
         <button type="submit" class="order-place-btn">Place Order</button>
     </form>
+
+    <!-- 🔒 ORDER SUMMARY (UNCHANGED) -->
     <div class="order-place-summary-card">
         <h2 class="order-place-summary-title">Order Summary</h2>
 
         <ul class="order-place-summary-list">
             {% for item in cart_items %}
             <li>
-                <span>{{ item.product.name }} × {{ item.quantity }}</span> 
+                <span>{{ item.product.name }} × {{ item.quantity }}</span>
                 <span>₹{{ item.total_price }}</span>
             </li>
             {% endfor %}
@@ -267,7 +309,6 @@
             <span>Total</span>
             <span class="order-place-total-amount">₹{{ total }}</span>
         </p>
-
     </div>
 
 </div>

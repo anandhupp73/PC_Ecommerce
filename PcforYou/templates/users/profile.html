@@ -10,8 +10,12 @@
         {% csrf_token %}
 
         <div class="profile-image">
-            <img src="{{ profile.user_image.url }}" class="avatar">
-            <input type="file" name="user_image">
+            {% if profile.user_image %}
+                <img src="{{ profile.user_image.url }}" class="avatar">
+            {% else %}
+                <img src="{% static 'profiles/default.png' %}" class="avatar">
+            {% endif %}
+            <input type="file" name="user_image" onchange="previewImage(this)"> 
         </div>
 
         <input type="text" id="display_name" name="display_name" placeholder="Full Name" value="{{ profile.display_name }}">
@@ -39,4 +43,17 @@
     </a>
 
 </div>
+
+<script>
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            document.querySelector(".avatar").src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+
 {% endblock %}
