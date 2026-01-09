@@ -317,7 +317,9 @@
                 
                 <div class="footer-column">
                     <div class="footer-logo">
-                        <div class="logo-icon"></div>
+                        <div class="logo-icon">
+                            <img src="{% static 'images/pcforyoulogo.png' %}" alt="">
+                        </div>
                         <h3>PC-FOR-YOU</h3>
                     </div>
                     <p>Your trusted source for premium PC components and gaming hardware.</p>
@@ -332,10 +334,10 @@
                 <div class="footer-column">
                     <h4>Shop</h4>
                     <ul>
-                        <li><a href="#">Processors</a></li>
-                        <li><a href="#">Graphics Cards</a></li>
-                        <li><a href="#">Memory & Storage</a></li>
-                        <li><a href="#">Cooling Solutions</a></li>
+                        <li><a href="{% url 'processors' %}">Processors</a></li>
+                        <li><a href="{% url 'gpu' %}">Graphics Cards</a></li>
+                        <li><a href="{% url 'storages' %}">Memory & Storage</a></li>
+                        <li><a href="{% url 'cooling' %}">Cooling Solutions</a></li>
                     </ul>
                 </div>
 

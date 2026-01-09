@@ -396,6 +396,17 @@ nav a:hover {
     /* max-width: 1200px;
     margin: 0 auto; */
 }
+@media (max-width:769px) {
+    .products{
+        grid-template-columns: repeat(2,1fr);
+    }
+    
+}
+@media (max-width: 480px) {
+    .products {
+        grid-template-columns: 1fr;
+    }
+}
 .product-card{
     border-radius: 10px;
     width: 100%;
