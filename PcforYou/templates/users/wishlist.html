@@ -140,11 +140,13 @@
     <div class="wishlist-cards-grid">
         {% for item in wishlist_items %}
             <div class="wishlist-product-card">
+                <a href="{% url 'product_detail' item.product.id %}">
                 {% if item.product.image %}
                     <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
                 {% else %}
                     <img src="{% static 'img/no-image.png' %}" alt="no image">
                 {% endif %}
+                </a>
 
                 <div class="wishlist-card-body">
                     <div class="wishlist-category">{{ item.product.category.name }}</div>

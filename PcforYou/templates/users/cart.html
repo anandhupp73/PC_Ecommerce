@@ -183,7 +183,9 @@
         {% for item in cart_items %}
         <div class="cart-card">
 
+            <a href="{% url 'product_detail' item.product.id %}">
             <img class="cart-img" src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+            </a>
 
             <div class="cart-cart-info">
                 <div class="cart-category">{{ item.product.category.name }}</div>

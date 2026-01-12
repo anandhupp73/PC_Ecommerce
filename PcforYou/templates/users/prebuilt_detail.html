@@ -2,149 +2,126 @@
 {% block title %}{{ pc.name }}{% endblock %}
 
 {% block content %}
-
 <style>
-.detail-container {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 60px;
-    padding: 60px 80px;
-    color: #e5e7eb;
-    background: radial-gradient(circle at top left, #0f172a, #020617);
-    min-height: 100vh;
-}
-
-/* Image Section */
-.detail-image {
-    background: linear-gradient(145deg, #020617, #020617);
-    border-radius: 24px;
-    padding: 40px;
-    box-shadow:
-        0 0 0 1px rgba(255,255,255,0.05),
-        0 30px 80px rgba(0,0,0,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.detail-image img {
-    width: 100%;
-    max-width: 420px;
-    border-radius: 18px;
-    object-fit: cover;
-}
-
-/* Info Section */
-.detail-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.detail-info h1 {
-    font-size: 48px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    letter-spacing: 0.5px;
-}
-
-/* Price */
-.price {
-    font-size: 36px;
-    font-weight: 700;
-    color: #22c55e;
-    margin-bottom: 25px;
-}
-
-/* Specs */
-.spec {
-    background: linear-gradient(145deg, #020617, #020617);
-    border-radius: 14px;
-    padding: 18px 20px;
-    margin-bottom: 14px;
-    box-shadow:
-        0 0 0 1px rgba(255,255,255,0.05),
-        inset 0 0 20px rgba(56,189,248,0.05);
-}
-
-.spec h3 {
-    font-size: 13px;
-    font-weight: 600;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 6px;
-}
-
-.spec p {
-    font-size: 16px;
-    font-weight: 500;
-    color: #e5e7eb;
-}
-
-/* Buy Button */
-.buy-btn {
-    margin-top: 30px;
-    background: linear-gradient(135deg, #22d3ee, #0ea5e9);
-    color: #020617;
-    padding: 18px 36px;
-    border-radius: 16px;
-    border: none;
-    font-size: 18px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow:
-        0 10px 30px rgba(14,165,233,0.4);
-    transition: all 0.3s ease;
-}
-
-.buy-btn:hover {
-    transform: translateY(-2px);
-    box-shadow:
-        0 16px 40px rgba(14,165,233,0.6);
-}
-
-/* -------- Responsive -------- */
-@media (max-width: 1200px) {
+    /* Main Layout */
     .detail-container {
-        padding: 50px;
-        gap: 40px;
+        display: grid;
+        grid-template-columns: 1fr 1.2fr; /* Slightly wider space for info */
+        gap: 50px;
+        padding: 60px 8%;
+        color: #e5e7eb;
+        background: #020617;
+        /* Ensure the container only takes up as much height as the content */
+        min-height: auto; 
+        align-items: center; /* This keeps both sides vertically centered with each other */
+    }
+
+    /* Left Side: Fixed/Stable Image Card */
+    .detail-image {
+        /* This ensures the card itself stays centered even if the right side grows */
+        align-self: center; 
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 24px;
+        padding: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        /* Set a max-height to keep it proportional */
+        max-height: 500px;
+    }
+
+    .detail-image img {
+        width: 100%;
+        max-width: 380px; /* Controlled size */
+        height: auto;
+        border-radius: 12px;
+        object-fit: contain;
+    }
+
+    /* Right Side: Info Section */
+    .detail-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     .detail-info h1 {
-        font-size: 40px;
-    }
-}
-
-@media (max-width: 900px) {
-    .detail-container {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-
-    .detail-info {
-        align-items: center;
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 5px;
+        color: #ffffff;
     }
 
     .price {
-        font-size: 30px;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #22c55e;
+        margin-bottom: 25px;
+    }
+
+    /* Specs Grid - 2 Columns to save height */
+    .specs-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .spec-card {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 15px;
+    }
+
+    .spec-card h3 {
+        font-size: 0.7rem;
+        color: #64748b;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .spec-card p {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #f1f5f9;
+        margin: 0;
+    }
+
+    .spec-card.full {
+        grid-column: span 2;
     }
 
     .buy-btn {
         width: 100%;
+        background: #0ea5e9;
+        color: white;
+        padding: 16px;
+        border-radius: 12px;
+        border: none;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s, background 0.2s;
     }
-}
 
-@media (max-width: 600px) {
-    .detail-container {
-        padding: 24px;
+    .buy-btn:hover {
+        background: #0284c7;
+        transform: translateY(-2px);
     }
 
-    .detail-info h1 {
-        font-size: 32px;
+    /* Responsive fix */
+    @media (max-width: 1000px) {
+        .detail-container {
+            grid-template-columns: 1fr;
+            padding: 30px 5%;
+        }
+        .detail-image {
+            max-height: 400px;
+        }
     }
-}
-
 </style>
 
 <div class="detail-container">
@@ -154,39 +131,36 @@
 
     <div class="detail-info">
         <h1>{{ pc.name }}</h1>
+        <p class="price">₹{{ pc.price }}</p>
 
-        <p class="price">₹ {{ pc.price }}</p>
-
-        <div class="spec">
-            <h3>Processor</h3>
-            <p>{{ pc.processor }}</p>
+        <div class="specs-grid">
+            <div class="spec-card">
+                <h3>Processor</h3>
+                <p>{{ pc.processor }}</p>
+            </div>
+            <div class="spec-card">
+                <h3>GPU</h3>
+                <p>{{ pc.graphics_card }}</p>
+            </div>
+            {% if pc.ram %}
+            <div class="spec-card">
+                <h3>RAM</h3>
+                <p>{{ pc.ram }}</p>
+            </div>
+            {% endif %}
+            {% if pc.storage %}
+            <div class="spec-card">
+                <h3>Storage</h3>
+                <p>{{ pc.storage }}</p>
+            </div>
+            {% endif %}
+            {% if pc.motherboard %}
+            <div class="spec-card full">
+                <h3>Motherboard</h3>
+                <p>{{ pc.motherboard }}</p>
+            </div>
+            {% endif %}
         </div>
-
-        <div class="spec">
-            <h3>Graphics Card</h3>
-            <p>{{ pc.graphics_card }}</p>
-        </div>
-
-        {% if pc.ram %}
-        <div class="spec">
-            <h3>RAM</h3>
-            <p>{{ pc.ram }}</p>
-        </div>
-        {% endif %}
-
-        {% if pc.storage %}
-        <div class="spec">
-            <h3>Storage</h3>
-            <p>{{ pc.storage }}</p>
-        </div>
-        {% endif %}
-
-        {% if pc.motherboard %}
-        <div class="spec">
-            <h3>Motherboard</h3>
-            <p>{{ pc.motherboard }}</p>
-        </div>
-        {% endif %}
 
         <a href="{% url 'buy_prebuilt' pc.id %}" style="text-decoration: none;">
             <button class="buy-btn">Buy Now</button>

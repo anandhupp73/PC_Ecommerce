@@ -2,174 +2,293 @@
 {% block title %} {{ product.name }} {% endblock %}
 
 {% block content %}
+<style>
+    /* Professional Color Palette & Layout */
+    .product-detail-page {
+        padding: 40px 20px;
+        display: flex;
+        justify-content: center;
+        align-items:flex-start;
+        background-color: #0f172a; /* Darker background for contrast */
+    }
+
+    .product-detail-card {
+        display: flex;
+        flex-wrap: wrap; /* Responsive for smaller screens */
+        gap: 50px;
+        background: #1e293b;
+        padding: 40px;
+        border-radius: 20px;
+        color: white;
+        max-width: 1000px;
+        width:100%;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        border: 1px solid #334155;
+    }
+
+    /* Image Styling */
+    .product-img-box {
+        flex: 1;
+        min-width: 300px;
+        max-height: 450px; /* Prevents image from pushing the card down */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .product-img-box img {
+        width: 100%;
+        height: auto;
+        border-radius: 16px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .product-img-box img:hover {
+        transform: scale(1.02);
+    }
+
+    /* Info Section */
+    .product-info {
+        flex: 1.2;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-info h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        font-weight: 700;
+        background: linear-gradient(90deg, #38bdf8, #818cf8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .price {
+        font-size: 2rem;
+        color: #10b981; /* Emerald Green */
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .desc {
+        line-height: 1.6;
+        color: #94a3b8;
+        margin-bottom: 25px;
+    }
+
+    hr {
+        border: 0;
+        border-top: 1px solid #334155;
+        margin-bottom: 25px;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #f1f5f9;
+    }
+
+    /* Table Styling */
+    .spec-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+    }
+
+    .spec-table tr {
+        border-bottom: 1px solid #334155;
+    }
+
+    .spec-table td {
+        padding: 8px 0;
+    }
+
+    .spec-table td:first-child {
+        color: #94a3b8;
+        font-weight: 500;
+        width: 40%;
+    }
+
+    .spec-table td:last-child {
+        color: #f8fafc;
+        font-weight: 600;
+        text-align: right;
+    }
+
+    /* Buttons */
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top:auto;
+    }
+
+    .add-to-cart {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .add-to-cart:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+    }
+
+    .add-to-wishlist {
+        background: transparent;
+        color: #cbd5e1;
+        border: 1px solid #475569;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .add-to-wishlist:hover {
+        background: #334155;
+        color: white;
+        border-color: #64748b;
+    }
+</style>
 
 <div class="product-detail-page">
-
     <div class="product-detail-card">
-
+        
         <div class="product-img-box">
             <img src="{{ product.image.url }}" alt="{{ product.name }}">
         </div>
 
         <div class="product-info">
-
             <h1>{{ product.name }}</h1>
             <h2 class="price">₹{{ product.price }}</h2>
-
             <p class="desc">{{ product.description }}</p>
 
             <hr>
 
-            <h3>Specifications</h3>
-
             {% if details %}
-                <table class="spec-table">
+            <h3>Specifications</h3>
+            <table class="spec-table">
+                {% if details.capacity_gb %}
+                <tr><td>Capacity</td><td>{{ details.capacity_gb }} GB</td></tr>
+                {% endif %}
 
-                    {% comment %} RAM  {% endcomment %}
+                {% if details.ddr_type %}
+                <tr><td>DDR Type</td><td>{{ details.ddr_type }}</td></tr>
+                {% endif %}
 
-                    {% if details.capacity_gb %}
-                    <tr><td>Capacity</td><td>{{ details.capacity_gb }} GB</td></tr>
-                    {% endif %}
+                {% if details.speed_mhz %}
+                <tr><td>Speed</td><td>{{ details.speed_mhz }} MHz</td></tr>
+                {% endif %}
+                
+                {% if details.form_factor %}
+                <tr><td>Form Factor</td><td>{{ details.form_factor }}</td></tr>
+                {% endif %}
 
-                    {% if details.ddr_type %}
-                    <tr><td>DDR Type</td><td>{{ details.ddr_type }}</td></tr>
-                    {% endif %}
+                {% if details.color %}
+                <tr><td>Color</td><td>{{ details.color }}</td></tr>
+                {% endif %}
 
-                    {% if details.speed_mhz %}
-                    <tr><td>Speed</td><td>{{ details.speed_mhz }} MHz</td></tr>
-                    {% endif %}
-                    
-                    {% comment %} CABINET  {% endcomment %}
+                {% if details.cooling_type %}
+                <tr><td>Cooling Type</td><td>{{ details.cooling_type }}</td></tr>
+                {% endif %}
 
-                    {% if details.form_factor %}
-                    <tr><td>Form Factor</td><td>{{ details.form_factor }}</td></tr>
-                    {% endif %}
+                {% if details.fan_count %}
+                <tr><td>Fan Count</td><td>{{ details.fan_count }}</td></tr>
+                {% endif %}
 
-                    {% if details.color %}
-                    <tr><td>Color</td><td>{{ details.color }}</td></tr>
-                    {% endif %}
+                {% if details.vram_gb %}
+                <tr><td>VRAM</td><td>{{ details.vram_gb }}</td></tr>
+                {% endif %}
 
-                    {% comment %} COOLER  {% endcomment %}
+                {% if details.chipset %}
+                <tr><td>Chipset</td><td>{{ details.chipset }}</td></tr>
+                {% endif %}
 
-                    {% if details.cooling_type %}
-                    <tr><td>Cooling Type</td><td>{{ details.cooling_type }}</td></tr>
-                    {% endif %}
+                {% if details.interface %}
+                <tr><td>Interface</td><td>{{ details.interface }}</td></tr>
+                {% endif %}
 
-                    {% if details.fan_count %}
-                    <tr><td>Fan Count</td><td>{{ details.fan_count }}</td></tr>
-                    {% endif %}
+                {% if details.core_count %}
+                <tr><td>Cores</td><td>{{ details.core_count }}</td></tr>
+                {% endif %}
 
-                    {% comment %} GPU  {% endcomment %}
+                {% if details.thread_count %}
+                <tr><td>Threads</td><td>{{ details.thread_count }}</td></tr>
+                {% endif %}
 
-                    {% if details.vram_gb %}
-                    <tr><td>RAM</td><td>{{ details.vram_gb }}</td></tr>
-                    {% endif %}
+                {% if details.base_clock_ghz %}
+                <tr><td>Base Clock</td><td>{{ details.base_clock_ghz }} GHz</td></tr>
+                {% endif %}
 
-                    {% if details.chipset %}
-                    <tr><td>Chipset</td><td>{{ details.chipset }}</td></tr>
-                    {% endif %}
+                {% if details.socket_type %}
+                <tr><td>Socket</td><td>{{ details.socket_type }}</td></tr>
+                {% endif %}
 
-                    {% if details.interface %}
-                    <tr><td>Interface</td><td>{{ details.interface }}</td></tr>
-                    {% endif %}
+                {% if details.size_inch %}
+                <tr><td>Screen size</td><td>{{ details.size_inch }}"</td></tr>
+                {% endif %}
 
-                    {% comment %} CPU  {% endcomment %}
+                {% if details.resolution %}
+                <tr><td>Resolution</td><td>{{ details.resolution }}</td></tr>
+                {% endif %}
+                
+                {% if details.refresh_rate_hz %}
+                <tr><td>Refresh rate</td><td>{{ details.refresh_rate_hz }} Hz</td></tr>
+                {% endif %}
 
-                    {% if details.core_count %}
-                    <tr><td>Cores</td><td>{{ details.core_count }}</td></tr>
-                    {% endif %}
+                {% if details.panel_type %}
+                <tr><td>Panel</td><td>{{ details.panel_type }}</td></tr>
+                {% endif %}
 
-                    {% if details.thread_count %}
-                    <tr><td>Threads</td><td>{{ details.thread_count }}</td></tr>
-                    {% endif %}
+                {% if details.wattage %}
+                <tr><td>Wattage</td><td>{{ details.wattage }}W</td></tr>
+                {% endif %}
 
-                    {% if details.base_clock_ghz %}
-                    <tr><td>Base Clock</td><td>{{ details.base_clock_ghz }}</td></tr>
-                    {% endif %}
+                {% if details.efficiency_rating %}
+                <tr><td>Efficiency</td><td>{{ details.efficiency_rating }}</td></tr>
+                {% endif %}
 
-                    {% if details.socket_type %}
-                    <tr><td>Socket</td><td>{{ details.socket_type }}</td></tr>
-                    {% endif %}
+                {% if details.modular %}
+                <tr><td>Modular</td><td>{{ details.modular }}</td></tr>
+                {% endif %}
 
-                    {% comment %} monitor {% endcomment %}
+                {% if details.storage_type %}
+                <tr><td>Storage Type</td><td>{{ details.storage_type }}</td></tr>
+                {% endif %}
 
-                    {% if details.size_inch %}
-                    <tr><td>Screen size</td><td>{{ details.size_inch }}</td></tr>
-                    {% endif %}
+                {% if details.accessory_type %}
+                <tr><td>Accessory Type</td><td>{{ details.accessory_type }}</td></tr>
+                {% endif %}
 
-                    {% if details.resolution %}
-                    <tr><td>Resolution</td><td>{{ details.resolution }}</td></tr>
-                    {% endif %}
-                    
-                    {% if details.refresh_rate_hz %}
-                    <tr><td>Refresh rate</td><td>{{ details.refresh_rate_hz }}</td></tr>
-                    {% endif %}
-
-                    {% if details.panel_type %}
-                    <tr><td>Panel</td><td>{{ details.panel_type }}</td></tr>
-                    {% endif %}
-
-                    {% comment %} motherboard takes values from others gpu cpu cabinet {% endcomment %}
-
-                    {% comment %} powersupply  {% endcomment %}
-
-                    {% if details.wattage %}
-                    <tr><td>Wattage</td><td>{{ details.wattage }}</td></tr>
-                    {% endif %}
-
-                    {% if details.efficiency_rating %}
-                    <tr><td>Efficiency rating</td><td>{{ details.efficiency_rating }}</td></tr>
-                    {% endif %}
-
-                    {% if details.modular %}
-                    <tr><td>Modular</td><td>{{ details.modular }}</td></tr>
-                    {% endif %}
-
-                    {% comment %} storage {% endcomment %}
-
-                    {% comment %} {% if details.capacity_gb %}
-                    <tr><td>GB</td><td>{{ details.capacity_gb }}</td></tr>
-                    {% endif %} {% endcomment %}
-
-                    {% if details.storage_type %}
-                    <tr><td>Storage Type</td><td>{{ details.storage_type }}</td></tr>
-                    {% endif %}
-
-                    {% comment %} {% if details.form_factor %}
-                    <tr><td>Form Factor</td><td>{{ details.form_factor }}</td></tr>
-                    {% endif %} {% endcomment %}
-
-                    {% comment %} accessories  {% endcomment %}
-
-                    {% if details.accessory_type %}
-                    <tr><td>Accessory Type</td><td>{{ details.accessory_type }}</td></tr>
-                    {% endif %}
-
-                    {% if details.connection %}
-                    <tr><td>Connection</td><td>{{ details.connection }}</td></tr>
-                    {% endif %}
-
-                    {% comment %} {% if details.color %}
-                    <tr><td>Color</td><td>{{ details.color_type }}</td></tr>
-                    {% endif %} {% endcomment %}
-
-
-                </table>
+                {% if details.connection %}
+                <tr><td>Connection</td><td>{{ details.connection }}</td></tr>
+                {% endif %}
+            </table>
             {% endif %}
             
-            <form action="{% url 'add_to_cart' product.id %}" method="post">
-                {% csrf_token %}
-                <button class="add-to-cart">Add to Cart</button>
-            </form>
+            <div class="btn-group">
+                <form action="{% url 'add_to_cart' product.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="add-to-cart" style="width: 100%;">Add to Cart</button>
+                </form>
 
-            <form action="{% url 'add_to_wishlist' product.id %}" method="post">
-                {% csrf_token %}
-                <button style="margin-top: 10px;">Add To Wishlist</button>
-            </form>
+                <form action="{% url 'add_to_wishlist' product.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="add-to-wishlist" style="width: 100%;">Add To Wishlist</button>
+                </form>
+            </div>
 
         </div>
     </div>
-
 </div>
-
 {% endblock %}
