@@ -87,8 +87,8 @@ An intelligent assistant that validates your custom build **step by step**.
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/anandhupp73/PcForYou.git
-cd PcForYou
+git clone https://github.com/anandhupp73/PC_Ecommerce.git
+cd PC_Ecommerce/PcForYou
 
 python -m venv venv
 source venv/bin/activate   # Linux / Mac
