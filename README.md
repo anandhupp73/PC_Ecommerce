@@ -1,104 +1,121 @@
-🖥️ PcForYou – Intelligent PC Builder & Component Marketplace 🤖
+# 🖥️ PcForYou – Intelligent PC Builder & Component Marketplace 🤖
+> *Build smarter PCs with AI-powered compatibility checks*
 
-PcForYou is a full-stack Django-based e-commerce platform designed to remove the guesswork from building a custom PC. At its core lies an AI-powered PC Builder Tool that acts as a smart technical consultant, validating component compatibility, physical clearances, and performance balance in real time.
+---
 
-Unlike traditional part-pickers, PcForYou leverages Generative AI (Google Gemini) to understand real-world hardware nuances and guide users toward optimal builds.
+## 📌 Overview
 
-🚀 Key Features
-🧠 AI PC Builder Tool
+**PcForYou** is a full-stack **Django-based e-commerce platform** that removes the guesswork from building a custom PC.
 
-An intelligent assistant that validates your custom build step by step.
+At its core is an **AI-powered PC Builder Tool** powered by **Google Gemini**, which acts as a virtual hardware consultant—validating component compatibility, checking physical clearances, and ensuring balanced performance **in real time**.
 
-Real-time Compatibility Checks
+Unlike traditional part-pickers, PcForYou understands *real-world hardware nuances* and guides users toward **practical, optimized builds**.
 
-CPU ↔ Motherboard socket matching
+---
 
-BIOS version requirements
+## 🚀 Key Features
 
-RAM type and frequency support
+### 🧠 AI PC Builder Tool
+An intelligent assistant that validates your custom build **step by step**.
 
-Physical Clearance Validation
+- 🔄 **Real-time Compatibility Checks**
+  - CPU ↔ Motherboard socket & chipset compatibility  
+  - BIOS version requirements for newer processors  
+  - RAM type (DDR4 / DDR5), frequency & capacity support  
+  - GPU ↔ Motherboard interface compatibility (PCIe)  
+  - Power supply wattage & connector requirements  
 
-GPU length vs case size
+- 📏 **Physical Clearance Validation**
+  - GPU length, width & slot clearance vs case size  
+  - CPU cooler height & radiator support vs case clearance  
+  - Motherboard form factor (ATX / mATX / ITX) vs case support  
+  - PSU form factor compatibility  
 
-CPU cooler height vs case clearance
+- 💡 **Smart Feedback & Suggestions**
+  - Explains *why* a component is incompatible  
+  - Suggests compatible and better-balanced alternatives  
+  - Prevents common PC building mistakes  
 
-Intelligent Feedback & Suggestions
 
-Explains why a part is incompatible
+---
 
-Recommends compatible alternatives instead of generic errors
+### 🛒 E-Commerce Functionality
 
-🛒 E-Commerce Capabilities
+- 🛍️ **Advanced Cart & Wishlist**
+  - Save AI-verified PC builds
+  - Add full builds or individual components
 
-Advanced Cart & Wishlist
+- 📦 **Order Tracking System**
+  - Track orders from **Processing → Out for Delivery**
 
-Save AI-verified PC builds
+- 👤 **User Accounts**
+  - Secure authentication
+  - Manage addresses, orders
 
-Add full builds or individual components to cart
+- 🛠️ **Admin Command Center**
+  - Inventory management
+  - Order & user monitoring
+  - Status updates from a centralized dashboard
 
-Order Tracking System
+---
 
-Track orders from Processing → Out for Delivery
+## 🧰 Tech Stack
 
-User Accounts
+### Backend
+- Python
+- Django 5.x
 
-Secure authentication
+### AI Integration
+- Google Gemini API (`google-generativeai`)
 
-Manage addresses, orders, and saved builds
+### Database
+- SQLite3
 
-Admin Command Center
+### Configuration
+- Environment variables via `.env`
+- Dependencies via `requirements.txt`
 
-Inventory management
+---
 
-Order status updates
+## 📸 Screenshots
 
-User activity monitoring
+> *(Add screenshots of the AI builder, cart, and admin panel here)*
 
-🛠️ Tech Stack
-Layer	Technology
-Backend & Templates	Django 5.x
-AI Engine	Google Gemini API (google-generativeai)
-Database	SQLite3
-Environment Config	.env
-Dependencies	requirements.txt
-📸 Screenshots & Demo
+---
 
-(Add application screenshots here to showcase the UI and AI builder experience)
+## ⚙️ Installation & Setup
 
-📦 Installation & Setup
-1️⃣ Clone the Repository
+### 1️⃣ Clone the Repository
+```bash
 git clone https://github.com/anandhupp73/PcForYou.git
 cd PcForYou
 
-2️⃣ Create & Activate Virtual Environment
 python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
-
-3️⃣ Install Dependencies
+source venv/bin/activate   # Linux / Mac
+venv\Scripts\activate
 pip install -r requirements.txt
 
-4️⃣ Configure Environment Variables
+Configure Environment Variables
 
 Create a .env file in the project root:
 
 GOOGLE_API_KEY=your_gemini_api_key
 
-5️⃣ Database Migration & Run Server
+Run Migrations & Start Server
+
 python manage.py migrate
 python manage.py runserver
 
-🔮 Future Roadmap
+🔮 Future Enhancements
 
- AI-based 3D PC Builder
+ 🧩 AI-powered 3D PC Builder
 
-Visual workstation to see components assembled in real time
+Visual workstation to assemble components in 3D
 
- FPS Estimator
+ 🎮 FPS Estimator
 
-AI-driven performance predictions for specific games
+AI-based performance prediction for popular games
 
- Automated Stock Scraper
+ 🌐 Automated Stock Scraper
 
-Sync real-time pricing and availability from external vendors
+Real-time pricing & availability from external vendors
