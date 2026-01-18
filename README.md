@@ -79,7 +79,19 @@ An intelligent assistant that validates your custom build **step by step**.
 
 ## 📸 Screenshots
 
-> *(Add screenshots of the AI builder, cart, and admin panel here)*
+### 🧠 AI PC Builder
+<img src="screenshots/Pcforyou_home.png" width="900">
+
+### 🛒 Items
+<img src="screenshots/items.png" width="900">
+
+### 🛠️ Ai
+<img src="screenshots/selected.png" width="900">
+<img src="screenshots/result.png" width="900">
+<img src="screenshots/result2.png" width="900">
+
+### 📦 Order Tracking
+<img src="screenshots/tracking.png" width="900">
 
 ---
 
@@ -92,7 +104,7 @@ cd PC_Ecommerce/PcForYou
 
 python -m venv venv
 source venv/bin/activate   # Linux / Mac
-venv\Scripts\activate
+venv\Scripts\activate #Windows
 pip install -r requirements.txt
 
 Configure Environment Variables
