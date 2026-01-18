@@ -1,64 +1,104 @@
-PcForYou 🖥️🤖
-The Intelligent PC Builder & Component Marketplace
+🖥️ PcForYou – Intelligent PC Builder & Component Marketplace 🤖
 
-PcForYou is a full-stack Django e-commerce platform that takes the guesswork out of custom PC building. At its core is the AI PC Builder Tool, which allows users to hand-pick components while the Google Gemini AI acts as a technical consultant, verifying compatibility, checking physical clearances, and ensuring optimal performance balance.
+PcForYou is a full-stack Django-based e-commerce platform designed to remove the guesswork from building a custom PC. At its core lies an AI-powered PC Builder Tool that acts as a smart technical consultant, validating component compatibility, physical clearances, and performance balance in real time.
 
-🚀 The PC Builder Tool
-Unlike standard part-pickers, our tool uses Generative AI to understand the nuances of hardware:
+Unlike traditional part-pickers, PcForYou leverages Generative AI (Google Gemini) to understand real-world hardware nuances and guide users toward optimal builds.
 
-Real-time Compatibility: Select a CPU and Motherboard; the AI instantly checks socket types, BIOS version requirements, and RAM frequency support.
+🚀 Key Features
+🧠 AI PC Builder Tool
 
-Physical Clearance Guard: The AI verifies if your selected GPU will fit inside your chosen Case and if the CPU cooler height is compatible.
+An intelligent assistant that validates your custom build step by step.
 
-Intelligent Feedback: If a part is incompatible, the AI doesn't just say "No"—it explains why and suggests a better alternative.
+Real-time Compatibility Checks
 
-🛒 E-Commerce Features
-Advanced Cart & Wishlist: Add your AI-verified builds directly to your cart or save them to your wishlist for later.
+CPU ↔ Motherboard socket matching
 
-Order Tracking: Integrated system to monitor your hardware from "Processing" to "Out for Delivery."
+BIOS version requirements
 
-Admin Command Center: A powerful dashboard for managing inventory, reviewing order statuses, and overseeing user activity.
+RAM type and frequency support
 
-User Accounts: Secure login/signup to manage addresses, orders
+Physical Clearance Validation
+
+GPU length vs case size
+
+CPU cooler height vs case clearance
+
+Intelligent Feedback & Suggestions
+
+Explains why a part is incompatible
+
+Recommends compatible alternatives instead of generic errors
+
+🛒 E-Commerce Capabilities
+
+Advanced Cart & Wishlist
+
+Save AI-verified PC builds
+
+Add full builds or individual components to cart
+
+Order Tracking System
+
+Track orders from Processing → Out for Delivery
+
+User Accounts
+
+Secure authentication
+
+Manage addresses, orders, and saved builds
+
+Admin Command Center
+
+Inventory management
+
+Order status updates
+
+User activity monitoring
 
 🛠️ Tech Stack
-Framework: Django 5.x (Backend & Frontend Templates)
+Layer	Technology
+Backend & Templates	Django 5.x
+AI Engine	Google Gemini API (google-generativeai)
+Database	SQLite3
+Environment Config	.env
+Dependencies	requirements.txt
+📸 Screenshots & Demo
 
-AI Engine: Google Gemini API (google-generativeai)
-
-Database: SQLite3 (Relational storage for Users, Products, and Orders)
-
-Configuration: Managed via requirements.txt and .env
-
-📸 Visual Tour
-(Add your screenshots here as discussed earlier!)
-
+(Add application screenshots here to showcase the UI and AI builder experience)
 
 📦 Installation & Setup
-Clone the Project:
-
-Bash
+1️⃣ Clone the Repository
 git clone https://github.com/anandhupp73/PcForYou.git
 cd PcForYou
-Environment Setup:
 
-Bash
+2️⃣ Create & Activate Virtual Environment
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-Configure API Keys: Create a .env file in the root:
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
 
-Code snippet
+3️⃣ Install Dependencies
+pip install -r requirements.txt
+
+4️⃣ Configure Environment Variables
+
+Create a .env file in the project root:
+
 GOOGLE_API_KEY=your_gemini_api_key
 
-Database & Run:
-
-Bash
+5️⃣ Database Migration & Run Server
 python manage.py migrate
 python manage.py runserver
+
 🔮 Future Roadmap
-[ ] AI-based 3D Building: A visual workbench to see your parts assembled in 3D.
 
-[ ] FPS Estimator: AI-driven performance predictions for specific games based on the build.
+ AI-based 3D PC Builder
 
-[ ] Automated Stock Scraper: Syncing real-time availability with external hardware vendors.
+Visual workstation to see components assembled in real time
+
+ FPS Estimator
+
+AI-driven performance predictions for specific games
+
+ Automated Stock Scraper
+
+Sync real-time pricing and availability from external vendors
