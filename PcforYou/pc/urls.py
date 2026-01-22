@@ -7,9 +7,9 @@ urlpatterns = [
 
     # admin section 
 
-    path('admin-login/',views.admin_login,name="admin_login"),
+    path('admin/',views.admin_login,name="admin_login"),
     path('admin-logout/',views.admin_logout,name="admin_logout"),
-    path('admin/',views.admin_dashboard,name="admin_dashboard"),
+    path('admin-dashboard/',views.admin_dashboard,name="admin_dashboard"),
     path('admin/view-products/',views.viewproducts,name="view_products"),
     path('admin/add-products/',views.add_product,name="add_products"),
     path("products/<int:product_id>/edit/", views.update_product, name="update_product"),
