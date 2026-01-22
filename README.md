@@ -63,7 +63,7 @@ An intelligent assistant that validates your custom build **step by step**.
 
 ### Backend
 - Python
-- Django 5.x
+- Django 
 
 ### AI Integration
 - Google Gemini API (`google-generativeai`)
@@ -117,7 +117,7 @@ Run Migrations & Start Server
 
 python manage.py migrate
 python manage.py runserver
-
+```
 🔮 Future Enhancements
 
  🧩 AI-powered 3D PC Builder
