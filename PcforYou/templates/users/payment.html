@@ -1,0 +1,60 @@
+{% extends "index.html" %}
+{% block title %}Payment Checkout{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="col-6 mx-auto" style="margin-top:10%;">
+    <h2>Complete Your Payment</h2>
+    <p>Name: {{ order.name }}</p>
+    <p>Amount: ₹{{ order.total_amount }}</p>
+
+    <!-- Razorpay payment form -->
+    <form id="razorpay-form">
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script>
+            var options = {
+                "key": "{{ razorpay_key }}",
+                "amount": {{ amount_in_paise }},
+                "currency": "INR",
+                "name": "{{ order.user.get_full_name }}",
+                "description": "E-commerce Payment",
+                "order_id": "{{ order.provider_order_id }}",
+                "handler": function (response) {
+                    fetch("{% url 'payment_callback' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: JSON.stringify({
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_signature: response.razorpay_signature,
+                            payment_id: "{{ order.id }}"
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.status === "success"){
+                            window.location.href = "{% url 'order_detail' order.id %}";
+                        } else {
+                            alert("Payment verification failed. Try again!");
+                            window.location.href = "{% url 'checkout_cart' %}";
+                        }
+                    })
+                },
+                "prefill": {
+                    "name": "{{ order.user.get_full_name }}",
+                    "email": "{{ order.user.email }}",
+                    "contact": "{{ order.user.profile.user_phone|default:'' }}"
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+            var rzp = new Razorpay(options);
+            rzp.open();
+        </script>
+    </form>
+</div>
+{% endblock %}

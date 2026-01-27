@@ -17,6 +17,13 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from weasyprint import HTML
 import tempfile
+import razorpay
+from django.conf import settings
+from django.urls import reverse
+
+razorpay_client = razorpay.Client(
+    auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
+)
 
 
 # Create your views here.
@@ -651,14 +658,13 @@ def remove_from_cart(request, cart_id):
     item.delete()
     return redirect("cart")
 
+
 @login_required
 def checkout_cart(request, product_id=None):
-    # ==========================
-    # GET PROFILE (READ ONLY)
-    # ==========================
+    # ----------------------------
+    # GET USER PROFILE FOR PREFILL
+    # ----------------------------
     profile = getattr(request.user, "profile", None)
-
-    # Prefill checkout fields from profile
     checkout_data = {
         "full_name": profile.display_name if profile else "",
         "phone": profile.user_phone if profile else "",
@@ -668,9 +674,9 @@ def checkout_cart(request, product_id=None):
         "pincode": profile.user_pincode if profile else "",
     }
 
-    # ==========================
+    # ----------------------------
     # BUY NOW MODE
-    # ==========================
+    # ----------------------------
     if product_id:
         product = get_object_or_404(Product, id=product_id)
 
@@ -682,25 +688,25 @@ def checkout_cart(request, product_id=None):
 
         cart_items = [TempItem(product)]
 
-    # ==========================
+    # ----------------------------
     # CART MODE
-    # ==========================
+    # ----------------------------
     else:
         cart_items = list(Cart.objects.filter(user=request.user))
         if not cart_items:
             return redirect("cart")
 
-    # ==========================
+    # ----------------------------
     # PRICE CALCULATION
-    # ==========================
+    # ----------------------------
     subtotal = sum(item.total_price for item in cart_items)
     shipping = Decimal("30.00") if subtotal > 0 else Decimal("0.00")
     estimated_tax = (subtotal * Decimal("0.08")).quantize(Decimal("0.01"))
     total = subtotal + shipping + estimated_tax
 
-    # ==========================
-    # ORDER SUBMIT
-    # ==========================
+    # ----------------------------
+    # POST: PLACE ORDER
+    # ----------------------------
     if request.method == "POST":
         full_name = request.POST.get("full_name", "").strip()
         phone = request.POST.get("phone", "").strip()
@@ -708,20 +714,21 @@ def checkout_cart(request, product_id=None):
         city = request.POST.get("city", "").strip()
         state = request.POST.get("state", "").strip()
         pincode = request.POST.get("pincode", "").strip()
-        payment_method = request.POST.get("payment", "cod")
+        payment_method = request.POST.get("payment")
 
-        # 🔥 Combine into ONE snapshot address
+        # Combine full address
         combined_address = f"""{full_name}
-        {address_line}
-        {city}, {state} - {pincode}
-        Phone: {phone}
-        Payment: {payment_method.upper()}""".strip()
+{address_line}
+{city}, {state} - {pincode}
+Phone: {phone}
+Payment: {payment_method.upper()}""".strip()
 
         # Create Order
         order = Order.objects.create(
             user=request.user,
             total_amount=total,
-            address=combined_address
+            address=combined_address,
+            status=PaymentStatus.PENDING
         )
 
         # Create Order Items
@@ -733,15 +740,41 @@ def checkout_cart(request, product_id=None):
                 price=item.product.price
             )
 
-        # Clear cart only for cart checkout
+        # Clear cart for cart checkout
         if not product_id:
             Cart.objects.filter(user=request.user).delete()
 
-        return redirect("order_detail", order_id=order.id)
+        # ----------------------------
+        # COD PAYMENT
+        # ----------------------------
+        if payment_method == "cod":
+            order.status = PaymentStatus.SUCCESS
+            order.save()
+            return redirect("order_detail", order_id=order.id)
 
-    # ==========================
-    # RENDER CHECKOUT
-    # ==========================
+        # ----------------------------
+        # ONLINE PAYMENT (RAZORPAY)
+        # ----------------------------
+        if payment_method == "online":
+            razorpay_order = razorpay_client.order.create({
+                "amount": int(total * 100),  # amount in paise
+                "currency": "INR",
+                "payment_capture": 1
+            })
+            order.provider_order_id = razorpay_order["id"]
+            order.save()
+
+            context = {
+                "order": order,
+                "razorpay_key": settings.RAZORPAY_KEY_ID,
+                "callback_url": request.build_absolute_uri(reverse("payment_callback")),
+                "amount_in_paise": int(total * 100) 
+            }
+            return render(request, "users/payment.html", context)
+
+    # ----------------------------
+    # RENDER CHECKOUT PAGE
+    # ----------------------------
     return render(request, "users/checkout_cart.html", {
         "cart_items": cart_items,
         "subtotal": subtotal,
@@ -751,6 +784,38 @@ def checkout_cart(request, product_id=None):
         "checkout_data": checkout_data,
     })
 
+
+# ----------------------------
+# RAZORPAY CALLBACK
+# ----------------------------
+@csrf_exempt
+def payment_callback(request):
+    try:
+        data = json.loads(request.body)
+        order = Order.objects.get(id=data["payment_id"])
+
+        order.payment_id = data["razorpay_payment_id"]
+        order.signature_id = data["razorpay_signature"]
+
+        # Verify signature
+        razorpay_client.utility.verify_payment_signature({
+            "razorpay_payment_id": data["razorpay_payment_id"],
+            "razorpay_order_id": data["razorpay_order_id"],
+            "razorpay_signature": data["razorpay_signature"]
+        })
+
+        order.status = PaymentStatus.SUCCESS
+        order.save()
+        return JsonResponse({"status": "success"})
+
+    except razorpay.errors.SignatureVerificationError:
+        order.status = PaymentStatus.FAILURE
+        order.save()
+        return JsonResponse({"status": "failure"})
+
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})
+    
 @login_required
 def buy_prebuilt(request, pc_id):
     prebuilt = get_object_or_404(PrebuiltPC, id=pc_id)
@@ -797,7 +862,7 @@ def buy_prebuilt(request, pc_id):
         city = request.POST.get("city", "").strip()
         state = request.POST.get("state", "").strip()
         pincode = request.POST.get("pincode", "").strip()
-        payment_method = request.POST.get("payment", "cod")
+        payment_method = request.POST.get("payment")
 
         combined_address = f"""{full_name}
 {address_line}
@@ -819,7 +884,33 @@ Payment: {payment_method.upper()}""".strip()
             price=prebuilt.price
         )
 
-        return redirect("order_detail", order_id=order.id)
+        # ----------------------------
+        # COD PAYMENT
+        # ----------------------------
+        if payment_method == "cod":
+            order.status = PaymentStatus.SUCCESS
+            order.save()
+            return redirect("order_detail", order_id=order.id)
+
+        # ----------------------------
+        # ONLINE PAYMENT (RAZORPAY)
+        # ----------------------------
+        if payment_method == "online":
+            razorpay_order = razorpay_client.order.create({
+                "amount": int(total * 100),  # amount in paise
+                "currency": "INR",
+                "payment_capture": 1
+            })
+            order.provider_order_id = razorpay_order["id"]
+            order.save()
+
+            context = {
+                "order": order,
+                "razorpay_key": settings.RAZORPAY_KEY_ID,
+                "callback_url": request.build_absolute_uri(reverse("payment_callback")),
+                "amount_in_paise": int(total * 100) 
+            }
+            return render(request, "users/payment.html", context)
 
     # ==========================
     # RENDER CHECKOUT
