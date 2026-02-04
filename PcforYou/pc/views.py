@@ -658,13 +658,10 @@ def remove_from_cart(request, cart_id):
     item.delete()
     return redirect("cart")
 
-
 @login_required
 def checkout_cart(request, product_id=None):
-    # ----------------------------
-    # GET USER PROFILE FOR PREFILL
-    # ----------------------------
     profile = getattr(request.user, "profile", None)
+
     checkout_data = {
         "full_name": profile.display_name if profile else "",
         "phone": profile.user_phone if profile else "",
@@ -675,7 +672,7 @@ def checkout_cart(request, product_id=None):
     }
 
     # ----------------------------
-    # BUY NOW MODE
+    # CART / BUY NOW
     # ----------------------------
     if product_id:
         product = get_object_or_404(Product, id=product_id)
@@ -683,165 +680,104 @@ def checkout_cart(request, product_id=None):
         class TempItem:
             def __init__(self, product):
                 self.product = product
+                self.prebuilt_pc = None
                 self.quantity = 1
                 self.total_price = product.price
 
         cart_items = [TempItem(product)]
-
-    # ----------------------------
-    # CART MODE
-    # ----------------------------
     else:
         cart_items = list(Cart.objects.filter(user=request.user))
         if not cart_items:
             return redirect("cart")
 
     # ----------------------------
-    # PRICE CALCULATION
+    # PRICE
     # ----------------------------
-    subtotal = sum(item.total_price for item in cart_items)
+    subtotal = sum(getattr(item, "total_price", 0) for item in cart_items)
     shipping = Decimal("30.00") if subtotal > 0 else Decimal("0.00")
-    estimated_tax = (subtotal * Decimal("0.08")).quantize(Decimal("0.01"))
-    total = subtotal + shipping + estimated_tax
+    tax = (subtotal * Decimal("0.08")).quantize(Decimal("0.01"))
+    total = subtotal + shipping + tax
 
     # ----------------------------
-    # POST: PLACE ORDER
+    # PLACE ORDER
     # ----------------------------
     if request.method == "POST":
-        full_name = request.POST.get("full_name", "").strip()
-        phone = request.POST.get("phone", "").strip()
-        address_line = request.POST.get("address", "").strip()
-        city = request.POST.get("city", "").strip()
-        state = request.POST.get("state", "").strip()
-        pincode = request.POST.get("pincode", "").strip()
-        payment_method = request.POST.get("payment")
-
-        # Combine full address
-        combined_address = f"""{full_name}
-{address_line}
-{city}, {state} - {pincode}
-Phone: {phone}
+        payment_method = request.POST.get("payment", "cod")
+        combined_address = f"""{request.POST.get("full_name")}
+{request.POST.get("address")}
+{request.POST.get("city")}, {request.POST.get("state")} - {request.POST.get("pincode")}
+Phone: {request.POST.get("phone")}
 Payment: {payment_method.upper()}""".strip()
 
-        # Create Order
+        # Create order
         order = Order.objects.create(
             user=request.user,
             total_amount=total,
             address=combined_address,
-            status=PaymentStatus.PENDING
+            status="PENDING"
         )
 
-        # Create Order Items
+        # Create order items
         for item in cart_items:
             OrderItem.objects.create(
                 order=order,
-                product=item.product,
-                quantity=item.quantity,
-                price=item.product.price
+                product=getattr(item, "product", None),
+                prebuilt_pc=getattr(item, "prebuilt_pc", None),
+                quantity=getattr(item, "quantity", 1),
+                price=getattr(item.product or item.prebuilt_pc, "price", 0)
             )
 
-        # Clear cart for cart checkout
-        if not product_id:
-            Cart.objects.filter(user=request.user).delete()
-
-        # ----------------------------
-        # COD PAYMENT
-        # ----------------------------
+        # COD → confirm immediately
         if payment_method == "cod":
-            order.status = PaymentStatus.SUCCESS
+            order.status = "CONFIRMED"
             order.save()
+            if not product_id:  # Only clear cart in normal cart checkout
+                Cart.objects.filter(user=request.user).delete()
             return redirect("order_detail", order_id=order.id)
 
-        # ----------------------------
-        # ONLINE PAYMENT (RAZORPAY)
-        # ----------------------------
-        if payment_method == "online":
-            razorpay_order = razorpay_client.order.create({
-                "amount": int(total * 100),  # amount in paise
-                "currency": "INR",
-                "payment_capture": 1
-            })
-            order.provider_order_id = razorpay_order["id"]
-            order.save()
+        # ONLINE → Razorpay
+        razorpay_order = razorpay_client.order.create({
+            "amount": int(total * 100),
+            "currency": "INR",
+            "payment_capture": 1
+        })
 
-            context = {
-                "order": order,
-                "razorpay_key": settings.RAZORPAY_KEY_ID,
-                "callback_url": request.build_absolute_uri(reverse("payment_callback")),
-                "amount_in_paise": int(total * 100) 
-            }
-            return render(request, "users/payment.html", context)
+        return render(request, "users/payment.html", {
+            "order": order,
+            "razorpay_key": settings.RAZORPAY_KEY_ID,
+            "razorpay_order_id": razorpay_order["id"],
+            "amount_in_paise": int(total * 100),
+            "callback_url": request.build_absolute_uri(reverse("payment_callback")),
+        })
 
-    # ----------------------------
-    # RENDER CHECKOUT PAGE
-    # ----------------------------
     return render(request, "users/checkout_cart.html", {
         "cart_items": cart_items,
         "subtotal": subtotal,
         "shipping": shipping,
-        "estimated_tax": estimated_tax,
+        "estimated_tax": tax,
         "total": total,
         "checkout_data": checkout_data,
     })
 
 
-# ----------------------------
-# RAZORPAY CALLBACK
-# ----------------------------
-@csrf_exempt
-def payment_callback(request):
-    try:
-        data = json.loads(request.body)
-        order = Order.objects.get(id=data["payment_id"])
-
-        order.payment_id = data["razorpay_payment_id"]
-        order.signature_id = data["razorpay_signature"]
-
-        # Verify signature
-        razorpay_client.utility.verify_payment_signature({
-            "razorpay_payment_id": data["razorpay_payment_id"],
-            "razorpay_order_id": data["razorpay_order_id"],
-            "razorpay_signature": data["razorpay_signature"]
-        })
-
-        order.status = PaymentStatus.SUCCESS
-        order.save()
-        return JsonResponse({"status": "success"})
-
-    except razorpay.errors.SignatureVerificationError:
-        order.status = PaymentStatus.FAILURE
-        order.save()
-        return JsonResponse({"status": "failure"})
-
-    except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)})
-    
 @login_required
 def buy_prebuilt(request, pc_id):
     prebuilt = get_object_or_404(PrebuiltPC, id=pc_id)
 
-    # ==========================
-    # FAKE CART ITEM
-    # ==========================
     class TempItem:
         def __init__(self, pc):
-            self.product = pc   # reused in template
+            self.product = None
+            self.prebuilt_pc = pc
             self.quantity = 1
             self.total_price = pc.price
 
     cart_items = [TempItem(prebuilt)]
 
-    # ==========================
-    # PRICE CALCULATION
-    # ==========================
     subtotal = prebuilt.price
     shipping = Decimal("30.00") if subtotal > 0 else Decimal("0.00")
-    estimated_tax = (subtotal * Decimal("0.08")).quantize(Decimal("0.01"))
-    total = subtotal + shipping + estimated_tax
+    tax = (subtotal * Decimal("0.08")).quantize(Decimal("0.01"))
+    total = subtotal + shipping + tax
 
-    # ==========================
-    # PREFILL FROM PROFILE
-    # ==========================
     profile = getattr(request.user, "profile", None)
     checkout_data = {
         "full_name": profile.display_name if profile else "",
@@ -852,31 +788,21 @@ def buy_prebuilt(request, pc_id):
         "pincode": profile.user_pincode if profile else "",
     }
 
-    # ==========================
-    # ORDER SUBMIT
-    # ==========================
     if request.method == "POST":
-        full_name = request.POST.get("full_name", "").strip()
-        phone = request.POST.get("phone", "").strip()
-        address_line = request.POST.get("address", "").strip()
-        city = request.POST.get("city", "").strip()
-        state = request.POST.get("state", "").strip()
-        pincode = request.POST.get("pincode", "").strip()
-        payment_method = request.POST.get("payment")
-
-        combined_address = f"""{full_name}
-{address_line}
-{city}, {state} - {pincode}
-Phone: {phone}
+        payment_method = request.POST.get("payment", "cod")
+        combined_address = f"""{request.POST.get("full_name")}
+{request.POST.get("address")}
+{request.POST.get("city")}, {request.POST.get("state")} - {request.POST.get("pincode")}
+Phone: {request.POST.get("phone")}
 Payment: {payment_method.upper()}""".strip()
 
         order = Order.objects.create(
             user=request.user,
             total_amount=total,
-            address=combined_address
+            address=combined_address,
+            status="PENDING"
         )
 
-        # Store PrebuiltPC order
         OrderItem.objects.create(
             order=order,
             prebuilt_pc=prebuilt,
@@ -884,45 +810,34 @@ Payment: {payment_method.upper()}""".strip()
             price=prebuilt.price
         )
 
-        # ----------------------------
-        # COD PAYMENT
-        # ----------------------------
         if payment_method == "cod":
-            order.status = PaymentStatus.SUCCESS
+            order.status = "CONFIRMED"
             order.save()
             return redirect("order_detail", order_id=order.id)
 
-        # ----------------------------
-        # ONLINE PAYMENT (RAZORPAY)
-        # ----------------------------
-        if payment_method == "online":
-            razorpay_order = razorpay_client.order.create({
-                "amount": int(total * 100),  # amount in paise
-                "currency": "INR",
-                "payment_capture": 1
-            })
-            order.provider_order_id = razorpay_order["id"]
-            order.save()
+        razorpay_order = razorpay_client.order.create({
+            "amount": int(total * 100),
+            "currency": "INR",
+            "payment_capture": 1
+        })
 
-            context = {
-                "order": order,
-                "razorpay_key": settings.RAZORPAY_KEY_ID,
-                "callback_url": request.build_absolute_uri(reverse("payment_callback")),
-                "amount_in_paise": int(total * 100) 
-            }
-            return render(request, "users/payment.html", context)
+        return render(request, "users/payment.html", {
+            "order": order,
+            "razorpay_key": settings.RAZORPAY_KEY_ID,
+            "razorpay_order_id": razorpay_order["id"],
+            "amount_in_paise": int(total * 100),
+            "callback_url": request.build_absolute_uri(reverse("payment_callback")),
+        })
 
-    # ==========================
-    # RENDER CHECKOUT
-    # ==========================
     return render(request, "users/checkout_cart.html", {
         "cart_items": cart_items,
         "subtotal": subtotal,
         "shipping": shipping,
-        "estimated_tax": estimated_tax,
+        "estimated_tax": tax,
         "total": total,
         "checkout_data": checkout_data,
     })
+
 
 
 @login_required
@@ -932,15 +847,15 @@ def orders_list(request):
 
 
 @login_required
-def order_detail(request, order_id):
+def cancel_order(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    if request.method == "POST" and 'cancel_order' in request.POST:
-        if order.status in ["PENDING", "CONFIRMED"]:
-            order.status = "CANCELLED"
-            order.save()
-    return render(request, 'users/order_detail.html', {'order': order})
+    if order.status == "PENDING":
+        order.status = "CANCELLED"
+        order.save()
+    return redirect("order_detail", order_id=order.id)
 
 
+# Admin
 @admin_required
 def admin_order_manage(request):
     orders = (
@@ -957,13 +872,47 @@ def admin_order_manage(request):
 def update_order_status(request):
     order_id = request.POST.get('order_id')
     new_status = request.POST.get('new_status')
-
     order = get_object_or_404(Order, pk=order_id)
     if new_status in dict(Order.STATUS_CHOICES):
         order.status = new_status
         order.save()
         return JsonResponse({'success': True, 'new_status': order.status})
     return JsonResponse({'success': False, 'error': 'Invalid status'})
+
+
+# Razorpay callback
+@csrf_exempt
+def payment_callback(request):
+    try:
+        data = json.loads(request.body)
+        order = Order.objects.get(id=data["order_id"])
+
+        razorpay_client.utility.verify_payment_signature({
+            "razorpay_payment_id": data["razorpay_payment_id"],
+            "razorpay_order_id": data["razorpay_order_id"],
+            "razorpay_signature": data["razorpay_signature"],
+        })
+
+        order.status = "CONFIRMED"
+        order.save()
+        Cart.objects.filter(user=order.user).delete()
+        return JsonResponse({"status": "success"})
+
+    except Exception:
+        return JsonResponse({"status": "failure"})
+
+
+@login_required
+def order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    if request.method == "POST" and 'cancel_order' in request.POST:
+        if order.status in ["PENDING", "CONFIRMED"]:
+            order.status = "CANCELLED"
+            order.save()
+    return render(request, 'users/order_detail.html', {'order': order})
+
+
+
 
 # -------------------------pc builder compactability-----------------------------------
 
