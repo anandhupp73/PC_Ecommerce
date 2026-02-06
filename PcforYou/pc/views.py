@@ -209,7 +209,7 @@ def delete_product(request, product_id):
 
     if request.method == "POST":
         product.delete()  # cascades detail models
-        messages.success(request, "🗑️ Product deleted successfully.")
+        # messages.success(request, "🗑️ Product deleted successfully.")
         return redirect("view_products")
 
     return render(request, "admin/delete_product_confirm.html", {
