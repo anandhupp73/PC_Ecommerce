@@ -33,13 +33,12 @@
                         </nav>
                     </div>
                     <div class="nav-right">
-                        <div class="search-wrapper">
+                        <div class="product-search-wrapper">
                             <div class="search-box">
                                 <i class="fa-solid fa-magnifying-glass"></i>
                                 <input type="text" id="search-input" class="search-input" placeholder="Search">
                             </div>
-
-                            <div id="search-results" class="search-results-modal"></div>
+                            <div id="search-results" class="product-search-results-modal"></div>
                         </div>
 
 
@@ -410,25 +409,24 @@
     const resultsBox = document.getElementById("search-results");
 
     searchInput.addEventListener("keyup", function() {
-        const query = searchInput.value;
+        const query = this.value.trim(); // Use trim() to avoid spaces triggering a search
 
-        if (query.length > 0) {
+        if (query.length > 1) { // Trigger only after 2 characters
             fetch(`/search/?q=${query}`)
                 .then(response => response.json())
                 .then(data => {
                     resultsBox.innerHTML = "";
                     
-                    if (data.products.length > 0) {
+                    if (data.products && data.products.length > 0) {
                         resultsBox.style.display = "block";
                         data.products.forEach(product => {
-                            // Create a link that wraps the item
                             resultsBox.innerHTML += `
-                                <a href="${product.url}" class="search-item-link">
-                                    <div class="search-item">
-                                        <img src="${product.image}" alt="${product.name}" class="search-img">
-                                        <div class="search-info">
-                                            <span class="search-name">${product.name}</span>
-                                            <span class="search-price">$${product.price}</span>
+                                <a href="${product.url}" class="product-search-item-link">
+                                    <div class="product-search-item">
+                                        <img src="${product.image}" class="product-search-img" alt="">
+                                        <div class="product-search-info">
+                                            <span class="product-search-name">${product.name}</span>
+                                            <span class="product-search-price">$${product.price}</span>
                                         </div>
                                     </div>
                                 </a>
@@ -439,6 +437,13 @@
                     }
                 });
         } else {
+            resultsBox.style.display = "none";
+        }
+    });
+
+    // Close search if user clicks anywhere else on the page
+    document.addEventListener("click", function(e) {
+        if (!searchInput.contains(e.target) && !resultsBox.contains(e.target)) {
             resultsBox.style.display = "none";
         }
     });

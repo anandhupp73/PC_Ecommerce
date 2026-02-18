@@ -1372,68 +1372,99 @@ button:hover {
 /* --------- for searching--------------- */
 
 
-/* This is the anchor */
-.search-wrapper {
-    position: relative; 
-    width: 300px; 
+.product-search-wrapper {
+    position: relative;
+    display: inline-block;
 }
 
-/* This is the modal/dropdown */
+.search-box {
+    display: none; 
+    position: relative;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .search-box {
+        display: flex;
+    }
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    color: #667182;
+    font-size: 16px;
+    z-index: 2; 
+}
+
+.search-input {
+    width: 256px;
+    border: 1px solid gray;
+    background-color: #0f131a;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    outline: none;
+    color: white;
+    transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+    border: 1px solid var(--primary, #3498db); 
+}
+
+
 #search-results {
     position: absolute;
-    top: 100%; 
+    top: calc(100% + 5px); /* 5px gap below the input */
     left: 0;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-top: none;
-    z-index: 1000; 
-    max-height: 300px;
+    width: 100%;
+    background-color: #1a1f26; 
+    border: 1px solid #333;
+    border-radius: 6px;
+    z-index: 9999; 
+    max-height: 400px;
     overflow-y: auto;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    display: none; /* Hidden by default */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    display: none;
 }
 
 
-/* Remove default link styling */
-.search-item-link {
+.product-search-item-link {
     text-decoration: none;
-    color: inherit;
+    color: #fff;
     display: block;
 }
 
-.search-item {
+.product-search-item {
     display: flex;
     align-items: center;
-    padding: 10px;
-    gap: 15px; /* Space between image and text */
-    border-bottom: 1px solid #eee;
+    padding: 12px;
+    gap: 12px;
+    border-bottom: 1px solid #2d333b;
 }
 
-.search-img {
-    width: 45px;
-    height: 45px;
+.product-search-item:hover {
+    background-color: #2d333b;
+}
+
+.product-search-img {
+    width: 40px;
+    height: 40px;
     object-fit: cover;
     border-radius: 4px;
-    background-color: #f8f8f8;
 }
 
-.search-info {
+.product-search-info {
     display: flex;
     flex-direction: column;
 }
 
-.search-name {
-    font-weight: 600;
+.product-search-name {
     font-size: 14px;
-    color: #333;
+    font-weight: 500;
 }
 
-.search-price {
+.product-search-price {
     font-size: 12px;
-    color: #27ae60; /* Green for price */
-}
-
-.search-item:hover {
-    background-color: #f1f1f1;
+    color: #2ecc71;
 }
