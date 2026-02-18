@@ -1181,31 +1181,6 @@ button:hover {
     background: #0ea5e9;
 }
 
-/* product-details */
-
-/* .product-detail-page {
-    padding: 40px;
-    display: flex;
-    justify-content: center;
-}
-
-.product-detail-card {
-    display: flex;
-    gap: 40px;
-    background: #1e293b;
-    padding: 30px;
-    border-radius: 12px;
-    color: white;
-}
-
-.product-img-box img {
-    width: 350px;
-    border-radius: 12px;
-}
-
-.spec-table td {
-    padding: 8px 20px;
-} */
 
 .buy-now-div {
     width: 100%;
@@ -1245,6 +1220,44 @@ button:hover {
     margin-top: 80px;
 }
 
+/* Tablets */
+@media (max-width: 1024px) {
+
+    .shopc-product-page {
+        grid-template-columns: 1fr; /* Stack sidebar + products */
+    }
+
+    .shopc-filters,
+    .shopc-filters-pros {
+        margin-top: 0;
+        height: auto; /* Remove fixed height */
+    }
+
+    .shopc-product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+
+/* Small Mobile */
+@media (max-width: 480px) {
+
+    .shopc-product-page {
+        margin: 8px;
+    }
+
+    .shopc-img-box img {
+        height: 180px;
+    }
+
+    .shopc-product-card {
+        padding: 12px;
+    }
+
+    .shopc-product-name {
+        font-size: 15px;
+    }
+}
 /* ---------------------------------
 ------profile page css -----------
 --------------------------------- */
@@ -1354,3 +1367,4 @@ button:hover {
     background: #00d9ff;
     color: #000;
 }
+

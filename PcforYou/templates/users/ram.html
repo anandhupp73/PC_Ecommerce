@@ -3,15 +3,15 @@
 
 {% block content %}
 
-<div class="ram-product-page">
+<div class="shopc-product-page">
 
-    <aside class="ram-filters">
+    <aside class="shopc-filters">
         <h2>Filters</h2>
 
         <form method="GET" action="{% url 'ram' %}" id="filterForm">
 
             <!-- PRICE -->
-            <div class="ram-filter-group">
+            <div class="shopc-filter-group">
                 <h4>Price</h4>
 
                  <input type="range" 
@@ -22,14 +22,14 @@
                     max="50000"
                     value="{{ request.GET.price|default:50000 }}">
 
-                <div class="cooling-price-values">
+                <div class="shopc-price-values">
                     <span>₹0</span>
                     <span id="priceValue">₹{{ request.GET.price|default:30000 }}</span>
                 </div>
             </div>
 
             <!--Ram Types -->
-            <div class="ram-filter-group">
+            <div class="shopc-filter-group">
                 <h4>Ram Type</h4>
 
                 <label>
@@ -48,7 +48,7 @@
             </div>
 
             <!-- RAM SIZE -->
-            <div class="ram-filter-group">
+            <div class="shopc-filter-group">
                 <h4>RAM Size</h4>
 
                 {% for size in ram_sizes %}
@@ -70,25 +70,25 @@
     <main class="ram-products">
         <h2 style="color: white;">RAM Products</h2>
 
-        <div class="ram-product-grid">
+        <div class="shopc-product-grid">
 
             {% for ram in rams %}
             
-            <div class="ram-product-card">
+            <div class="shopc-product-card">
 
                 <a href="{% url 'product_detail' ram.id %}" style="text-decoration: none;">
-                <div class="ram-img-box">
+                <div class="shopc-img-box">
                     <img src="{{ ram.image.url }}" alt="{{ ram.name }}">
                 </div>
 
-                <h3 class="ram-product-name">{{ ram.name }}</h3>
+                <h3 class="shopc-product-name">{{ ram.name }}</h3>
 
-                <div class="ram-product-bottom">
+                <div class="shopc-product-bottom">
                     <span class="ram-price">₹{{ ram.price }}</span>
                     {% comment %} <button class="ram-add-btn">Add to Cart</button> {% endcomment %}
                     <form action="{% url 'add_to_cart' ram.id %}" method="post">
                         {% csrf_token %}
-                        <button class="ram-add-btn">Add to Cart</button>
+                        <button class="shopc-add-btn">Add to Cart</button>
                     </form>
                 </div>
                 </a>

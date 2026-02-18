@@ -3,16 +3,16 @@
 
 {% block content %}
 
-<div class="cooling-product-page">
+<div class="shopc-product-page">
 
     <!-- FILTER SIDEBAR -->
-    <aside class="cooling-filters">
+    <aside class="shopc-filters">
         <h2>Filters</h2>
 
         <form method="GET" action="{% url 'cooling' %}" id="filterForm">
 
             <!-- PRICE -->
-            <div class="cooling-filter-group">
+            <div class="shopc-filter-group">
                 <h4>Price</h4>
 
                  <input type="range" 
@@ -23,14 +23,14 @@
                     max="100000"
                     value="{{ request.GET.price|default:100000 }}">
 
-                <div class="cooling-price-values">
+                <div class="shopc-price-values">
                     <span>₹0</span>
                     <span id="priceValue">₹{{ request.GET.price|default:100000 }}</span>
                 </div>
             </div>
 
             <!-- COOLING TYPE -->
-            <div class="cooling-filter-group">
+            <div class="shopc-filter-group">
                 <h4>Cooling Type</h4>
 
                 <label>
@@ -56,25 +56,25 @@
     <main class="cooling-products">
         <h2 style="color: white;">Cooling Products</h2>
 
-        <div class="cooling-product-grid">
+        <div class="shopc-product-grid">
 
             {% for cooling in cooling %}
             
-            <div class="cooling-product-card">
+            <div class="shopc-product-card">
 
                 <a href="{% url 'product_detail' cooling.id %}" style="text-decoration: none;">
-                <div class="cooling-img-box">
+                <div class="shopc-img-box">
                     <img src="{{ cooling.image.url }}" alt="{{ cooling.name }}">
                 </div>
 
-                <h3 class="cooling-product-name">{{ cooling.name }}</h3>
+                <h3 class="shopc-product-name">{{ cooling.name }}</h3>
 
-                <div class="cooling-product-bottom">
-                    <span class="cooling-price">₹{{ cooling.price }}</span>
+                <div class="shopc-product-bottom">
+                    <span class="shopc-price">₹{{ cooling.price }}</span>
                     {% comment %} <button class="cooling-add-btn">Add to Cart</button> {% endcomment %}
                     <form action="{% url 'add_to_cart' cooling.id %}" method="post">
                         {% csrf_token %}
-                        <button class="cooling-add-btn">Add to Cart</button>
+                        <button class="shopc-add-btn">Add to Cart</button>
                     </form>
                 </div>
                 </a>
