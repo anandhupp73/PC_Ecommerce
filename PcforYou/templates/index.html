@@ -33,10 +33,15 @@
                         </nav>
                     </div>
                     <div class="nav-right">
-                        <div class="search-box">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" class="search-input" placeholder="Search">
+                        <div class="search-wrapper">
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="search-input" class="search-input" placeholder="Search">
+                            </div>
+
+                            <div id="search-results" class="search-results-modal"></div>
                         </div>
+
 
                         <div class="icon-button" id="userIcon">
                                 <i class="user-icon fa-regular fa-user" style="color: white;"></i>
@@ -398,6 +403,43 @@
     document.addEventListener("click", (e) => {
         if (!userIcon.contains(e.target)) {
             dropdown.classList.remove("show");
+        }
+    });
+
+    const searchInput = document.getElementById("search-input");
+    const resultsBox = document.getElementById("search-results");
+
+    searchInput.addEventListener("keyup", function() {
+        const query = searchInput.value;
+
+        if (query.length > 0) {
+            fetch(`/search/?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    resultsBox.innerHTML = "";
+                    
+                    if (data.products.length > 0) {
+                        resultsBox.style.display = "block";
+                        data.products.forEach(product => {
+                            // Create a link that wraps the item
+                            resultsBox.innerHTML += `
+                                <a href="${product.url}" class="search-item-link">
+                                    <div class="search-item">
+                                        <img src="${product.image}" alt="${product.name}" class="search-img">
+                                        <div class="search-info">
+                                            <span class="search-name">${product.name}</span>
+                                            <span class="search-price">$${product.price}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            `;
+                        });
+                    } else {
+                        resultsBox.style.display = "none";
+                    }
+                });
+        } else {
+            resultsBox.style.display = "none";
         }
     });
     </script>

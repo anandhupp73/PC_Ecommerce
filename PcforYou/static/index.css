@@ -1368,3 +1368,72 @@ button:hover {
     color: #000;
 }
 
+
+/* --------- for searching--------------- */
+
+
+/* This is the anchor */
+.search-wrapper {
+    position: relative; 
+    width: 300px; 
+}
+
+/* This is the modal/dropdown */
+#search-results {
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    z-index: 1000; 
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: none; /* Hidden by default */
+}
+
+
+/* Remove default link styling */
+.search-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.search-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    gap: 15px; /* Space between image and text */
+    border-bottom: 1px solid #eee;
+}
+
+.search-img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+}
+
+.search-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+.search-price {
+    font-size: 12px;
+    color: #27ae60; /* Green for price */
+}
+
+.search-item:hover {
+    background-color: #f1f1f1;
+}

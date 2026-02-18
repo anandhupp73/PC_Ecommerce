@@ -1010,3 +1010,28 @@ def profile_view(request):
         return redirect("profile")
 
     return render(request, "users/profile.html", {"profile": profile})
+
+def product_search(request):
+    query = request.GET.get('q', '')
+    products_data = []
+
+    if query:
+        qs = Product.objects.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query),
+            is_available=True
+        )[:10]
+
+        for product in qs:
+            # Check if image exists, else use a placeholder or empty string
+            image_url = product.image.url if product.image else f"{settings.STATIC_URL}images/no-image.png"
+            
+            products_data.append({
+                'id': product.id,
+                'name': product.name,
+                'price': float(product.price),
+                'image': image_url,
+                'url': reverse('product_detail', args=[product.id])
+            })
+
+    return JsonResponse({'products': products_data})

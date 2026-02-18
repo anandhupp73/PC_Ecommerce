@@ -55,6 +55,7 @@ urlpatterns = [
     path("generate-pdf/",views.generate_report_pdf, name="generate_pdf"),
 
     path('payment/callback/', views.payment_callback, name='payment_callback'),
-
+    
+    path('search/', views.product_search, name='product_search'),
 
 ]
