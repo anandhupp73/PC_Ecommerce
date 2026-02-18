@@ -34,7 +34,7 @@ if not GEMINI_API_KEY:
     print("WARNING: GEMINI_API_KEY not found in environment variables or .env file.")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['PcforYou.pythonanywhere.com', 'localhost', '127.0.0.1']
 
