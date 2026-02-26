@@ -28,7 +28,6 @@
                         <nav>
                             <a href="{% url 'home' %}#shop">Components</a>
                             <a href="{% url 'home' %}#prebuilt">Pre-Built</a>
-                            {% comment %} <a href="{% url 'orders_list' %}">Orders</a> {% endcomment %}
                             <a href="#">Support</a>
                         </nav>
                     </div>
@@ -99,9 +98,6 @@
                         <i data-lucide="cpu" class="my-icon"></i>
                     </div>
                     <div class="title">Processors</div>
-                    {% comment %} <div class="count">
-                        Processors count 
-                    </div> {% endcomment %}
                 </div>
                 </a>
 
@@ -113,9 +109,6 @@
                         <i data-lucide="box" class="my-icon"></i>
                     </div>
                     <div class="title">Graphics Cards</div>
-                    {% comment %} <div class="count">
-                        graphics card count 
-                    </div> {% endcomment %}
                 </div>
                 </a>
 
@@ -127,9 +120,6 @@
                         <i data-lucide="hard-drive" class="my-icon"></i>
                     </div>
                     <div class="title">Storage</div>
-                    {% comment %} <div class="count">
-                        storage count 
-                    </div> {% endcomment %}
                 </div>
                 </a>
 
@@ -141,9 +131,6 @@
                         <i data-lucide="monitor-speaker" class="my-icon"></i>
                     </div>
                     <div class="title">Monitors</div>
-                    {% comment %} <div class="count">
-                        Monitors count 
-                    </div> {% endcomment %}
                 </div>
                 </a>
 
@@ -154,9 +141,6 @@
                        <i data-lucide="fan" class="my-icon"></i>
                     </div>
                     <div class="title">Cooling</div>
-                    {% comment %} <div class="count">
-                        cooling count 
-                    </div> {% endcomment %}
                 </div>
                 </a>
                 
@@ -168,9 +152,6 @@
                         <i data-lucide="circuit-board" class="my-icon"></i>
                     </div>
                     <div class="title">Motherboard</div>
-                    {% comment %} <div class="count">
-                        Motherboard count 
-                    </div> {% endcomment %}
                 </div>
                 </a>
 
@@ -182,9 +163,6 @@
                         <i data-lucide="memory-stick" class="my-icon"></i>
                     </div>
                     <div class="title">RAM</div>
-                    {% comment %} <div class="count">
-                        RAM count 
-                    </div> {% endcomment %}
                 </div>
                 </a>
 
@@ -196,9 +174,6 @@
                         <i data-lucide="square-power" class="my-icon"></i>
                     </div>
                     <div class="title">Power Supply</div>
-                    {% comment %} <div class="count">
-                        Power Supply count 
-                    </div> {% endcomment %}
                 </div>
                 </a>
 
@@ -210,9 +185,6 @@
                         <i data-lucide="pc-case" class="my-icon"></i>
                     </div>
                     <div class="title">Cabinets</div>
-                    {% comment %} <div class="count">
-                        Cabinets count 
-                    </div> {% endcomment %}
                 </div>
                 </a>
 
@@ -224,9 +196,6 @@
                         <i data-lucide="cable" class="my-icon"></i>
                     </div>
                     <div class="title">Accessories</div>
-                    {% comment %} <div class="count">
-                        Accessories count 
-                    </div> {% endcomment %}
                 </div>
                 </a>
 
@@ -251,7 +220,6 @@
                     <div class="info">
                         <p class="category">Name</p>
                         <h3>{{ prebuilt.name }}</h3>
-                        {% comment %} <p class="rating"> <i data-lucide="star" class="my-icon"></i> 4.8 <span>(1247)</span></p> {% endcomment %}
                         <div class="prebuilt-pros">
                             <span style="color: white;">Processor : </span>
                             <span style="color: rgb(33, 173, 20);">{{ prebuilt.processor }}</span>
