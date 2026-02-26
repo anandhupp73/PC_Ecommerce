@@ -156,6 +156,91 @@ nav a:hover {
     font-size: 20px;
     color: var(--foreground);
 }
+
+/* ------- FIX FOR THE 768px - 945px RANGE ------- */
+
+@media (min-width: 768px) and (max-width: 945px) {
+    .nav-left {
+        gap: 1rem; /* Reduce gap between logo and links */
+    }
+
+    .logo-text {
+        font-size: 1rem; /* Shrink logo text slightly */
+    }
+
+    nav {
+        gap: 0.75rem; /* Tighten nav link spacing */
+    }
+
+    nav a {
+        font-size: 0.8rem; /* Smaller font for links */
+    }
+
+    .search-input {
+        width: 160px; /* Shrink search box width so it doesn't push icons off */
+    }
+    
+    .nav-right {
+        gap: 0.5rem; /* Tighten icon spacing */
+    }
+}
+
+/* ------- GENERAL IMPROVEMENT FOR FLEXIBILITY ------- */
+
+/* Make the search box container flexible instead of fixed */
+.product-search-wrapper {
+    flex-shrink: 1; 
+    min-width: 0;
+}
+
+/* Ensure the navbar doesn't overflow horizontally */
+.nav-inner {
+    overflow: hidden; 
+}
+/* ------- FIX FOR 768px - 850px ------- */
+@media (min-width: 768px) and (max-width: 850px) {
+    .navbar {
+        padding: 0 15px; /* Reduce outer padding to win 20px */
+    }
+
+    .nav-left {
+        gap: 0.8rem; /* Tighten gap between logo and nav links */
+    }
+
+    /* Hide the logo text - the icon is enough for this size */
+    .logo-text {
+        display: none; 
+    }
+
+    nav {
+        gap: 0.8rem; /* Tighten nav link spacing */
+    }
+
+    nav a {
+        font-size: 0.85rem;
+    }
+
+    /* Shrink the search bar significantly */
+    .search-input {
+        width: 140px; 
+        font-size: 0.8rem;
+    }
+
+    .nav-right {
+        gap: 0.5rem; /* Tighten icon spacing */
+    }
+
+    .icon-button {
+        padding: 0.4rem; /* Smaller padding around icons */
+    }
+}
+
+/* Ensure the search box doesn't push the icons out of the navbar */
+.product-search-wrapper {
+    flex-shrink: 1;
+    min-width: 0;
+}
+
 /* #userIcon{
   position: relative;
 } */
