@@ -1164,6 +1164,7 @@ button:hover {
 
 /* shop by category except ram cool cab */
 
+
 /* PAGE LAYOUT */
 .shopc-product-page {
     display: grid;
@@ -1178,8 +1179,9 @@ button:hover {
     padding: 20px;
     border-radius: 15px;
     color: #e2e8f0;
-    height: 350px;
+    height: fit-content;
     margin-top: 80px;
+    align-self: start;
 }
 
 .shopc-filter-group {
@@ -1215,6 +1217,7 @@ button:hover {
     display: flex;
     flex-direction: column;
     /* height: 100%; */
+    flex-grow: 1;
     text-decoration: none;
 }
 
@@ -1235,6 +1238,11 @@ button:hover {
     margin-top: 14px;
     font-size: 18px;
     color: #f8fafc;
+    min-height: 3em; 
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 /* PRICE + BUTTON */
@@ -1303,7 +1311,8 @@ button:hover {
     color: #e2e8f0;
     height: 250px;
     margin-top: 80px;
-}
+} 
+
 
 /* Tablets */
 @media (max-width: 1024px) {
