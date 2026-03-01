@@ -37,8 +37,8 @@
                                 <i class="fa-solid fa-magnifying-glass"></i>
                                 <input type="text" id="search-input" class="search-input" placeholder="Search">
                             </div>
-                            <div id="search-results" class="product-search-results-modal"></div>
                         </div>
+                        <div id="search-results" class="product-search-results-modal"></div>
 
 
                         <div class="icon-button" id="userIcon">
@@ -377,16 +377,23 @@
     const resultsBox = document.getElementById("search-results");
 
     searchInput.addEventListener("keyup", function() {
-        const query = this.value.trim(); // Use trim() to avoid spaces triggering a search
+        const query = this.value.trim();
 
-        if (query.length > 1) { // Trigger only after 2 characters
+        if (query.length > 1) {
             fetch(`/search/?q=${query}`)
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(data => {
                     resultsBox.innerHTML = "";
-                    
+
                     if (data.products && data.products.length > 0) {
                         resultsBox.style.display = "block";
+
+                        // Position dropdown below input
+                        const rect = searchInput.getBoundingClientRect();
+                        resultsBox.style.top = rect.bottom + window.scrollY + 5 + "px";
+                        resultsBox.style.left = rect.left + window.scrollX + "px";
+                        resultsBox.style.width = rect.width + "px";
+
                         data.products.forEach(product => {
                             resultsBox.innerHTML += `
                                 <a href="${product.url}" class="product-search-item-link">
@@ -409,7 +416,7 @@
         }
     });
 
-    // Close search if user clicks anywhere else on the page
+    // Close search if user clicks anywhere else
     document.addEventListener("click", function(e) {
         if (!searchInput.contains(e.target) && !resultsBox.contains(e.target)) {
             resultsBox.style.display = "none";

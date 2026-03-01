@@ -1497,22 +1497,17 @@ button:hover {
     border: 1px solid var(--primary, #3498db); 
 }
 
-
 #search-results {
-    position: absolute;
-    top: calc(100% + 5px); /* 5px gap below the input */
-    left: 0;
-    width: 100%;
-    background-color: #1a1f26; 
+    position: absolute; /* can also use fixed if needed */
+    background-color: #1a1f26;
     border: 1px solid #333;
     border-radius: 6px;
-    z-index: 9999; 
     max-height: 400px;
     overflow-y: auto;
     box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     display: none;
+    z-index: 100000; /* very high to ensure it’s above hero */
 }
-
 
 .product-search-item-link {
     text-decoration: none;

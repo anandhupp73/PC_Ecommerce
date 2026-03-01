@@ -1012,18 +1012,18 @@ def profile_view(request):
     return render(request, "users/profile.html", {"profile": profile})
 
 def product_search(request):
-    query = request.GET.get('q', '')
+    query = request.GET.get('q', '').strip()  # trim whitespace
     products_data = []
 
     if query:
+        # Use istartswith to match only the beginning of name or description
         qs = Product.objects.filter(
-            Q(name__icontains=query) |
-            Q(description__icontains=query),
+            Q(name__istartswith=query) | Q(description__istartswith=query),
             is_available=True
         )[:10]
 
         for product in qs:
-            # Check if image exists, else use a placeholder or empty string
+            # Check if image exists, else use a placeholder
             image_url = product.image.url if product.image else f"{settings.STATIC_URL}images/no-image.png"
             
             products_data.append({
