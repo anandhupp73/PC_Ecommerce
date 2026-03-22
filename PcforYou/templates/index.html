@@ -362,17 +362,22 @@
 
     // Toggle dropdown visibility
     userIcon.addEventListener("click", (e) => {
-        e.stopPropagation();
+        e.stopPropagation(); 
         dropdown.classList.toggle("show");
     });
 
-    // Close dropdown when clicking outside
+    // Close when clicking outside
     document.addEventListener("click", (e) => {
         if (!userIcon.contains(e.target)) {
             dropdown.classList.remove("show");
         }
     });
 
+    // Prevent dropdown from closing when clicking internal links/text
+    dropdown.addEventListener("click", (e) => {
+        e.stopPropagation();
+    });
+    
     const searchInput = document.getElementById("search-input");
     const resultsBox = document.getElementById("search-results");
 

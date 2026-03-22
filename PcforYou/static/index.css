@@ -24,7 +24,7 @@ body{
 header{
     position: sticky;
     top: 0;
-    z-index: 50;
+    z-index: 2000 !important;
     width: 100%;
     border-bottom: 1px solid gray;
     background:#0f131a;
@@ -41,6 +41,7 @@ header{
     align-items: center;
     justify-content:space-between;
     height: 64px;
+    overflow: visible !important;
 }
 .nav-left {
     display: flex;
@@ -241,35 +242,53 @@ nav a:hover {
     min-width: 0;
 }
 
-/* #userIcon{
-  position: relative;
-} */
-.user-dropdown{
-  position: absolute;
-  top: 45px;
-  right: 0;
-  background: #0f131a;
-  color: white;
-  border-radius: 8px;
-  width: 160px;
-  display: none;
-  flex-direction: column;
-  overflow: hidden;
-  z-index: 10;
-  animation: fadeIn 0.2s ease;
+/* 1. Ensure the parent container is the reference point */
+#userIcon {
+    position: relative !important;
+    overflow: visible !important;
+    z-index: 2001;
 }
-.user-dropdown a{
-  padding: 10px 15px;
-  text-decoration: none;
-  color: white;
-  transition: background 0.2s;
+
+/* 2. Update the dropdown positioning */
+.user-dropdown {
+    position: absolute;
+    top: 100%; /* Positions it directly below the icon button */
+    right: 0;
+    background: #0f131a;
+    color: white;
+    border-radius: 8px;
+    width: 180px;
+    display: none; /* Keep hidden by default */
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9999 !important; /* Ensure it stays above the hero section */
+    border: 1px solid #333;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    margin-top: 10px;
+    animation: fadeIn 0.2s ease;
 }
-.user-dropdown a:hover{
-  background:  #161b24;
+
+/* 3. The Fix: Make this selector more specific so it overrides 'display: none' */
+.user-dropdown.show {
+    display: flex !important;
 }
-.show{
+
+/* 4. Ensure links are clickable and styled */
+.user-dropdown a {
+    padding: 12px 15px;
+    text-decoration: none;
+    color: white;
+    display: block;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.user-dropdown a:hover {
+    background: #161b24;
+}
+/* .show{
   display: flex;
-}
+} */
 @keyframes fadeIn {
     from{
       opacity: 0;
